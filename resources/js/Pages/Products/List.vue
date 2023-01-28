@@ -1,7 +1,7 @@
 <script setup>
     import AppLayout from '@/Layouts/AppLayout.vue';
-    import { Head,useForm } from '@inertiajs/vue3';
- 
+    import { useForm } from '@inertiajs/vue3';
+    import { faTrashAlt, faPencilAlt } from "@fortawesome/free-solid-svg-icons";
     import Pagination from '@/Components/Pagination.vue'
 
     const props = defineProps({
@@ -97,20 +97,22 @@
                                 <td class="text-center px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 border-r">
                                     {{ index + 1 }}
                                 </td>
-                                <td class="text-center text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap border-r">
-                                    <img :src="product.image" width="50px" height="50px">
-                                </td>
                                 <td class="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap border-r">
                                     <div class="flex space-x-2 justify-center">
                                         <div>
                                             <a :href="route('products.edit',product.id)" class="mr-1 inline-block px-6 py-2.5 bg-green-500 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-green-600 hover:shadow-lg focus:bg-green-600 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-green-700 active:shadow-lg transition duration-150 ease-in-out">
-                                                Editar
+                                                <font-awesome-icon :icon="faPencilAlt" />
                                             </a>
                                             <button type="button" class="inline-block px-6 py-2.5 bg-red-600 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-red-700 hover:shadow-lg focus:bg-red-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-red-800 active:shadow-lg transition duration-150 ease-in-out"
                                             @click="destroy(product.id)"
-                                            >Eliminar</button>
+                                            >
+                                            <font-awesome-icon :icon="faTrashAlt" />
+                                        </button>
                                         </div>
                                     </div>
+                                </td>
+                                <td class="text-center text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap border-r">
+                                    <img :src="product.image" width="50px" height="50px">
                                 </td>
                                 <td class="text-center text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap border-r">
                                     {{ product.interne }}
