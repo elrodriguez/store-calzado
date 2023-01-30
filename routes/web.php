@@ -4,6 +4,7 @@ use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\PettyCashController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -34,4 +35,5 @@ Route::middleware([
     })->name('dashboard');
 
     Route::resource('products', ProductController::class);
+    Route::resource('pettycash', PettyCashController::class);
 });
