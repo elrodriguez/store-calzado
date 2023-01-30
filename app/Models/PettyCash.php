@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -19,6 +20,12 @@ class PettyCash extends Model
         'final_balance',
         'income',
         'state',
-        'reference_number'
+        'reference_number',
+        'local_sale_id'
     ];
+
+    public function getDateOpeningAttribute($value)
+    {
+        return Carbon::parse($value)->format('d-m-Y');
+    }
 }

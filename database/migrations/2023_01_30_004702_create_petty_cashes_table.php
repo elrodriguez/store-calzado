@@ -18,11 +18,11 @@ return new class extends Migration
             $table->bigInteger('user_id')->nullable();
             $table->date('date_opening');
             $table->time('time_opening');
-            $table->date('date_closed');
-            $table->time('time_closed');
-            $table->decimal('beginning_balance', 12, 2);
-            $table->time('final_balance', 12, 2);
-            $table->time('income', 12, 2);
+            $table->date('date_closed')->nullable();
+            $table->time('time_closed')->nullable();
+            $table->decimal('beginning_balance', 12, 2)->nullable();
+            $table->decimal('final_balance', 12, 2)->nullable();
+            $table->decimal('income', 12, 2)->nullable();
             $table->char('state', 1);
             $table->string('reference_number', 20)->nullable();
             $table->timestamps();
