@@ -53,10 +53,12 @@ class ProviderController extends Controller
     public function store(Request $request)
     {
         $this->validate($request, [
-            'interne' => 'required|unique:providers,interne',
+            'short_name' => 'required|unique:providers,short_name',
             'description' => 'required',
-            'purchase_prices' => 'required',
-            'sale_prices' => 'array:high,medium,under'
+            'name' => 'required|unique:providers,name',
+            'ruc' => 'required|numeric|unique:providers,ruc',
+            'contact_name' => 'required',
+            'contact_telephone' => 'required',
         ]);
         $path = 'img/imagen-no-disponible.jpeg';
         $destination = 'uploads/providers';
@@ -70,26 +72,23 @@ class ProviderController extends Controller
                 'public'
             );
         }
-        $total = 0;
-        foreach ($request->get('sizes') as $k => $item) {
-            $total = $total + $item['quantity'];
-        }
-
-        //dd($request->get('sale_prices'));
         Provider::create([
-            'usine' => $request->get('usine'),
-            'interne'  => $request->get('interne'),
+            'short_name' => $request->get('short_name'),
+            'name'  => $request->get('name'),
             'description'  => $request->get('description'),
             'image'  => $path,
-            'purchase_prices'  => $request->get('purchase_prices'),
-            'sale_prices'  => json_encode($request->get('sale_prices')),
-            'sizes'  => json_encode($request->get('sizes')),
-            'stock_min'  => 1,
-            'stock'  => $total
+            'ruc'  => $request->get('ruc'),
+            'telephone'  => $request->get('telephone'),
+            'email'  => $request->get('email'),
+            'address'  => $request->get('address'),
+            'contact_telephone'  => $request->get('contact_telephone'),
+            'contact_name'  => $request->get('contact_name'),
+            'contact_email'  => $request->get('contact_email'),
+            'ubigeo'  => $request->get('ubigeo'),
         ]);
 
-        return redirect()->route('providers.create')
-            ->with('message', __('Providero creado con éxito'));
+        return redirect()->route('products.create')
+            ->with('message', __('Producto creado con éxito'));
     }
 
     /**
@@ -127,10 +126,12 @@ class ProviderController extends Controller
     {
         // dd($request->all());
         $this->validate($request, [
-            'interne' => 'required|unique:providers,interne,' . $provider->id,
+            'short_name' => 'required|unique:providers,short_name'.$provider->id,
             'description' => 'required',
-            'purchase_prices' => 'required',
-            'sale_prices' => 'array:high,medium,under'
+            'name' => 'required|unique:providers,name'.$provider->id,
+            'ruc' => 'required|numeric'.$provider->id,
+            'contact_name' => 'required',
+            'contact_telephone' => 'required',
         ]);
 
         $path = 'img/imagen-no-disponible.jpeg';
@@ -153,19 +154,22 @@ class ProviderController extends Controller
 
         //dd($request->get('sale_prices'));
         $provider->update([
-            'usine' => $request->get('usine'),
-            'interne'  => $request->get('interne'),
+            'short_name' => $request->get('short_name'),
+            'name'  => $request->get('name'),
             'description'  => $request->get('description'),
             'image'  => $path,
-            'purchase_prices'  => $request->get('purchase_prices'),
-            'sale_prices'  => json_encode($request->get('sale_prices')),
-            'sizes'  => json_encode($request->get('sizes')),
-            'stock_min'  => 1,
-            'stock'  => $total
+            'ruc'  => $request->get('ruc'),
+            'telephone'  => $request->get('telephone'),
+            'email'  => $request->get('email'),
+            'address'  => $request->get('address'),
+            'contact_telephone'  => $request->get('contact_telephone'),
+            'contact_name'  => $request->get('contact_name'),
+            'contact_email'  => $request->get('contact_email'),
+            'ubigeo'  => $request->get('ubigeo'),
         ]);
 
         return redirect()->route('providers.edit', $provider->id)
-            ->with('message', __('Providero editado con éxito'));
+            ->with('message', __('Proveedor editado con éxito'));
     }
 
     /**

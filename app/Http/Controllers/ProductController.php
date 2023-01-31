@@ -58,9 +58,9 @@ class ProductController extends Controller
     public function store(Request $request)
     {
         $this->validate($request, [
-            'interne' => 'required|unique:products,interne',
+            'short_name' => 'required|unique:providers,short_name',
             'description' => 'required',
-            'purchase_prices' => 'required',
+            'name' => 'required|unique:providers,name',
             'sale_prices' => 'array:high,medium,under'
         ]);
         $path = 'img/imagen-no-disponible.jpeg';
