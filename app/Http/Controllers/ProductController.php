@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Kardex;
 use App\Models\Product;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -81,7 +83,7 @@ class ProductController extends Controller
         }
 
         //dd($request->get('sale_prices'));
-        Product::create([
+        $pr = Product::create([
             'usine' => $request->get('usine'),
             'interne'  => $request->get('interne'),
             'description'  => $request->get('description'),
@@ -91,6 +93,15 @@ class ProductController extends Controller
             'sizes'  => json_encode($request->get('sizes')),
             'stock_min'  => 1,
             'stock'  => $total
+        ]);
+
+        Kardex::create([
+            'date_of_issue' => Carbon::now()->format('Y-m-d'),
+            'motion' => 'purchase',
+            'product_id' => $pr->id,
+            'local_id' => 1,
+            'quantity' => $total,
+            'description' => 'Stock Inicial'
         ]);
 
         return redirect()->route('products.create')
@@ -130,7 +141,8 @@ class ProductController extends Controller
      */
     public function update(Request $request, Product $product)
     {
-        // dd($request->all());
+        //dd($request->all());
+        //dd($product);
         $this->validate($request, [
             'interne' => 'required|unique:products,interne,' . $product->id,
             'description' => 'required',
@@ -151,10 +163,24 @@ class ProductController extends Controller
                 'public'
             );
         }
+
         $total = 0;
+
         foreach ($request->get('sizes') as $k => $item) {
             $total = $total + $item['quantity'];
         }
+
+        if ($total != Product::find($product->id)->stock) {
+            Kardex::create([
+                'date_of_issue' => Carbon::now()->format('Y-m-d'),
+                'motion' => 'purchase',
+                'product_id' => $product->id,
+                'local_id' => 1,
+                'quantity' => - (Product::find($product->id)->stock),
+                'description' => 'Stock Modificado'
+            ]);
+        }
+
 
         //dd($request->get('sale_prices'));
         $product->update([
@@ -167,6 +193,16 @@ class ProductController extends Controller
             'sizes'  => json_encode($request->get('sizes')),
             'stock_min'  => 1,
             'stock'  => $total
+        ]);
+
+
+        Kardex::create([
+            'date_of_issue' => Carbon::now()->format('Y-m-d'),
+            'motion' => 'purchase',
+            'product_id' => $product->id,
+            'local_id' => 1,
+            'quantity' => $total,
+            'description' => 'Stock Modificado'
         ]);
 
         return redirect()->route('products.edit', $product->id)

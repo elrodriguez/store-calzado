@@ -7,7 +7,8 @@
     import TextInput from '@/Components/TextInput.vue';
     import { library } from "@fortawesome/fontawesome-svg-core";
     import { faTrashAlt } from "@fortawesome/free-solid-svg-icons";
-
+    import { router } from '@inertiajs/vue3'
+    
     const props = defineProps({
         product: {
             type: Object,
@@ -30,7 +31,7 @@
 
     const editProduct = () => {
         form.put(route('products.update', props.product.id), {
-            forceFormData: true,
+            //forceFormData: true,
             errorBag: 'editProduct',
             preserveScroll: true,
         });
@@ -98,10 +99,10 @@
                 />
                 <InputError :message="form.errors.description" class="mt-2" />
             </div>
-            <div class="col-span-6 sm:col-span-4">
+            <!-- <div class="col-span-6 sm:col-span-4">
                 <InputLabel for="image" value="Imagen" />
                 <input type="file" @input="form.image = $event.target.files[0]" />
-            </div>
+            </div> -->
             <div class="col-span-6 sm:col-span-2">
                 <InputLabel for="purchase_prices" value="Precio de compra" />
                 <TextInput
@@ -191,7 +192,7 @@
             <PrimaryButton :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
                 Actualizar
             </PrimaryButton>
-            <a :href="route('products.index')"  class="inline-block px-6 py-2.5 bg-green-500 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-green-600 hover:shadow-lg focus:bg-green-600 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-green-700 active:shadow-lg transition duration-150 ease-in-out mr-2">Ir al Listado</a>
+            <a :href="route('products.index')"  class="ml-2 inline-block px-6 py-2.5 bg-green-500 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-green-600 hover:shadow-lg focus:bg-green-600 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-green-700 active:shadow-lg transition duration-150 ease-in-out">Ir al Listado</a>
         </template>
     </FormSection>
 </template>
