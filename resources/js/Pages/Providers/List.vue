@@ -118,7 +118,7 @@
                                     <img :src="provider.image" width="50px" height="50px">
                                 </td>
                                 <td class="text-center text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap border-r">
-                                    {{ provider.name }}
+                                    {{ provider.full_name }}
                                 </td>
                                 <td class="text-center text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap border-r">
                                     {{ provider.short_name }}

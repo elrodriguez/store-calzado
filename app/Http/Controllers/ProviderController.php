@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Provider;
+use App\Models\Person;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -10,7 +10,7 @@ class ProviderController extends Controller
 {
     public function index()
     {
-        $providers = (new Provider())->newQuery();
+        $providers = (new Person())->newQuery()->where('is_provider', true);
         if (request()->has('search')) {
             $providers->where('description', 'Like', '%' . request()->input('search') . '%');
         }
@@ -53,10 +53,10 @@ class ProviderController extends Controller
     public function store(Request $request)
     {
         $this->validate($request, [
-            'short_name' => 'required|unique:providers,short_name',
+            'short_name' => 'required|unique:people,short_name',
             'description' => 'required',
-            'name' => 'required|unique:providers,name',
-            'ruc' => 'required|numeric|unique:providers,ruc',
+            'name' => 'required|unique:people,full_name',
+            'number' => 'required|numeric|unique:people,number',
             'contact_name' => 'required',
             'contact_telephone' => 'required',
         ]);
@@ -72,32 +72,34 @@ class ProviderController extends Controller
                 'public'
             );
         }
-        Provider::create([
+        Person::create([
             'short_name' => $request->get('short_name'),
-            'name'  => $request->get('name'),
+            'full_name'  => $request->get('name'),
             'description'  => $request->get('description'),
             'image'  => $path,
-            'ruc'  => $request->get('ruc'),
+            'document_type_id' => 6,
+            'number'  => $request->get('number'),
             'telephone'  => $request->get('telephone'),
             'email'  => $request->get('email'),
             'address'  => $request->get('address'),
+            'is_provider' => true,
             'contact_telephone'  => $request->get('contact_telephone'),
             'contact_name'  => $request->get('contact_name'),
             'contact_email'  => $request->get('contact_email'),
             'ubigeo'  => $request->get('ubigeo'),
         ]);
 
-        return redirect()->route('products.create')
-            ->with('message', __('Producto creado con éxito'));
+        return redirect()->route('providers.create')
+            ->with('message', __('Proveedor creado con éxito'));
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Provider  $provider
+     * @param  \App\Models\Person  $provider
      * @return \Illuminate\Http\Response
      */
-    public function show(Provider $provider)
+    public function show(Person $provider)
     {
         //
     }
@@ -105,10 +107,10 @@ class ProviderController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\Provider  $provider
+     * @param  \App\Models\Person  $provider
      * @return \Illuminate\Http\Response
      */
-    public function edit(Provider $provider)
+    public function edit(Person $provider)
     {
         return Inertia::render('Providers/Edit', [
             'provider' => $provider
@@ -119,17 +121,17 @@ class ProviderController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Provider  $provider
+     * @param  \App\Models\Person  $provider
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Provider $provider)
+    public function update(Request $request, Person $provider)
     {
         // dd($request->all());
         $this->validate($request, [
-            'short_name' => 'required|unique:providers,short_name'.$provider->id,
+            'short_name' => 'required',
             'description' => 'required',
-            'name' => 'required|unique:providers,name'.$provider->id,
-            'ruc' => 'required|numeric'.$provider->id,
+            'name' => 'required',
+            'number' => 'required|numeric',
             'contact_name' => 'required',
             'contact_telephone' => 'required',
         ]);
@@ -147,20 +149,43 @@ class ProviderController extends Controller
                 'public'
             );
         }
-        $total = 0;
-        foreach ($request->get('sizes') as $k => $item) {
-            $total = $total + $item['quantity'];
-        }
 
         //dd($request->get('sale_prices'));
+        if($request->get('short_name')!= $provider->short_name){
+            $this->validate($request, [
+                'short_name' => 'required|unique:people,short_name'
+            ]);
+            $provider->update([
+                'short_name' => $request->get('short_name')]);
+        }
+        if($request->get('name')!= $provider->full_name){
+            $this->validate($request, [
+                'name' => 'required|unique:people,full_name'
+            ]);
+            $provider->update([
+                'full_name' => $request->get('name')]);
+        }
+
+        if($request->get('number')!= $provider->number){
+            $this->validate($request, [
+                'number' => 'required|unique:people,number'
+            ]);
+            $provider->update([
+                'number'  => $request->get('number')]);
+        }
+
+        if($request->get('email')!= $provider->email){
+            $this->validate($request, [
+                'email' => 'required|unique:people,email'
+            ]);
+            $provider->update([
+            'email'  => $request->get('email')]);
+        }
+
         $provider->update([
-            'short_name' => $request->get('short_name'),
-            'name'  => $request->get('name'),
             'description'  => $request->get('description'),
             'image'  => $path,
-            'ruc'  => $request->get('ruc'),
             'telephone'  => $request->get('telephone'),
-            'email'  => $request->get('email'),
             'address'  => $request->get('address'),
             'contact_telephone'  => $request->get('contact_telephone'),
             'contact_name'  => $request->get('contact_name'),
@@ -175,10 +200,10 @@ class ProviderController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Provider  $provider
+     * @param  \App\Models\Person  $provider
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Provider $provider)
+    public function destroy(Person $provider)
     {
         $provider->delete();
         return redirect()->route('providers.index')

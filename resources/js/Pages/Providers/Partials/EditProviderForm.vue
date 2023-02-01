@@ -18,7 +18,7 @@
     const form = useForm({
         short_name: props.provider.short_name,
         name: props.provider.name,
-        ruc: props.provider.ruc,
+        number: props.provider.number,
         description: props.provider.description,
         image: '',
         telephone: props.provider.telephone,
@@ -33,7 +33,7 @@
 
     const editProvider = () => {
         form.put(route('providers.update', props.provider.id), {
-            forceFormData: true,
+            //forceFormData: true,
             errorBag: 'editProvider',
             preserveScroll: true,
         });
@@ -88,15 +88,15 @@
                 <InputError :message="form.errors.description" class="mt-2" />
             </div>
             <div class="col-span-6 sm:col-span-2">
-                <InputLabel for="ruc" value="RUC" />
+                <InputLabel for="number" value="number" />
                 <TextInput
-                    id="ruc"
-                    v-model="form.ruc"
+                    id="number"
+                    v-model="form.number"
                     type="number"
                     class="block w-full mt-1"
                     autofocus
                 />
-                <InputError :message="form.errors.ruc" class="mt-2" />
+                <InputError :message="form.errors.number" class="mt-2" />
             </div>
             <div class="col-span-6 sm:col-span-4">
                 <InputLabel for="image" value="Imagen" />

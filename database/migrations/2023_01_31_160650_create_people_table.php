@@ -34,6 +34,7 @@ return new class extends Migration
             $table->string('contact_telephone')->nullable();
             $table->string('contact_name')->nullable();
             $table->string('contact_email')->nullable();
+            $table->boolean('is_provider')->nullable();
             $table->string('ubigeo')->nullable();
             $table->timestamps();
         });

@@ -12,7 +12,7 @@ const form = useForm({
     short_name: '',
     name: '',
     description: '',
-    ruc: '',
+    number: '',
     telephone: '',
     email: '',
     image: '',
@@ -30,20 +30,6 @@ const createProvider = () => {
         preserveScroll: true,
         onSuccess: () => form.reset(),
     });
-};
-
-const addSize = () => {
-    let ar = {
-        size:'',
-        quantity: ''
-    };
-    form.sizes.push(ar);
-};
-
-const removeSize = (index) => {
-    if(index>0){
-        form.sizes.splice(index,1);
-    }
 };
 
 library.add(faTrashAlt);
@@ -95,15 +81,15 @@ library.add(faTrashAlt);
                 <InputError :message="form.errors.description" class="mt-2" />
             </div>
             <div class="col-span-6 sm:col-span-2">
-                <InputLabel for="ruc" value="RUC" />
+                <InputLabel for="number" value="number" />
                 <TextInput
-                    id="ruc"
-                    v-model="form.ruc"
+                    id="number"
+                    v-model="form.number"
                     type="number"
                     class="block w-full mt-1"
                     autofocus
                 />
-                <InputError :message="form.errors.ruc" class="mt-2" />
+                <InputError :message="form.errors.number" class="mt-2" />
             </div>
             <div class="col-span-6 sm:col-span-4">
                 <InputLabel for="image" value="Imagen" />
