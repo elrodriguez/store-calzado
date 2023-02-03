@@ -6,6 +6,7 @@ use Inertia\Inertia;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\PettyCashController;
 use App\Http\Controllers\ProviderController;
+use App\Http\Controllers\SaleController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -38,4 +39,10 @@ Route::middleware([
     Route::resource('products', ProductController::class);
     Route::resource('pettycash', PettyCashController::class);
     Route::resource('providers', ProviderController::class);
+    Route::resource('sales', SaleController::class);
+
+    Route::post(
+        'search/products',
+        [ProductController::class, 'searchProduct']
+    )->name('search_product');
 });

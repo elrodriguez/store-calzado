@@ -221,4 +221,25 @@ class ProductController extends Controller
         return redirect()->route('products.index')
             ->with('message', __('Producto eliminado con éxito'));
     }
+
+    public function searchProduct(Request $request)
+    {
+        $search = $request->get('search');
+        $products = Product::where('interne', $search)
+            ->orWhere('description', 'like', '%' . $search . '%')->get();
+        // return  redirect()->back()->with('products', $products);
+        return response()->json($products);
+        // return Inertia('Sales/Create', [
+        //     'products' => $products
+        // ]);
+
+        // Inertia::share('flash', function (Request $request) {
+        //     $search = $request->get('search');
+        //     $products = Product::where('interne', $search)
+        //         ->orWhere('description', 'like', '%' . $search . '%')->get();
+        //     return [
+        //         'products' => $products
+        //     ];
+        // });
+    }
 }
