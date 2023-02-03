@@ -5,7 +5,7 @@
     import Pagination from '@/Components/Pagination.vue'
 
     const props = defineProps({
-        providers: {
+        clients: {
             type: Object,
             default: () => ({}),
         },
@@ -15,14 +15,14 @@
         },
     })
     const form = useForm({
-        search: props.filters.search,
+        search: props.filters.serach,
     });
 
     const formDelete = useForm({});
 
     function destroy(id) {
         if (confirm("¿Estás seguro de que quieres eliminar?")) {
-            formDelete.delete(route('providers.destroy', id));
+            formDelete.delete(route('clients.destroy', id));
         }
     }
 </script>
@@ -31,14 +31,14 @@
     <AppLayout title="Create Team">
         <template #header>
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                Proveedors
+                Clientes
             </h2>
         </template>
 
         <div>
             <div class="max-w-7xl mx-auto py-10 sm:px-6 lg:px-8">
                 <div class="col-span-6 p-4 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
-                    <form @submit.prevent="form.get(route('providers.index'))">
+                    <form @submit.prevent="form.get(route('clients.index'))">
                         <div class="grid grid-cols-3 gap-4 py-2">
                             <div>
                                 <input type="search" v-model="form.search"
@@ -67,7 +67,7 @@
                                 </button>
                             </div>
                             <div class="text-right">
-                                <a :href="route('providers.create')" class="inline-block px-6 py-2.5 bg-blue-600 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg transition duration-150 ease-in-out">Nuevo</a>
+                                <a :href="route('clients.create')" class="inline-block px-6 py-2.5 bg-blue-600 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg transition duration-150 ease-in-out">Nuevo</a>
                             </div>
                         </div>
                     </form>
@@ -82,32 +82,32 @@
                                     Acción
                                 </th>
                                 <th scope="col" class="w-4 text-sm font-medium text-gray-900 px-6 py-4 border-r">
-                                    RUC
+                                    Nombres y Apellidos
                                 </th>
                                 <th scope="col" class="w-4 text-sm font-medium text-gray-900 px-6 py-4 border-r">
-                                    Nombre de Proveedor(C)
+                                    DNI/RUC
                                 </th>
                                 <th scope="col" class="w-4 text-sm font-medium text-gray-900 px-6 py-4 border-r">
-                                    Nombre Corto
+                                    Teléfono
                                 </th>
-                                <th scope="col" class="text-left text-sm font-medium text-gray-900 px-6 py-4">
-                                    Descripción
+                                <th scope="col" class="w-4 text-sm font-medium text-gray-900 px-6 py-4 border-r">
+                                    Email
                                 </th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr v-for="(provider, index) in providers.data" :key="provider.id" class="border-b">
+                            <tr v-for="(client, index) in clients.data" :key="client.id" class="border-b">
                                 <td class="text-center px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 border-r">
                                     {{ index + 1 }}
                                 </td>
                                 <td class="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap border-r">
                                     <div class="flex space-x-2 justify-center">
                                         <div>
-                                            <a :href="route('providers.edit',provider.id)" class="mr-1 inline-block px-6 py-2.5 bg-green-500 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-green-600 hover:shadow-lg focus:bg-green-600 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-green-700 active:shadow-lg transition duration-150 ease-in-out">
+                                            <a :href="route('clients.edit',client.id)" class="mr-1 inline-block px-6 py-2.5 bg-green-500 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-green-600 hover:shadow-lg focus:bg-green-600 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-green-700 active:shadow-lg transition duration-150 ease-in-out">
                                                 <font-awesome-icon :icon="faPencilAlt" />
                                             </a>
                                             <button type="button" class="inline-block px-6 py-2.5 bg-red-600 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-red-700 hover:shadow-lg focus:bg-red-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-red-800 active:shadow-lg transition duration-150 ease-in-out"
-                                            @click="destroy(provider.id)"
+                                            @click="destroy(client.id)"
                                             >
                                             <font-awesome-icon :icon="faTrashAlt" />
                                         </button>
@@ -115,22 +115,22 @@
                                     </div>
                                 </td>
                                 <td class="text-center text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap border-r">
-                                    {{ provider.number }}
+                                    {{ client.full_name }}
                                 </td>
                                 <td class="text-center text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap border-r">
-                                    {{ provider.full_name }}
+                                    {{ client.number.toString().length == 8 ? "DNI: "+client.number : client.number}}
                                 </td>
                                 <td class="text-center text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap border-r">
-                                    {{ provider.short_name }}
+                                    {{ client.telephone }}
                                 </td>
-                                <td class="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
-                                    {{ provider.description }}
+                                <td class="text-center text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap border-r">
+                                    {{ client.email }}
                                 </td>
                             </tr>
 
                         </tbody>
                     </table>
-                    <Pagination :data="providers" />
+                    <Pagination :data="clients" />
                 </div>
 
             </div>
