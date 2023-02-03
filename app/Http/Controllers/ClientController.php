@@ -52,46 +52,38 @@ class ClientController extends Controller
      */
     public function store(Request $request)
     {
+
         $this->validate($request, [
-            'short_name' => 'required|unique:people,short_name',
-            'description' => 'required',
             'document_type_id' => 'required',
-            'name' => 'required|unique:people,full_name',
+            'full_name' => 'required|unique:people,full_name',
             'number' => 'required|numeric|unique:people,number',
-            'contact_name' => 'required',
-            'contact_telephone' => 'required',
+            'email' => 'email|unique:people,email',
         ]);
-        $path = 'img/imagen-no-disponible.jpeg';
-        $destination = 'uploads/clients';
-        $file = $request->file('image');
-        if ($file) {
-            $original_name = strtolower(trim($file->getClientOriginalName()));
-            $file_name = time() . rand(100, 999) . $original_name;
-            $path = $request->file('image')->storeAs(
-                $destination,
-                $file_name,
-                'public'
-            );
+        
+        if(count(Person::where('number', $request->get('number'))->get())==0){
+            Person::create([
+                'full_name'  => $request->get('full_name'),
+                'document_type_id' => $request->get('document_type_id'),
+                'number'  => $request->get('number'),
+                'telephone'  => $request->get('telephone'),
+                'email'  => $request->get('email'),
+                'address'  => $request->get('address'),
+                'is_client' => true
+            ]);
+        }else{
+            Person::where('number', $request->get('number'))->first()->update([
+                'full_name'  => $request->get('full_name'),
+                'document_type_id' => $request->get('document_type_id'),
+                'number'  => $request->get('number'),
+                'telephone'  => $request->get('telephone'),
+                'email'  => $request->get('email'),
+                'address'  => $request->get('address'),
+                'is_client' => true
+            ]);
         }
-        Person::create([
-            'short_name' => $request->get('short_name'),
-            'full_name'  => $request->get('name'),
-            'description'  => $request->get('description'),
-            'image'  => $path,
-            'document_type_id' => 6,
-            'number'  => $request->get('number'),
-            'telephone'  => $request->get('telephone'),
-            'email'  => $request->get('email'),
-            'address'  => $request->get('address'),
-            'is_client' => true,
-            'contact_telephone'  => $request->get('contact_telephone'),
-            'contact_name'  => $request->get('contact_name'),
-            'contact_email'  => $request->get('contact_email'),
-            'ubigeo'  => $request->get('ubigeo'),
-        ]);
 
         return redirect()->route('clients.create')
-            ->with('message', __('Proveedor creado con éxito'));
+            ->with('message', __('Cliente registrado con éxito'));
     }
 
     /**
@@ -129,73 +121,26 @@ class ClientController extends Controller
     {
         // dd($request->all());
         $this->validate($request, [
-            'short_name' => 'required',
-            'description' => 'required',
-            'name' => 'required',
-            'number' => 'required|numeric',
-            'contact_name' => 'required',
-            'contact_telephone' => 'required',
+            'full_name' => 'required',
+            'number' => 'required|numeric|unique:people,number,'.$client->id,
+            'document_type_id' => 'required',
+            'email' => 'required|unique:people,email,'.$client->id
         ]);
 
-        $path = 'img/imagen-no-disponible.jpeg';
-        $destination = 'uploads/clients';
-        $file = $request->file('image');
-
-        if ($file) {
-            $original_name = strtolower(trim($file->getClientOriginalName()));
-            $file_name = time() . rand(100, 999) . $original_name;
-            $path = $request->file('image')->storeAs(
-                $destination,
-                $file_name,
-                'public'
-            );
-        }
-
         //dd($request->get('sale_prices'));
-        if($request->get('short_name')!= $client->short_name){
-            $this->validate($request, [
-                'short_name' => 'required|unique:people,short_name'
-            ]);
-            $client->update([
-                'short_name' => $request->get('short_name')]);
-        }
-        if($request->get('name')!= $client->full_name){
-            $this->validate($request, [
-                'name' => 'required|unique:people,full_name'
-            ]);
-            $client->update([
-                'full_name' => $request->get('name')]);
-        }
-
-        if($request->get('number')!= $client->number){
-            $this->validate($request, [
-                'number' => 'required|unique:people,number'
-            ]);
-            $client->update([
-                'number'  => $request->get('number')]);
-        }
-
-        if($request->get('email')!= $client->email){
-            $this->validate($request, [
-                'email' => 'required|unique:people,email'
-            ]);
-            $client->update([
-            'email'  => $request->get('email')]);
-        }
+       
 
         $client->update([
-            'description'  => $request->get('description'),
-            'image'  => $path,
+            'full_name'  => $request->get('full_name'),
+            'number'  => $request->get('number'),
             'telephone'  => $request->get('telephone'),
+            'document_type_id'  => $request->get('document_type_id'),
             'address'  => $request->get('address'),
-            'contact_telephone'  => $request->get('contact_telephone'),
-            'contact_name'  => $request->get('contact_name'),
-            'contact_email'  => $request->get('contact_email'),
-            'ubigeo'  => $request->get('ubigeo'),
+            'email' => $request->get('email'),
         ]);
 
         return redirect()->route('clients.edit', $client->id)
-            ->with('message', __('Proveedor editado con éxito'));
+            ->with('message', __('Cliente editado con éxito'));
     }
 
     /**

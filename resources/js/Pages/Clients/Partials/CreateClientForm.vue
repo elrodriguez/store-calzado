@@ -14,8 +14,7 @@ const form = useForm({
     telephone: '',
     email: '',
     address: '',
-    document_type_id: '',
-    ubigeo: ''
+    document_type_id: ''
 });
 
 const createClient = () => {
@@ -28,6 +27,7 @@ const createClient = () => {
 };
 
 library.add(faTrashAlt);
+
 
 </script>
 
@@ -42,17 +42,6 @@ library.add(faTrashAlt);
         </template>
 
         <template #form>
-            <div class="col-span-6 sm:col-span-4">
-                <InputLabel for="full_name" value="Nombres/Razón Social" />
-                <TextInput
-                    id="full_name"
-                    v-model="form.full_name"
-                    type="text"
-                    class="block w-full mt-1"
-                    autofocus
-                />
-                <InputError :message="form.errors.full_name" class="mt-2" />
-            </div>
             <div class="col-span-4 sm:col-span-2">
                         <InputLabel value="Tipo de Documento" class="mb-1" />
                         <select class="form-select appearance-none
@@ -70,27 +59,15 @@ library.add(faTrashAlt);
                             focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
                             v-model="form.document_type_id"
                             >
-                                <option selected>Seleccionar</option>
-                                    <option :value="1">DNI</option>
-                                    <option :value="6">RUC</option>
-                                    <option :value="0">Otros</option>
+                                <option value="" selected>Seleccionar</option>
+                                    <option :value="1" @click="document_type_id=1">DNI</option>
+                                    <option :value="6" @click="document_type_id=6">RUC</option>
+                                    <option :value="0" @click="document_type_id=0">Otros</option>
                           </select>
                         <InputError :message="form.errors.document_type_id" class="mt-2" />
              </div>
-            <div class="col-span-6 sm:col-span-4">
-                <InputLabel for="description" value="Descripción" />
-                <TextInput
-                    id="description"
-                    v-model="form.description"
-                    type="text"
-                    class="block w-full mt-1"
-                    autofocus
-                />
-                <InputError :message="form.errors.description" class="mt-2" />
-            </div>
-
             <div class="col-span-6 sm:col-span-2">
-                <InputLabel for="number" value="number" />
+                <InputLabel for="number" value="Número de Doc." />
                 <TextInput
                     id="number"
                     v-model="form.number"
@@ -100,15 +77,8 @@ library.add(faTrashAlt);
                 />
                 <InputError :message="form.errors.number" class="mt-2" />
             </div>
-            <div class="col-span-6 sm:col-span-4">
-                <InputLabel for="image" value="Imagen" />
-                <input type="file" @input="form.image = $event.target.files[0]" />
-                <progress v-if="form.progress" :value="form.progress.percentage" max="100">
-                    {{ form.progress.percentage }}%
-                </progress>
-            </div>
             <div class="col-span-6 sm:col-span-2">
-                <InputLabel for="telephone" value="Teléfono de la Empresa" />
+                <InputLabel for="telephone" value="Teléfono" />
                 <TextInput
                     id="telephone"
                     v-model="form.telephone"
@@ -118,8 +88,20 @@ library.add(faTrashAlt);
                 />
                 <InputError :message="form.errors.telephone" class="mt-2" />
             </div>
+            <div class="col-span-6 sm:col-span-4">
+                <InputLabel v-if="document_type_id==6" for="full_name" value="Razón Social" />
+                <InputLabel v-else for="full_name" value="Nombres" />
+                <TextInput
+                    id="full_name"
+                    v-model="form.full_name"
+                    type="text"
+                    class="block w-full mt-1"
+                    autofocus
+                />
+                <InputError :message="form.errors.full_name" class="mt-2" />
+            </div>
             <div class="col-span-6 sm:col-span-2">
-                <InputLabel for="email" value="Email de la Empresa" />
+                <InputLabel for="email" value="Email" />
                 <TextInput
                     id="email"
                     v-model="form.email"
@@ -130,7 +112,7 @@ library.add(faTrashAlt);
                 <InputError :message="form.errors.email" class="mt-2" />
             </div>
             <div class="col-span-6 sm:col-span-4">
-                <InputLabel for="address" value="Dirección de proveedor" />
+                <InputLabel for="address" value="Dirección" />
                 <TextInput
                     id="address"
                     v-model="form.address"
@@ -140,46 +122,7 @@ library.add(faTrashAlt);
                 />
                 <InputError :message="form.errors.address" class="mt-2" />
             </div>
-            <div class="col-span-6 sm:col-span-6">
-                <label>
-                    Datos de Contacto del Proveedor
-                </label>
-                <div class="col-span-6 sm:col-span-2">
-                <InputLabel for="contact_name" value="Nombres" />
-                <TextInput
-                    id="contact_name"
-                    v-model="form.contact_name"
-                    type="text"
-                    class="block w-full mt-1"
-                    autofocus
-                />
-                <InputError :message="form.errors.contact_name" class="mt-2" />
-            </div>
 
-            <div class="col-span-6 sm:col-span-2">
-                <InputLabel for="contact_telephone" value="Teléfono" />
-                <TextInput
-                    id="contact_telephone"
-                    v-model="form.contact_telephone"
-                    type="text"
-                    class="block w-full mt-1"
-                    autofocus
-                />
-                <InputError :message="form.errors.contact_telephone" class="mt-2" />
-            </div>
-
-            <div class="col-span-6 sm:col-span-2">
-                <InputLabel for="contact_email" value="Email" />
-                <TextInput
-                    id="contact_email"
-                    v-model="form.contact_email"
-                    type="text"
-                    class="block w-full mt-1"
-                    autofocus
-                />
-                <InputError :message="form.errors.contact_email" class="mt-2" />
-            </div>
-            </div>
         </template>
 
         <template #actions>

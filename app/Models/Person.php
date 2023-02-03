@@ -13,6 +13,7 @@ class Person extends Model
         'short_name',
         'full_name',
         'description',
+        'document_type_id',
         'number',
         'telephone',
         'email',

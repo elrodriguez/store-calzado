@@ -15,7 +15,7 @@
         },
     })
     const form = useForm({
-        search: props.filters.serach,
+        search: props.filters.search,
     });
 
     const formDelete = useForm({});
@@ -82,7 +82,7 @@
                                     Acción
                                 </th>
                                 <th scope="col" class="w-4 text-sm font-medium text-gray-900 px-6 py-4 border-r">
-                                    Imagen
+                                    RUC
                                 </th>
                                 <th scope="col" class="w-4 text-sm font-medium text-gray-900 px-6 py-4 border-r">
                                     Nombre de Proveedor(C)
@@ -115,7 +115,7 @@
                                     </div>
                                 </td>
                                 <td class="text-center text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap border-r">
-                                    <img :src="provider.image" width="50px" height="50px">
+                                    {{ provider.number }}
                                 </td>
                                 <td class="text-center text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap border-r">
                                     {{ provider.full_name }}
