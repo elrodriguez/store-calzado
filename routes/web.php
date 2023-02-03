@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ClientController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -38,4 +39,5 @@ Route::middleware([
     Route::resource('products', ProductController::class);
     Route::resource('pettycash', PettyCashController::class);
     Route::resource('providers', ProviderController::class);
+    Route::resource('clients', ClientController::class);
 });

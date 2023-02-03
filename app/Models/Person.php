@@ -19,6 +19,7 @@ class Person extends Model
         'image',
         'address',
         'is_provider',
+        'is_client',
         'contact_telephone',
         'contact_name',
         'contact_email',
