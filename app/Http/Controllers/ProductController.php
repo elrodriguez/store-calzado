@@ -59,12 +59,21 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
-        $this->validate($request, [
-            'short_name' => 'required|unique:providers,short_name',
-            'description' => 'required',
-            'name' => 'required|unique:providers,name',
-            'sale_prices' => 'array:high,medium,under'
-        ]);
+        $this->validate(
+            $request,
+            [
+                'interne' => 'required|unique:products,interne',
+                'description' => 'required',
+                'purchase_prices' => 'required',
+                'sale_prices.high' => 'required',
+                'sizes.*.size' => 'required|numeric',
+                'sizes.*.quantity' => 'required|numeric',
+            ],
+            [
+                'sizes.*.size.required' => 'Ingrese Talla',
+                'sizes.*.quantity.required' => 'Ingrese Cantidad',
+            ]
+        );
         $path = 'img/imagen-no-disponible.jpeg';
         $destination = 'uploads/products';
         $file = $request->file('image');
@@ -141,13 +150,20 @@ class ProductController extends Controller
      */
     public function update(Request $request, Product $product)
     {
-        //dd($request->all());
-        //dd($product);
         $this->validate($request, [
-            'interne' => 'required|unique:products,interne,' . $product->id,
-            'description' => 'required',
-            'purchase_prices' => 'required',
-            'sale_prices' => 'array:high,medium,under'
+            $request,
+            [
+                'interne' => 'required|unique:products,interne' . $product->id,
+                'description' => 'required',
+                'purchase_prices' => 'required',
+                'sale_prices.high' => 'required',
+                'sizes.*.size' => 'required|numeric',
+                'sizes.*.quantity' => 'required|numeric',
+            ],
+            [
+                'sizes.*.size.required' => 'Ingrese Talla',
+                'sizes.*.quantity.required' => 'Ingrese Cantidad',
+            ]
         ]);
 
         $path = 'img/imagen-no-disponible.jpeg';
@@ -227,19 +243,7 @@ class ProductController extends Controller
         $search = $request->get('search');
         $products = Product::where('interne', $search)
             ->orWhere('description', 'like', '%' . $search . '%')->get();
-        // return  redirect()->back()->with('products', $products);
-        return response()->json($products);
-        // return Inertia('Sales/Create', [
-        //     'products' => $products
-        // ]);
 
-        // Inertia::share('flash', function (Request $request) {
-        //     $search = $request->get('search');
-        //     $products = Product::where('interne', $search)
-        //         ->orWhere('description', 'like', '%' . $search . '%')->get();
-        //     return [
-        //         'products' => $products
-        //     ];
-        // });
+        return response()->json($products);
     }
 }

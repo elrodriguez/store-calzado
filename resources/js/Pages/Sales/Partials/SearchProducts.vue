@@ -103,11 +103,12 @@
         <template #content>
             <div class="grid grid-cols-3">
                 <div class="col-span-1">
-                    <div class="flex flex-wrap justify-center">
+                    <div class="flex flex-wrap justify-center p-4">
                         <img
                         :src="form.product.image"
                         class="p-1 bg-white border rounded max-w-sm"
                         :alt="form.product.description"
+                        style="width: 100%;"
                         />
                     </div>
                 </div>
@@ -174,15 +175,16 @@
             </div>
         </template>
         <template #footer>
-            <SecondaryButton @click="closeModalSelectProduct">
-                Cancel
-            </SecondaryButton>
+            
             <DangerButton
-                class="ml-3"
+                class="mr-3"
                 @click="addProduct()"
             >
                 Agregar
             </DangerButton>
+            <SecondaryButton @click="closeModalSelectProduct">
+                Cancel
+            </SecondaryButton>
         </template>
     </DialogModal>
 </template>

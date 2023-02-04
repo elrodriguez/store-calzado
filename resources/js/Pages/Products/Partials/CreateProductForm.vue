@@ -120,13 +120,13 @@ library.add(faTrashAlt);
             <div class="col-span-6 sm:col-span-2">
                 <InputLabel for="sale_prices" value="Precio de venta" />
                 <TextInput
-                    id="sale_prices"
+                    id="sale_prices_high"
                     v-model="form.sale_prices.high"
                     type="text"
                     class="block w-full mt-1"
                     autofocus
                 />
-                <InputError :message="form.errors.sale_prices" class="mt-2" />
+                <InputError :message="form.errors[`sale_prices.high`]" class="mt-2" />
             </div>
             <div class="col-span-6 sm:col-span-2">
                 <InputLabel for="sale_prices_medium" value="Precio de venta Medio" />
@@ -137,7 +137,7 @@ library.add(faTrashAlt);
                     class="block w-full mt-1"
                     autofocus
                 />
-                <InputError :message="form.errors.sale_prices" class="mt-2" />
+                <InputError :message="form.errors[`sale_prices.medium`]" class="mt-2" />
             </div>
             <div class="col-span-6 sm:col-span-2">
                 <InputLabel for="sale_prices_under" value="Precio de venta Minimo" />
@@ -148,7 +148,7 @@ library.add(faTrashAlt);
                     class="block w-full mt-1"
                     autofocus
                 />
-                <InputError :message="form.errors.sale_prices" class="mt-2" />
+                <InputError :message="form.errors[`sale_prices.under`]" class="mt-2" />
             </div>
             <div class="col-span-6 sm:col-span-6">
                 <label>
@@ -167,6 +167,7 @@ library.add(faTrashAlt);
                                         class="block w-full mt-1"
                                         autofocus
                                     />
+                                    <InputError :message="form.errors[`sizes.${index}.size`]" class="mt-2" />
                                 </div>
                             </td>
                             <td style="padding: 4px;">
@@ -178,6 +179,7 @@ library.add(faTrashAlt);
                                         class="block w-full mt-1"
                                         autofocus
                                     />
+                                    <InputError :message="form.errors[`sizes.${index}.quantity`]" class="mt-2" />
                                 </div>
                             </td>
                             <td style="padding: 4px;" valign="bottom">
