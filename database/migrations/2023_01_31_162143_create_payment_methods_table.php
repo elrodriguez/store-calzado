@@ -17,12 +17,13 @@ return new class extends Migration
         Schema::create('payment_methods', function (Blueprint $table) {
             $table->id();
             $table->string('description');
-            $table->string('number');
+            $table->string('number')->nullable();
             $table->string('number_cci')->nullable();
             $table->timestamps();
         });
 
         DB::table('payment_methods')->insert([
+            ['description' => 'Efectivo', 'number' => null],
             ['description' => 'Yape', 'number' => '123456789'],
             ['description' => 'Pim', 'number' => '123456789'],
             ['description' => 'Transferencia BCP', 'number' => '123456789'],

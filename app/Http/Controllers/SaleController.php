@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\PaymentMethod;
+use App\Models\Person;
 use App\Models\Sale;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -15,7 +17,12 @@ class SaleController extends Controller
      */
     public function index()
     {
-        return Inertia::render('Sales/Create');
+        $payments = PaymentMethod::all();
+        $client = Person::find(1);
+        return Inertia::render('Sales/Create', [
+            'payments' => $payments,
+            'client' => $client
+        ]);
     }
 
     /**
