@@ -16,7 +16,7 @@
         },
         locals: {
             type: Object,
-            default: () => ({}), 
+            default: () => ({}),
         }
     });
     const form = useForm({
@@ -138,7 +138,7 @@
                     </table>
                     <Pagination :data="pettycashes" />
                 </div>
-                
+
             </div>
         </div>
     </AppLayout>

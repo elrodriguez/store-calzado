@@ -24,6 +24,5 @@ class Product extends Model
     public function getImageAttribute($value)
     {
         return ($value != 'img/imagen-no-disponible.jpeg' ? asset('storage/' . $value) : asset($value));
-
     }
 }
