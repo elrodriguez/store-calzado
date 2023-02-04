@@ -15,7 +15,7 @@
         },
     })
     const form = useForm({
-        search: props.filters.serach,
+        search: props.filters.search,
     });
 
     const formDelete = useForm({});

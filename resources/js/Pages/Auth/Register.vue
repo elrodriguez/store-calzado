@@ -84,6 +84,31 @@ const submit = () => {
                 <InputError class="mt-2" :message="form.errors.password_confirmation" />
             </div>
 
+            <div class="col-span-4 sm:col-span-2">
+                        <InputLabel value="Rol de Usuario" class="mb-1" />
+                        <select class="form-select appearance-none
+                            block
+                            w-full
+                            text-base
+                            font-normal
+                            text-gray-700
+                            bg-white bg-clip-padding bg-no-repeat
+                            border border-solid border-gray-300
+                            rounded
+                            transition
+                            ease-in-out
+                            m-0
+                            focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
+                            v-model="form.role"
+                            >
+                                <option value="" selected>Seleccionar</option>
+                                    <option :value="1" @click="role=1">Administrador</option>
+                                    <option :value="6" @click="role=6">Vendedor</option>
+                                    <option :value="0" @click="role=0">Almacenero</option>
+                          </select>
+                        <InputError :message="form.errors.role" class="mt-2" />
+             </div>
+
             <div v-if="$page.props.jetstream.hasTermsAndPrivacyPolicyFeature" class="mt-4">
                 <InputLabel for="terms">
                     <div class="flex items-center">

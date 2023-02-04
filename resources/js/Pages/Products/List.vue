@@ -15,7 +15,7 @@
         },
     })
     const form = useForm({
-        search: props.filters.serach,
+        search: props.filters.search,
     });
 
     const formDelete = useForm({});
@@ -41,7 +41,7 @@
                     <form @submit.prevent="form.get(route('products.index'))">
                         <div class="grid grid-cols-3 gap-4 py-2">
                             <div>
-                                <input type="search" v-model="form.search" 
+                                <input type="search" v-model="form.search"
                                 class="
                                         form-control
                                         block
@@ -129,7 +129,7 @@
                     </table>
                     <Pagination :data="products" />
                 </div>
-                
+
             </div>
         </div>
     </AppLayout>
