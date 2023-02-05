@@ -47,5 +47,11 @@ Route::middleware([
         'search/products',
         [ProductController::class, 'searchProduct']
     )->name('search_product');
+
+    Route::post(
+        'search/persons',
+        [ClientController::class, 'searchPerson']
+    )->name('search_person');
+
     Route::resource('clients', ClientController::class);
 });

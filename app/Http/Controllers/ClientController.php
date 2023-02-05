@@ -12,7 +12,8 @@ class ClientController extends Controller
     {
         $clients = (new Person())->newQuery()->where('is_client', true)->where('number', '<>', 99999999);
         if (request()->has('search')) {
-            $clients->where('full_name', 'Like', '%' . request()->input('search') . '%');
+            $clients->where('full_name', 'Like', '%' . request()->input('search') . '%')
+            ->orWhere('number','Like', '%' . request()->input('search') . '%');
         }
         if (request()->query('sort')) {
             $attribute = request()->query('sort');
@@ -55,11 +56,11 @@ class ClientController extends Controller
 
         $this->validate($request, [
             'document_type_id' => 'required',
-            'full_name' => 'required|unique:people,full_name',
-            'number' => 'required|numeric|unique:people,number',
-            'email' => 'email|unique:people,email',
+            'full_name' => 'required|unique:people,full_name,'.$request->get('id'),
+            'number' => 'required|numeric|unique:people,number,'.$request->get('id'),
+            'email' => 'email|unique:people,email,'.$request->get('id'),
         ]);
-        
+
         if(count(Person::where('number', $request->get('number'))->get())==0){
             Person::create([
                 'full_name'  => $request->get('full_name'),
@@ -128,7 +129,7 @@ class ClientController extends Controller
         ]);
 
         //dd($request->get('sale_prices'));
-       
+
 
         $client->update([
             'full_name'  => $request->get('full_name'),
@@ -154,5 +155,26 @@ class ClientController extends Controller
         $client->delete();
         return redirect()->route('clients.index')
             ->with('message', __('Cliento eliminado con éxito'));
+    }
+
+    public function searchPerson(Request $request)
+    {
+        $number = $request->get('number');
+        $person = Person::where('number', $number)->get();
+        // return  redirect()->back()->with('products', $products);
+        return response()->json($person[0]);
+
+        // return Inertia('Sales/Create', [
+        //     'products' => $products
+        // ]);
+
+        // Inertia::share('flash', function (Request $request) {
+        //     $search = $request->get('search');
+        //     $products = Product::where('interne', $search)
+        //         ->orWhere('description', 'like', '%' . $search . '%')->get();
+        //     return [
+        //         'products' => $products
+        //     ];
+        // });
     }
 }

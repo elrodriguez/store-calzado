@@ -14,8 +14,21 @@ const form = useForm({
     telephone: '',
     email: '',
     address: '',
-    document_type_id: ''
+    document_type_id: '',
+    id:''
 });
+
+const searchPerson = async () => {
+        axios.post(route('search_person'), form ).then((res) => {
+            form.full_name = res.data.full_name;
+            form.telephone = res.data.telephone;
+            form.email = res.data.email;
+            form.address = res.data.address;
+            form.document_type_id = res.data.document_type_id;
+            form.number = res.data.number;
+            form.id = res.data.id;
+        });
+    };
 
 const createClient = () => {
     form.post(route('clients.store'), {
@@ -77,6 +90,16 @@ library.add(faTrashAlt);
                 />
                 <InputError :message="form.errors.number" class="mt-2" />
             </div>
+
+            <div class="col-span-6 sm:col-span-2">
+                <form @submit.prevent="searchPerson()">
+                    <div class="">
+                        <input v-model="form.number" autocomplete="off" type="search" id="search" style="display:none" class="" placeholder="Buscar Producto" required>
+                        <button type="submit" class="block w-full bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow mt-6">Buscar por Nro</button>
+                    </div>
+                </form>
+            </div>
+
             <div class="col-span-6 sm:col-span-2">
                 <InputLabel for="telephone" value="Teléfono" />
                 <TextInput

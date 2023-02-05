@@ -229,6 +229,7 @@ class ProductController extends Controller
             ->orWhere('description', 'like', '%' . $search . '%')->get();
         // return  redirect()->back()->with('products', $products);
         return response()->json($products);
+
         // return Inertia('Sales/Create', [
         //     'products' => $products
         // ]);
