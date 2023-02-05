@@ -140,7 +140,7 @@ class ClientController extends Controller
             'email' => $request->get('email'),
         ]);
 
-        return redirect()->route('clients.edit', $client->id)
+        return redirect()->route('clients.index')
             ->with('message', __('Cliente editado con éxito'));
     }
 
