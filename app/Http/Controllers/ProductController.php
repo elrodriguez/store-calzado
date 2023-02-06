@@ -252,4 +252,9 @@ class ProductController extends Controller
 
         return response()->json($products);
     }
+
+    public function showdetails($id){
+        $product = Product::where('id', $id)->first();
+        return response()->json($product);
+    }
 }

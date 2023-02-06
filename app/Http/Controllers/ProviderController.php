@@ -193,7 +193,7 @@ class ProviderController extends Controller
             'ubigeo'  => $request->get('ubigeo'),
         ]);
 
-        return redirect()->route('providers.edit', $provider->id)
+        return redirect()->route('providers.index')
             ->with('message', __('Proveedor editado con éxito'));
     }
 
