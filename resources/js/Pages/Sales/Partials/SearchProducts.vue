@@ -113,14 +113,8 @@
                     </div>
                 </div>
                 <div class="col-span-2">
-                    <h4>{{ form.product.description  }}</h4>
-
-                    <div class="mb-4">
-                        <label for="stock" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                            Stock Actual
-                        </label>
-                        <input v-model="form.data.stock" type="text" id="stock" class="block w-full p-2 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 sm:text-xs focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                    </div>
+                    <h4>{{ form.product.interne  }} - {{ form.product.description  }}</h4>
+                    <p class="my-4">Stock Actual : {{ form.data.stock  }}</p>
                     <div class="mb-4">
                         <label for="stock" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                             Precios Disponibles
@@ -156,8 +150,8 @@
                             <div>
                                 <template v-for="(item, key) in JSON.parse(form.product.sizes)">
                                     <div class="form-check">
-                                        <input v-model="form.data.size" :value="item.size" class="form-check-input appearance-none rounded-full h-4 w-4 border border-gray-300 bg-white checked:bg-blue-600 checked:border-blue-600 focus:outline-none transition duration-200 mt-1 align-top bg-no-repeat bg-center bg-contain float-left mr-2 cursor-pointer" type="radio" name="sizes" :id="'size'+ key">
-                                        <label class="form-check-label inline-block text-gray-800" :for="'size'+ key ">
+                                        <input :disabled="item.quantity == 0 ? '' : disabled" v-model="form.data.size" :value="item.size" class="form-check-input appearance-none rounded-full h-4 w-4 border border-gray-300 bg-white checked:bg-blue-600 checked:border-blue-600 focus:outline-none transition duration-200 mt-1 align-top bg-no-repeat bg-center bg-contain float-left mr-2 cursor-pointer" type="radio" name="sizes" :id="'size'+ key">
+                                        <label :class="item.quantity == 0 ? 'text-gray-500': 'text-gray-800'" class="form-check-label inline-block" :for="'size'+ key ">
                                             Talla: {{ item.size }} / Cantidad: {{ item.quantity }}
                                         </label>
                                     </div>

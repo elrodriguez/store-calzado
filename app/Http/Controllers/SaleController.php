@@ -140,7 +140,6 @@ class SaleController extends Controller
                 }
             });
         } catch (\Exception $e) {
-            dd($e);
             return response()->json(['message' => 'Error']);
         }
         //return response()->json(['message' => 'Success']);
