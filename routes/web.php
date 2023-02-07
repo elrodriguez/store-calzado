@@ -47,5 +47,17 @@ Route::middleware([
         'search/products',
         [ProductController::class, 'searchProduct']
     )->name('search_product');
+
+    Route::post(
+        'show/detail_product',
+        [ProductController::class, 'showDetailProduct']
+    )->name('show_detail_product');
+
+    Route::post(
+        'products/showdetails/{id}',
+        [ProductController::class, 'showdetails']
+    )->name('showdetails');
+
+
     Route::resource('clients', ClientController::class);
 });

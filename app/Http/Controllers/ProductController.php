@@ -243,7 +243,18 @@ class ProductController extends Controller
         $search = $request->get('search');
         $products = Product::where('interne', $search)
             ->orWhere('description', 'like', '%' . $search . '%')->get();
+        // return  redirect()->back()->with('products', $products);
+        return response()->json($products);
+
+        // return Inertia('Sales/Create', [
+        //     'products' => $products
+        // ]);
 
         return response()->json($products);
+    }
+
+    public function showdetails($id){
+        $product = Product::where('id', $id)->first();
+        return response()->json($product);
     }
 }
