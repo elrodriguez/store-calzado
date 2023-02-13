@@ -7,6 +7,7 @@
     import TextInput from '@/Components/TextInput.vue';
     import { library } from "@fortawesome/fontawesome-svg-core";
     import { faTrashAlt } from "@fortawesome/free-solid-svg-icons";
+    import swal from 'sweetalert';
 
     const props = defineProps({
         establishments: {
@@ -23,11 +24,14 @@
 
     });
 
-    const createProduct = () => {
-        form.post(route('products.store'), {
-            errorBag: 'createProduct',
+    const createUser = () => {
+        form.post(route('users.store'), {
+            errorBag: 'createUser',
             preserveScroll: true,
-            onSuccess: () => form.reset(),
+            onSuccess: () => {
+                form.reset();
+                swal('Usuario creado con éxito');
+            }
         });
     };
 
@@ -36,7 +40,7 @@
 </script>
 
 <template>
-    <FormSection @submitted="createProduct">
+    <FormSection @submitted="createUser">
         <template #title>
             Datos de Usuario
         </template>
@@ -46,7 +50,7 @@
         </template>
 
         <template #form>
-            <div class="col-span-6 sm:col-span-2">
+            <div class="col-span-6 sm:col-span-3">
                 <InputLabel for="stablishment" value="Establecimiento" />
                 <select v-model="form.local_id" id="stablishment" class="mt-1 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                     <template v-for="(establishment, index) in props.establishments" :key="index">
@@ -55,8 +59,8 @@
                 </select>
                 <InputError :message="form.errors.local_id" class="mt-2" />
             </div>
-            <div class="col-span-6 sm:col-span-2">
-                <InputLabel for="name" value="Código Fabrica" />
+            <div class="col-span-6 sm:col-span-3">
+                <InputLabel for="name" value="Nombre" />
                 <TextInput
                     id="name"
                     v-model="form.name"
@@ -66,8 +70,8 @@
                 />
                 <InputError :message="form.errors.name" class="mt-2" />
             </div>
-            <div class="col-span-6 sm:col-span-2">
-                <InputLabel for="email" value="Código Interno" />
+            <div class="col-span-6 sm:col-span-3">
+                <InputLabel for="email" value="Email" />
                 <TextInput
                     id="email"
                     v-model="form.email"
@@ -77,8 +81,8 @@
                 />
                 <InputError :message="form.errors.email" class="mt-2" />
             </div>
-            <div class="col-span-6 sm:col-span-4">
-                <InputLabel for="password" value="Descripción" />
+            <div class="col-span-6 sm:col-span-3">
+                <InputLabel for="password" value="Contraseña" />
                 <TextInput
                     id="password"
                     v-model="form.password"
@@ -94,7 +98,7 @@
             <PrimaryButton :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
                 Guardar
             </PrimaryButton>
-            <a :href="route('products.index')"  class="ml-2 inline-block px-6 py-2.5 bg-green-500 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-green-600 hover:shadow-lg focus:bg-green-600 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-green-700 active:shadow-lg transition duration-150 ease-in-out">Ir al Listado</a>
+            <a :href="route('users.index')"  class="ml-2 inline-block px-6 py-2.5 bg-green-500 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-green-600 hover:shadow-lg focus:bg-green-600 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-green-700 active:shadow-lg transition duration-150 ease-in-out">Ir al Listado</a>
         </template>
     </FormSection>
 </template>

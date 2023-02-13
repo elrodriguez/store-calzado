@@ -46,6 +46,8 @@ class SaleController extends Controller
         }
 
         $sales = $sales->join('people', 'client_id', 'people.id')
+            ->join('sale_documents', 'sale_documents.sale_id', 'sales.id')
+            ->join('series', 'sale_documents.serie_id', 'series.id')
             ->select(
                 'sales.id',
                 'people.full_name',
@@ -54,9 +56,11 @@ class SaleController extends Controller
                 'total_discount',
                 'payments',
                 'sales.created_at',
-                'local_id'
+                'sales.local_id',
+                'series.description AS serie',
+                'sale_documents.number'
             )
-            ->paginate(4)
+            ->paginate(10)
             ->onEachSide(2);
 
         return Inertia::render('Sales/List', [
@@ -111,7 +115,7 @@ class SaleController extends Controller
                 $sale = Sale::create([
                     'user_id' => Auth::id(),
                     'client_id' => $request->get('client')['id'],
-                    'local_id' => 1,
+                    'local_id' => Auth::user()->local_id,
                     'total' => $request->get('total'),
                     'advancement' => $request->get('total'),
                     'total_discount' => 0,
@@ -236,14 +240,21 @@ class SaleController extends Controller
     public function ticketPdf($id)
     {
         $sale = Sale::find($id);
-        $document = SaleDocument::where('sale_id', $sale->id)->get();
+        $document = SaleDocument::join('series', 'serie_id', 'series.id')
+            ->select(
+                'series.description',
+                'sale_documents.number'
+            )
+            ->where('sale_documents.sale_id', $sale->id)
+            ->first();
         $local = LocalSale::find($sale->local_id);
         $products = SaleProduct::where('sale_id', $sale->id)->get();
 
         $data = [
             'local' => $local,
             'sale' => $sale,
-            'products' => $products
+            'products' => $products,
+            'document' => $document
         ];
 
         $file = public_path('ticket/') . 'ticket.pdf';

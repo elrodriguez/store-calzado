@@ -57,6 +57,7 @@ class UserRole extends Seeder
             'name' => 'Admin',
             'email' => 'admin@gmail.com',
             'password' => Hash::make('12345678'),
+            'local_id' => 1
         ]);
 
         $team = Team::create([

@@ -20,6 +20,10 @@
     const form = useForm({
         search: props.filters.search,
     });
+    
+    const printTicket = (id) => {
+        window.location.href = "../pdf/sales/ticket/" + id;
+    }
 </script>
 <template>
     <AppLayout title="Create Team">
@@ -57,6 +61,9 @@
                                         #
                                     </th>
                                     <th scope="col" class="px-6 py-2">
+                                        Documento
+                                    </th>
+                                    <th scope="col" class="px-6 py-2">
                                         Fecha
                                     </th>
                                     <th scope="col" class="px-6 py-2">
@@ -70,12 +77,15 @@
                             <tbody>
                                 <tr v-for="(sale, index) in sales.data" :key="sale.id" class="bg-blue-600 border-b border-blue-400 hover:bg-blue-500">
                                     <td class="px-6 py-4">
-                                        <button type="button" class="mr-1 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-full text-sm p-2.5 text-center inline-flex items-center mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                                        <button @click="printTicket(sale.id)" type="button" class="mr-1 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-full text-sm p-2.5 text-center inline-flex items-center mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
                                             <font-awesome-icon :icon="faPrint" />
                                         </button>
                                     </td>
                                     <td class="px-6 py-4">
                                         {{ index + 1 }}
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        {{ sale.serie }} - {{ sale.number }}
                                     </td>
                                     <td class="px-6 py-4">
                                         {{ sale.created_at }}

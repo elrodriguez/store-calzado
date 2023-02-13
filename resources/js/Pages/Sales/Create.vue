@@ -63,7 +63,7 @@
     }
 
     const printPdf = (id) => {
-        window.location.href = "../pdf/sales/ticket/" + id;
+        window.location.href = "../../pdf/sales/ticket/" + id;
     }
 
 </script>

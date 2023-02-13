@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\LocalSale;
+use App\Models\Team;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Inertia\Inertia;
 
 class UserController extends Controller
@@ -39,5 +41,42 @@ class UserController extends Controller
         return Inertia::render('Users/Create', [
             'establishments' => LocalSale::all()
         ]);
+    }
+    public function store(Request $request)
+    {
+        $this->validate($request, [
+            'local_id' => 'required',
+            'name' => 'required',
+            'email' => 'required|string|max:255|unique:users,email',
+            'password' => 'required|string'
+        ]);
+
+        $user = User::create([
+            'name'          => $request->get('name'),
+            'email'         => $request->get('email'),
+            'password'      => Hash::make($request->get('password')),
+            'local_id'      => $request->get('local_id')
+        ]);
+
+        $team = Team::create([
+            'user_id' => $user->id,
+            'name' => $user->name,
+            'personal_team' => 1
+        ]);
+
+        User::find($user->id)->update([
+            'current_team_id' => $team->id
+        ]);
+
+        return redirect()->route('users.create')
+            ->with('message', __('Usuario creado con éxito'));
+    }
+
+    public function destroy(User $user)
+    {
+        Team::where('user_id', $user->id)->delete();
+        $user->delete();
+        return redirect()->route('users.index')
+            ->with('message', __('Usuario eliminado con éxito'));
     }
 }

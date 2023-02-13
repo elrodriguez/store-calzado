@@ -3,8 +3,6 @@
     import { useForm } from '@inertiajs/vue3';
     import { faTrashAlt, faPencilAlt, faPrint, faWarehouse } from "@fortawesome/free-solid-svg-icons";
     import Pagination from '@/Components/Pagination.vue';
-    import DialogModal from '@/Components/DialogModal.vue';
-    import SecondaryButton from '@/Components/SecondaryButton.vue';
 
     const props = defineProps({
         users: {
@@ -20,6 +18,15 @@
     const form = useForm({
         search: props.filters.search,
     });
+
+    const formDelete = useForm({});
+
+    function destroy(id) {
+        if (confirm("¿Estás seguro de que quieres eliminar?")) {
+            formDelete.delete(route('users.destroy', id));
+        }
+    }
+
 </script>
 <template>
     <AppLayout title="Usuarios">
@@ -69,9 +76,11 @@
                             </thead>
                             <tbody>
                                 <tr v-for="(user, index) in users.data" :key="user.id" class="bg-blue-600 border-b border-blue-400 hover:bg-blue-500">
-                                    <td class="px-6 py-4">
-                                        <button type="button" class="mr-1 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-full text-sm p-2.5 text-center inline-flex items-center mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
-                                            <font-awesome-icon :icon="faPrint" />
+                                    <td class="text-center px-6 py-4">
+                                        <button type="button" class="mr-1 text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-full text-sm p-2.5 text-center inline-flex items-center mr-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800"
+                                            @click="destroy(user.id)"
+                                            >
+                                            <font-awesome-icon :icon="faTrashAlt" />
                                         </button>
                                     </td>
                                     <td class="px-6 py-4">
