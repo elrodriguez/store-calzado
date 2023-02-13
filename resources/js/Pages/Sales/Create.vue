@@ -56,28 +56,16 @@
         }
     };
     const saveSale = async () => {
-        form.post(route('sales.store'), {
-            forceFormData: true,
-            errorBag: 'saveSale',
-            preserveScroll: true,
-            onSuccess: () => {
-                form.reset()
-            },
+        axios.post(route('sales.store'), form ).then((res) => {
+            form.reset();
+            printPdf(res.data.id);
         });
     }
 
-
-    const showModalPrint = ref(false);
-
-    const openModalPrintSale = () => {
-
-        
-
-        showModalPrint.value = true;
+    const printPdf = (id) => {
+        window.location.href = "../pdf/sales/ticket/" + id;
     }
-    const closeModalPrintSale = () => {
-        showModalPrint.value = false;
-    }
+
 </script>
 
 <template>
@@ -198,17 +186,16 @@
                             <button @click="addPayment()" type="button" class="inline-block px-6 py-2 bg-transparent text-blue-600 font-medium text-xs leading-tight uppercase rounded transition duration-150 ease-in-out">Agregar (+)</button>
                         </div>
                         <div class="grid grid-cols-6 gap-4">
-                            <div class="col-end-7 col-span-2">
-                                <button @click="openModalPrintSale()" type="button" class="w-full inline-block px-6 py-2.5 bg-red-600 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-red-700 hover:shadow-lg focus:bg-red-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-red-800 active:shadow-lg transition duration-150 ease-in-out">
+                            <div class="col-end-7 col-span-4 text-right">
+                                <button @click="saveSale()" type="button" class=" inline-block px-6 py-2.5 bg-red-600 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-red-700 hover:shadow-lg focus:bg-red-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-red-800 active:shadow-lg transition duration-150 ease-in-out">
                                     Cobrar
                                 </button>
+                                <a :href="route('sales.index')"  class="ml-2 inline-block px-6 py-2.5 bg-green-500 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-green-600 hover:shadow-lg focus:bg-green-600 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-green-700 active:shadow-lg transition duration-150 ease-in-out">Ir al Listado</a>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div>
-                    <ModalPrintSale :show="showModalPrint" @close="closeModalPrintSale()" />
-                </div>
+
             </div>
         </div>
     </AppLayout>

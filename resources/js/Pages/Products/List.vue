@@ -190,7 +190,7 @@
             </template>
 
             <template #content>
-              <table class="max-w-full">
+              <table class="border" style="width: 100%;">
                     <thead class="bg-white border-b">
                       <tr class="text-xs text-white bg-blue-700 border-b dark:text-white">
                         <th class="text-lg font-medium  px-6 py-4 text-left italic hover:not-italic">

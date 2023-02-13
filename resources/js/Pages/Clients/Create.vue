@@ -4,7 +4,7 @@ import CreateClientForm from '@/Pages/Clients/Partials/CreateClientForm.vue';
 </script>
 
 <template>
-    <AppLayout title="Create Team">
+    <AppLayout title="Crear Cliente">
         <template #header>
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
                 Nuevo Cliente

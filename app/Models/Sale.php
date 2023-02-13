@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -18,4 +19,14 @@ class Sale extends Model
         'total_discount',
         'payments'
     ];
+
+    public function saleProduct()
+    {
+        return $this->hasMany(SaleProduct::class, 'sale_id', 'id');
+    }
+
+    public function getCreatedAtAttribute($value)
+    {
+        return Carbon::parse($value)->format('d-m-Y');
+    }
 }

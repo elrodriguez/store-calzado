@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Kardex;
+use App\Models\LocalSale;
 use App\Models\Product;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -48,7 +49,9 @@ class ProductController extends Controller
      */
     public function create()
     {
-        return Inertia::render('Products/Create');
+        return Inertia::render('Products/Create', [
+            'establishments' => LocalSale::all()
+        ]);
     }
 
     /**
@@ -108,7 +111,7 @@ class ProductController extends Controller
             'date_of_issue' => Carbon::now()->format('Y-m-d'),
             'motion' => 'purchase',
             'product_id' => $pr->id,
-            'local_id' => 1,
+            'local_id' => $request->get('local_id'),
             'quantity' => $total,
             'description' => 'Stock Inicial'
         ]);
@@ -150,10 +153,11 @@ class ProductController extends Controller
      */
     public function update(Request $request, Product $product)
     {
+        //dd($request->all());
         $this->validate($request, [
             $request,
             [
-                'interne' => 'required|unique:products,interne' . $product->id,
+                'interne' => 'required|unique:products,interne,' . $product->id,
                 'description' => 'required',
                 'purchase_prices' => 'required',
                 'sale_prices.high' => 'required',
@@ -253,7 +257,8 @@ class ProductController extends Controller
         return response()->json($products);
     }
 
-    public function showdetails($id){
+    public function showdetails($id)
+    {
         $product = Product::where('id', $id)->first();
         return response()->json($product);
     }

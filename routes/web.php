@@ -8,6 +8,8 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\PettyCashController;
 use App\Http\Controllers\ProviderController;
 use App\Http\Controllers\SaleController;
+use App\Http\Controllers\UserController;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -43,6 +45,12 @@ Route::middleware([
 
     Route::resource('sales', SaleController::class);
 
+    Route::get(
+        'pdf/sales/ticket/{id}',
+        [SaleController::class, 'ticketPdf']
+    )->name('ticketpdf_sales');
+
+
     Route::post(
         'search/products',
         [ProductController::class, 'searchProduct']
@@ -60,4 +68,5 @@ Route::middleware([
 
 
     Route::resource('clients', ClientController::class);
+    Route::resource('users', UserController::class);
 });

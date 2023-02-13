@@ -1,6 +1,13 @@
 <script setup>
 import AppLayout from '@/Layouts/AppLayout.vue';
 import CreateProductForm from '@/Pages/Products/Partials/CreateProductForm.vue';
+
+const props = defineProps({
+    establishments: {
+        type: Object,
+        default: () => ({}),
+    }
+});
 </script>
 
 <template>
@@ -13,7 +20,7 @@ import CreateProductForm from '@/Pages/Products/Partials/CreateProductForm.vue';
 
         <div>
             <div class="max-w-7xl mx-auto py-10 sm:px-6 lg:px-8">
-                <CreateProductForm />
+                <CreateProductForm :establishments="props.establishments" />
             </div>
         </div>
     </AppLayout>

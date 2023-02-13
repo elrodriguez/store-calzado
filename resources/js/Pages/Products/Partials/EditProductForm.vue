@@ -25,8 +25,7 @@
         sale_prices: JSON.parse(props.product.sale_prices),
         sizes: JSON.parse(props.product.sizes),
         stock_min:props.product.stock_min,
-        stock:props.product.stock
-
+        stock: props.product.stock
     });
 
     const editProduct = () => {
@@ -66,6 +65,7 @@
         </template>
 
         <template #form>
+            
             <div class="col-span-6 sm:col-span-3">
                 <InputLabel for="usine" value="Código Fabrica" />
                 <TextInput

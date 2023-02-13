@@ -18,4 +18,9 @@ class SaleProduct extends Model
         'quantity',
         'total'
     ];
+
+    public function sale()
+    {
+        return $this->belongsTo(Sale::class, 'sale_id', 'id');
+    }
 }
