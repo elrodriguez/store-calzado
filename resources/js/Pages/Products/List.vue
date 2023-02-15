@@ -10,6 +10,7 @@
     import InputLabel from '@/Components/InputLabel.vue';
     import TextInput from '@/Components/TextInput.vue';
     import { ref } from 'vue';
+    import swal from 'sweetalert';
 
     const props = defineProps({
         products: {
@@ -122,6 +123,7 @@
           onSuccess: () => {
             formInput.reset()
             dataProducts.search = null;
+            swal('Se registro correctamente.');
           },
       });
     }
