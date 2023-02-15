@@ -183,7 +183,7 @@ class SaleController extends Controller
 
             return response()->json($res);
         } catch (\Exception $e) {
-            return response()->json(['message' => 'Error']);
+            return response()->json(['message' => $e]);
         }
         //return response()->json(['message' => 'Success']);
 

@@ -13,19 +13,17 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('kardexes', function (Blueprint $table) {
+        Schema::create('kardex_sizes', function (Blueprint $table) {
             $table->id();
-            $table->date('date_of_issue');
-            $table->enum('motion', ['sale', 'purchase']);
+            $table->unsignedBigInteger('kardex_id');
             $table->unsignedBigInteger('product_id');
             $table->unsignedBigInteger('local_id')->nullable();
-            $table->decimal('quantity', 12, 2);
-            $table->unsignedBigInteger('document_id')->nullable();
-            $table->string('document_entity', 300)->nullable();
-            $table->string('description')->nullable();
+            $table->string('size');
+            $table->decimal('quantity', 4, 2);
             $table->timestamps();
-            $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade');
+            $table->foreign('kardex_id')->references('id')->on('kardexes')->onDelete('cascade');
             $table->foreign('local_id')->references('id')->on('local_sales')->onDelete('cascade');
+            $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade');
         });
     }
 
@@ -36,6 +34,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('kardexes');
+        Schema::dropIfExists('kardex_sizes');
     }
 };

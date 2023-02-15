@@ -5,10 +5,18 @@
     import Pagination from '@/Components/Pagination.vue';
     import DialogModal from '@/Components/DialogModal.vue';
     import SecondaryButton from '@/Components/SecondaryButton.vue';
+    import DangerButton from '@/Components/DangerButton.vue';
+    import InputError from '@/Components/InputError.vue';
+    import InputLabel from '@/Components/InputLabel.vue';
+    import TextInput from '@/Components/TextInput.vue';
     import { ref } from 'vue';
 
     const props = defineProps({
         products: {
+            type: Object,
+            default: () => ({}),
+        },
+        establishments: {
             type: Object,
             default: () => ({}),
         },
@@ -44,6 +52,7 @@
 
     const formDelete = useForm({});
     const openModalDetilsProduct = ref(false);
+    const openModalEntrada = ref(false);
         
     const showDetailProduct = (product) => {
         formDetails.interne = product.interne;
@@ -70,6 +79,72 @@
     const closeModalDetailsProduct = () => {
       openModalDetilsProduct.value = false;
     }
+
+    const closeModalEntradaSalida = () => {
+      openModalEntrada.value = false;
+    }
+
+    const openModalEntradaSalida = (d) => {
+      
+      formInput.type = d;
+      openModalEntrada.value = true;
+    }
+
+    const formInput = useForm({
+        type: 1,
+        motion: 'purchase',
+        product_id: '',
+        local_id: 1,
+        quantity: 1,
+        description: '',
+        sizes: [{
+            size:'',
+            quantity: ''
+        }],
+    });
+
+    const dataProducts= useForm({
+      products: [],
+      search:''
+    });
+
+    const searchProducts = async () => {
+        axios.post(route('search_product'), dataProducts ).then((res) => {
+          dataProducts.products = res;
+          document.getElementById('resultSearch').style.display = 'block';
+        });
+    };
+
+    const saveProductInput = () => {
+      formInput.post(route('input_products'), {
+          errorBag: 'saveProductInput',
+          preserveScroll: true,
+          onSuccess: () => {
+            formInput.reset()
+            dataProducts.search = null;
+          },
+      });
+    }
+
+    const selectProducts = (product) => {
+      formInput.product_id = product.id;
+      dataProducts.search = product.interne+ ' - '+ product.description;
+      document.getElementById('resultSearch').style.display = 'none';
+    }
+    
+    const addSize = () => {
+        let ar = {
+            size:'',
+            quantity: ''
+        };
+        formInput.sizes.push(ar);
+    };
+
+    const removeSize = (index) => {
+        if(index>0){
+          formInput.sizes.splice(index,1);
+        }
+    };
 </script>
 
 <template>
@@ -83,101 +158,94 @@
         <div>
             <div class="max-w-7xl mx-auto py-10 sm:px-6 lg:px-8">
                 <div class="col-span-6 p-4 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
-                    <form @submit.prevent="form.get(route('products.index'))">
-                        <div class="grid grid-cols-3 gap-4 py-2">
-                            <div>
-                                <input type="search" v-model="form.search"
-                                class="
-                                        form-control
-                                        block
-                                        w-full
-                                        px-3
-                                        py-1.5
-                                        text-base
-                                        font-normal
-                                        text-gray-700
-                                        bg-white bg-clip-padding
-                                        border border-solid border-gray-300
-                                        rounded
-                                        transition
-                                        ease-in-out
-                                        m-0
-                                        focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none
-                                    "
-                                placeholder="Escriba nombre">
+                  <div class="flex items-center justify-between pb-4 bg-white dark:bg-gray-900">
+                        <form @submit.prevent="form.get(route('products.index'))">
+                            <label for="table-search" class="sr-only">Search</label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                                    <svg class="w-5 h-5 text-gray-500 dark:text-gray-400" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"></path></svg>
+                                </div>
+                                <input type="text" id="table-search-users" class="block p-2 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Buscar productos">
                             </div>
-                            <div class="">
-                                <button type='submit' class='inline-block px-6 py-2.5 bg-gray-800 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-gray-900 hover:shadow-lg focus:bg-gray-900 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-gray-900 active:shadow-lg transition duration-150 ease-in-out'>
-                                    Buscar
-                                </button>
-                            </div>
-                            <div v-can="'productos_nuevo'" class="text-right">
-                                <a :href="route('products.create')" class="inline-block px-6 py-2.5 bg-blue-600 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg transition duration-150 ease-in-out">Nuevo</a>
-                            </div>
+                        </form>
+                        <div>
+                          
                         </div>
-                    </form>
-
-                    <table class="border mb-4" style="width: 100%;">
-                        <thead class="border-b">
-                            <tr>
-                                <th scope="col" class="w-2.5 text-sm font-medium text-gray-900 px-6 py-4 border-r">
-                                #
-                                </th>
-                                <th scope="col" class="w-4 text-sm font-medium text-gray-900 px-8 py-6 border-r">
-                                    Acción
-                                </th>
-                                <th scope="col" class="w-4 text-sm font-medium text-gray-900 px-6 py-4 border-r">
-                                    Imagen
-                                </th>
-                                <th scope="col" class="w-4 text-sm font-medium text-gray-900 px-6 py-4 border-r">
-                                    Código
-                                </th>
-                                <th scope="col" class="text-left text-sm font-medium text-gray-900 px-4 py-2">
-                                    Descripción
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr v-for="(product, index) in products.data" :key="product.id" class="border-b">
-                                <td class="text-center px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 border-r">
-                                    {{ index + 1 }}
-                                </td>
-                                <td class="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap border-r">
-                                    <div class="flex space-x-2 justify-center">
-                                        <div>
-                                            <a v-permission="'productos_editar'" :href="route('products.edit',product.id)" class="mr-1 inline-block px-6 py-2.5 bg-green-500 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-green-600 hover:shadow-lg focus:bg-green-600 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-green-700 active:shadow-lg transition duration-150 ease-in-out">
-                                                <font-awesome-icon :icon="faPencilAlt" />
-                                            </a>
-                                            <button type="button" class="mr-1 inline-block px-6 py-2.5 bg-gray-200 text-gray-700 font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-gray-300 hover:shadow-lg focus:bg-gray-300 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-gray-400 active:shadow-lg transition duration-150 ease-in-out">
-                                                <font-awesome-icon :icon="faPrint" />
-                                            </button>
-                                            <button type="button" class="mr-1 inline-block px-6 py-2.5 bg-blue-500 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg transition duration-150 ease-in-out"
-                                              @click="showDetailProduct(product)"
-                                            >
-                                              <font-awesome-icon :icon="faWarehouse" />
-                                            </button>
-                                            <button type="button" class="inline-block px-6 py-2.5 bg-red-600 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-red-700 hover:shadow-lg focus:bg-red-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-red-800 active:shadow-lg transition duration-150 ease-in-out"
-                                              @click="destroy(product.id)"
+                        <div  class="text-right">
+                          <div v-can="'productos_salida'">
+                            <button @click="openModalEntradaSalida(0)" type="button" class="mr-1 inline-block px-6 py-2.5 bg-green-500 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-green-600 hover:shadow-lg focus:bg-green-600 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-green-700 active:shadow-lg transition duration-150 ease-in-out">Salidas</button>
+                          </div>
+                          <div v-can="'productos_entrada'">
+                            <button @click="openModalEntradaSalida(1)" type="button" class="mr-1 inline-block px-6 py-2.5 bg-yellow-500 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-yellow-600 hover:shadow-lg focus:bg-yellow-600 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-yellow-700 active:shadow-lg transition duration-150 ease-in-out">Entradas</button>
+                          </div>
+                          <div v-can="'productos_nuevo'">
+                            <a :href="route('products.create')" class="inline-block px-6 py-2.5 bg-blue-900 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg transition duration-150 ease-in-out">Nuevo</a>
+                          </div>
+                        </div>
+                    </div>
+                    <div class="relative overflow-x-auto shadow-md sm:rounded-lg mb-2">
+                      <table class="w-full text-sm text-left text-blue-100 dark:text-blue-100">
+                          <thead class="text-xs text-white uppercase bg-blue-600 border-b border-blue-400 dark:text-white">
+                              <tr>
+                                  <th class="px-6 py-2">
+                                  #
+                                  </th>
+                                  <th class="text-center px-6 py-2">
+                                      Acción
+                                  </th>
+                                  <th class="text-center px-6 py-2">
+                                      Imagen
+                                  </th>
+                                  <th class="px-6 py-2">
+                                      Código
+                                  </th>
+                                  <th class="px-6 py-2">
+                                      Descripción
+                                  </th>
+                              </tr>
+                          </thead>
+                          <tbody>
+                              <tr v-for="(product, index) in products.data" :key="product.id" class="bg-blue-600 border-b border-blue-400 hover:bg-blue-500">
+                                  <td class="px-6 py-2">
+                                      {{ index + 1 }}
+                                  </td>
+                                  <td class="px-6 py-2">
+                                      <div class="flex space-x-2 justify-center">
+                                          <div>
+                                              <a v-permission="'productos_editar'" :href="route('products.edit',product.id)" class="mr-1 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-full text-sm p-2.5 text-center inline-flex items-center mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                                                  <font-awesome-icon :icon="faPencilAlt" />
+                                              </a>
+                                              <button type="button" class="mr-1 text-white bg-gray-700 hover:bg-gray-800 focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-full text-sm p-2.5 text-center inline-flex items-center mr-2 dark:bg-gray-600 dark:hover:bg-gray-700 dark:focus:ring-gray-800">
+                                                  <font-awesome-icon :icon="faPrint" />
+                                              </button>
+                                              <button type="button" class="mr-1 text-white bg-yellow-700 hover:bg-yellow-800 focus:ring-4 focus:outline-none focus:ring-yellow-300 font-medium rounded-full text-sm p-2.5 text-center inline-flex items-center mr-2 dark:bg-yellow-600 dark:hover:bg-yellow-700 dark:focus:ring-yellow-800"
+                                                @click="showDetailProduct(product)"
                                               >
-                                              <font-awesome-icon :icon="faTrashAlt" />
-                                          </button>
+                                                <font-awesome-icon :icon="faWarehouse" />
+                                              </button>
+                                              <button type="button" class="mr-1 text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-full text-sm p-2.5 text-center inline-flex items-center mr-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800"
+                                                @click="destroy(product.id)"
+                                                >
+                                                <font-awesome-icon :icon="faTrashAlt" />
+                                            </button>
 
-                                        </div>
-                                    </div>
-                                </td>
-                                <td class="text-center text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap border-r">
-                                    <img :src="product.image">
-                                </td>
-                                <td class="text-center text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap border-r">
-                                    {{ product.interne }}
-                                </td>
-                                <td class="text-sm text-gray-900 font-light px-2 py-2 whitespace-nowrap">
-                                    {{ product.description }}
-                                </td>
-                            </tr>
+                                          </div>
+                                      </div>
+                                  </td>
+                                  <td class="px-6 py-2" width="60px">
+                                      <img :src="product.image" >
+                                  </td>
+                                  <td class="px-6 py-2">
+                                      {{ product.interne }}
+                                  </td>
+                                  <td class="px-6 py-2">
+                                      {{ product.description }}
+                                  </td>
+                              </tr>
 
-                        </tbody>
-                    </table>
+                          </tbody>
+                      </table>
+                    </div>
                     <Pagination :data="products" />
                 </div>
 
@@ -282,6 +350,120 @@
                 <SecondaryButton @click="closeModalDetailsProduct">
                     Cancel
                 </SecondaryButton>
+            </template>
+        </DialogModal>
+
+        <DialogModal :show="openModalEntrada" @close="closeModalEntradaSalida">
+            <template #title>
+              {{ formInput.type == 1 ? 'Entrada' : 'Salida' }} de producto
+            </template>
+
+            <template #content>
+                <div class="mt-4 mb-1">
+                  <div style="position: relative;">
+                    <div class="bg-white dark:bg-gray-900">
+                      <label for="table-search" class="sr-only">Search</label>
+                      <div class="relative mt-1">
+                          <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                              <svg class="w-5 h-5 text-gray-500 dark:text-gray-400" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"></path></svg>
+                          </div>
+                          <input @keyup.enter="searchProducts" v-model="dataProducts.search" autocomplete="off" type="text" id="table-search" class="block p-2 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Buscar producto">
+                      </div>
+
+                    </div>
+                    <div class="mt-1" id="resultSearch" style="position: absolute;width: 100%;z-index: 1000000;display: none;">
+                        <div style="height: 300px;overflow-y: auto;">
+                            <table class="min-w-full" >
+                                <tbody>
+                                    <tr v-for="(product, index) in dataProducts.products.data" class="border-b bg-gray-100 boder-gray-900" style="cursor: pointer;">
+                                        <td @click="selectProducts(product)" class="text-sm font-medium px-6 py-4 whitespace-nowrap">
+                                            {{ product.interne }} - {{ product.description }}
+                                        </td>
+                                    </tr>
+                                </tbody> 
+                            </table>
+                        </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                  <div class="col-span-2 sm:col-span-1">
+                    <InputLabel for="stablishment" value="Establesimiento" />
+                    <select v-model="formInput.local_id" id="stablishment" class="mt-1 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                      <template v-for="(establishment, index) in props.establishments" :key="index">
+                          <option :value="establishment.id">{{ establishment.description }}</option>
+                      </template>
+                  </select>
+                    <InputError :message="formInput.errors.local_id" class="mt-2" />
+                  </div>
+                  <div class="col-span-2 sm:col-span-1">
+                    <InputLabel for="description" value="Descripción" />
+                    <TextInput
+                        id="description"
+                        v-model="formInput.description"
+                        type="text"
+                        class="block w-full mt-1"
+                        autofocus
+                    />
+                    <InputError :message="formInput.errors.description" class="mt-2" />
+                  </div>
+                  <div class="col-span-6 sm:col-span-6">
+                      <label>
+                          Tallas
+                          <button @click="addSize" type="button" class="inline-block px-6 py-2.5 bg-transparent text-blue-600 font-medium text-xs leading-tight uppercase rounded hover:text-blue-700 hover:bg-gray-100 focus:bg-gray-100 focus:outline-none focus:ring-0 active:bg-gray-200 transition duration-150 ease-in-out">Agregar</button>
+                      </label>
+                      <div v-for="(item, index) in formInput.sizes" v-bind:key="index">
+                          <table style="width: 100%;">
+                              <tr>
+                                  <td style="padding: 4px;">
+                                      <div class="col-span-3 sm:col-span-2">
+                                          <InputLabel value="Talla" />
+                                          <TextInput
+                                              v-model="item.size"
+                                              type="text"
+                                              class="block w-full mt-1"
+                                              autofocus
+                                          />
+                                          <InputError :message="formInput.errors[`sizes.${index}.size`]" class="mt-2" />
+                                      </div>
+                                  </td>
+                                  <td style="padding: 4px;">
+                                      <div class="col-span-3 sm:col-span-2">
+                                          <InputLabel value="Cantidad" />
+                                          <TextInput
+                                              v-model="item.quantity"
+                                              type="number"
+                                              class="block w-full mt-1"
+                                              autofocus
+                                          />
+                                          <InputError :message="formInput.errors[`sizes.${index}.quantity`]" class="mt-2" />
+                                      </div>
+                                  </td>
+                                  <td style="padding: 4px;" valign="bottom">
+                                      <button @click="removeSize(index)" type="button" class="inline-block rounded-full bg-blue-600 text-white leading-normal uppercase shadow-md hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg transition duration-150 ease-in-out w-9 h-9">
+                                          <font-awesome-icon :icon="faTrashAlt" />
+                                      </button>
+                                  </td>
+                              </tr>
+                          </table>
+                      </div>
+                  </div>
+                </div>
+            </template>
+
+            <template #footer>
+                <SecondaryButton @click="closeModalEntradaSalida">
+                    Cancel
+                </SecondaryButton>
+
+                <DangerButton
+                    class="ml-3"
+                    :class="{ 'opacity-25': formInput.processing }"
+                    :disabled="formInput.processing"
+                    @click="saveProductInput"
+                >
+                    Guardar
+                </DangerButton>
             </template>
         </DialogModal>
     </AppLayout>

@@ -65,6 +65,10 @@ Route::middleware([
         'products/showdetails/{id}',
         [ProductController::class, 'showdetails']
     )->name('showdetails');
+    Route::post(
+        'products/input',
+        [ProductController::class, 'saveInput']
+    )->name('input_products');
 
 
     Route::resource('clients', ClientController::class);

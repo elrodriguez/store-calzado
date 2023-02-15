@@ -34,6 +34,8 @@ class UserRole extends Seeder
         array_push($permissions, Permission::create(['name' => 'productos_editar']));
         array_push($permissions, Permission::create(['name' => 'productos_eliminar']));
         array_push($permissions, Permission::create(['name' => 'productos_codigoqr']));
+        array_push($permissions, Permission::create(['name' => 'productos_salida']));
+        array_push($permissions, Permission::create(['name' => 'productos_entrada']));
         array_push($permissions, Permission::create(['name' => 'caja_chica']));
         array_push($permissions, Permission::create(['name' => 'clientes']));
         array_push($permissions, Permission::create(['name' => 'clientes_nuevo']));
@@ -44,10 +46,6 @@ class UserRole extends Seeder
         array_push($permissions, Permission::create(['name' => 'proveedores_editar']));
         array_push($permissions, Permission::create(['name' => 'proveedores_eliminar']));
         array_push($permissions, Permission::create(['name' => 'punto_ventas']));
-        array_push($permissions, Permission::create(['name' => 'usuarios']));
-        array_push($permissions, Permission::create(['name' => 'usuarios_nuevo']));
-        array_push($permissions, Permission::create(['name' => 'usuarios_editar']));
-        array_push($permissions, Permission::create(['name' => 'usuarios_eliminar']));
 
         foreach ($permissions as $permission) {
             $role->givePermissionTo($permission->name);

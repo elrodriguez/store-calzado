@@ -150,39 +150,21 @@
             <div class="col-span-6 sm:col-span-6">
                 <label>
                     Tallas
-                    <button @click="addSize" type="button" class="inline-block px-6 py-2.5 bg-transparent text-blue-600 font-medium text-xs leading-tight uppercase rounded hover:text-blue-700 hover:bg-gray-100 focus:bg-gray-100 focus:outline-none focus:ring-0 active:bg-gray-200 transition duration-150 ease-in-out">Agregar</button>
                 </label>
-                <div v-for="(item, index) in form.sizes" v-bind:key="index">
-                    <table style="width: 100%;">
-                        <tr>
-                            <td style="padding: 4px;">
-                                <div class="col-span-3 sm:col-span-2">
-                                    <InputLabel value="Talla" />
-                                    <TextInput
-                                        v-model="item.size"
-                                        type="text"
-                                        class="block w-full mt-1"
-                                        autofocus
-                                    />
-                                    <InputError :message="form.errors[`sizes.${index}.size`]" class="mt-2" />
-                                </div>
+                <div  class="relative overflow-x-auto shadow-md sm:rounded-lg">
+                    <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+                        <thead class="text-xs text-gray-700 uppercase dark:text-gray-400">
+                            <tr>
+                                <th class="px-6 py-3 bg-gray-50 dark:bg-gray-800">Talla</th>
+                                <th class="px-6 py-3">Cantidad</th>
+                            </tr>
+                        </thead>
+                        <tr v-for="(item, index) in form.sizes" v-bind:key="index" class="border-b border-gray-200 dark:border-gray-700">
+                            <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap bg-gray-50 dark:text-white dark:bg-gray-800">
+                                {{ item.size }}
                             </td>
-                            <td style="padding: 4px;">
-                                <div class="col-span-3 sm:col-span-2">
-                                    <InputLabel value="Cantidad" />
-                                    <TextInput
-                                        v-model="item.quantity"
-                                        type="number"
-                                        class="block w-full mt-1"
-                                        autofocus
-                                    />
-                                    <InputError :message="form.errors[`sizes.${index}.quantity`]" class="mt-2" />
-                                </div>
-                            </td>
-                            <td style="padding: 4px;" valign="bottom">
-                                <button @click="removeSize(index)" type="button" class="inline-block rounded-full bg-blue-600 text-white leading-normal uppercase shadow-md hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg transition duration-150 ease-in-out w-9 h-9">
-                                    <font-awesome-icon :icon="faTrashAlt" />
-                                </button>
+                            <td class="px-6 py-4">
+                                {{ item.quantity }}
                             </td>
                         </tr>
                     </table>
