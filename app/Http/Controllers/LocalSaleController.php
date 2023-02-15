@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\LocalSale;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class LocalSaleController extends Controller
 {
@@ -14,7 +16,34 @@ class LocalSaleController extends Controller
      */
     public function index()
     {
-        //
+        $locals = (new LocalSale())->newQuery();
+        if (request()->has('search')) {
+            $locals->where('local_sales.description', 'Like', '%' . request()->input('search') . '%');
+        }
+        if (request()->query('sort')) {
+            $attribute = request()->query('sort');
+            $sort_order = 'ASC';
+            if (strncmp($attribute, '-', 1) === 0) {
+                $sort_order = 'DESC';
+                $attribute = substr($attribute, 1);
+            }
+            $locals->orderBy($attribute, $sort_order);
+        } else {
+            $locals->latest();
+        }
+
+        $locals = $locals->select(
+            'local_sales.id',
+            'local_sales.description',
+            'local_sales.address',
+            'local_sales.phone'
+        )->selectRaw('(SELECT name FROM users WHERE users.local_id=local_sales.id) AS user_name')
+            ->paginate(10)->onEachSide(2);
+
+        return Inertia::render('Establishments/List', [
+            'locals' => $locals,
+            'filters' => request()->all('search'),
+        ]);
     }
 
     /**
@@ -24,7 +53,10 @@ class LocalSaleController extends Controller
      */
     public function create()
     {
-        //
+        $users = User::all();
+        return Inertia::render('Establishments/Create', [
+            'users' => $users
+        ]);
     }
 
     /**
@@ -35,7 +67,30 @@ class LocalSaleController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $this->validate($request, [
+            'description'   => 'required',
+            'address'       => 'required',
+        ]);
+        if ($request->get('user_id')) {
+            $this->validate($request, [
+                'user_id'   => 'unique:users,local_id'
+            ]);
+        }
+        $l = LocalSale::create([
+            'description' => $request->get('description'),
+            'address' => $request->get('address'),
+            'phone' => $request->get('phone')
+        ]);
+
+        if ($request->get('user_id')) {
+            User::find($request->get('user_id'))
+                ->update([
+                    'local_id' => $l->id
+                ]);
+        }
+
+        return redirect()->route('establishments.create')
+            ->with('message', __('Tienda creada con éxito'));
     }
 
     /**
@@ -55,9 +110,14 @@ class LocalSaleController extends Controller
      * @param  \App\Models\LocalSale  $localSale
      * @return \Illuminate\Http\Response
      */
-    public function edit(LocalSale $localSale)
+    public function edit($id)
     {
-        //
+        $users = User::all();
+        return Inertia::render('Establishments/Edit', [
+            'users' => $users,
+            'local' => LocalSale::find($id),
+            'seller' => User::where('local_id', $id)->first()
+        ]);
     }
 
     /**
@@ -67,9 +127,33 @@ class LocalSaleController extends Controller
      * @param  \App\Models\LocalSale  $localSale
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, LocalSale $localSale)
+    public function update(Request $request, $id)
     {
-        //
+
+        $this->validate($request, [
+            'description'   => 'required',
+            'address'       => 'required',
+        ]);
+        if ($request->get('user_id')) {
+            $this->validate($request, [
+                'user_id'   => 'unique:users,local_id,' . $request->get('user_id')
+            ]);
+        }
+        LocalSale::find($id)->update([
+            'description' => $request->get('description'),
+            'address' => $request->get('address'),
+            'phone' => $request->get('phone')
+        ]);
+
+        if ($request->get('user_id')) {
+            User::find($request->get('user_id'))
+                ->update([
+                    'local_id' => $id
+                ]);
+        }
+
+        return redirect()->route('establishments.create')
+            ->with('message', __('Tienda Actualizada con éxito'));
     }
 
     /**

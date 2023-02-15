@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ClientController;
+use App\Http\Controllers\LocalSaleController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -65,6 +66,7 @@ Route::middleware([
         'products/showdetails/{id}',
         [ProductController::class, 'showdetails']
     )->name('showdetails');
+
     Route::post(
         'products/input',
         [ProductController::class, 'saveInput']
@@ -73,4 +75,5 @@ Route::middleware([
 
     Route::resource('clients', ClientController::class);
     Route::resource('users', UserController::class);
+    Route::resource('establishments', LocalSaleController::class);
 });

@@ -6,7 +6,6 @@ use App\Models\Kardex;
 use App\Models\KardexSize;
 use App\Models\LocalSale;
 use App\Models\Product;
-use App\Rules\SizeExistence;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Inertia\Inertia;

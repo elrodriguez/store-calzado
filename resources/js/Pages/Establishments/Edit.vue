@@ -1,27 +1,34 @@
 <script setup>
     import AppLayout from '@/Layouts/AppLayout.vue';
-    import EditUserForm from '@/Pages/Users/Partials/EditUserForm.vue';
+    import EditForm from '@/Pages/Establishments/Partials/EditForm.vue';
 
     const props = defineProps({
-        establishments: {
+        users: {
             type: Object,
             default: () => ({}),
         },
-
+        local:{
+            type: Object,
+            default: () => ({}),
+        },
+        seller:{
+            type: Object,
+            default: () => ({}),
+        }
     });
-
+    console.log(props.local)
 </script>
 
 <template>
     <AppLayout title="Crear Usuario">
         <template #header>
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                Editar Usuario
+                Editar Tienda
             </h2>
         </template>
         <div>
             <div class="max-w-7xl mx-auto py-10 sm:px-6 lg:px-8">
-                <EditUserForm :establishments="props.establishments" />
+                <EditForm :users="users" :local="local" :seller="seller" />
             </div>
         </div>
     </AppLayout>
