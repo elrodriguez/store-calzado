@@ -20,4 +20,9 @@ class LocalSale extends Model
     {
         return Carbon::parse($value)->format('d-m-Y');
     }
+
+    public function series()
+    {
+        return $this->hasMany(Serie::class, 'local_id');
+    }
 }

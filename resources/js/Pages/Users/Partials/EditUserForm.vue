@@ -13,24 +13,28 @@
         establishments: {
             type: Object,
             default: () => ({}),
+        },
+        xuser:{
+            type: Object,
+            default: () => ({}),
         }
     });
 
     const form = useForm({
-        name:'',
-        email:'',
-        password:'',
-        local_id: 1
+        name: props.xuser.name,
+        email: props.xuser.email,
+        password: props.xuser.password,
+        local_id: props.xuser.local_id
 
     });
 
-    const createUser = () => {
-        form.post(route('users.store'), {
-            errorBag: 'createUser',
+    const updateUser = () => {
+        form.put(route('users.update', props.xuser.id), {
+            errorBag: 'updateUser',
             preserveScroll: true,
             onSuccess: () => {
                 form.reset();
-                swal('Usuario creado con éxito');
+                swal('Usuario Modificado con éxito');
             }
         });
     };
@@ -40,13 +44,13 @@
 </script>
 
 <template>
-    <FormSection @submitted="createUser">
+    <FormSection @submitted="updateUser">
         <template #title>
             Datos de Usuario
         </template>
 
         <template #description>
-            Crear nuevo usuario
+            Editar usuario
         </template>
 
         <template #form>
@@ -66,7 +70,6 @@
                     v-model="form.name"
                     type="text"
                     class="block w-full mt-1"
-                    autofocus
                 />
                 <InputError :message="form.errors.name" class="mt-2" />
             </div>
@@ -77,7 +80,6 @@
                     v-model="form.email"
                     type="text"
                     class="block w-full mt-1"
-                    autofocus
                 />
                 <InputError :message="form.errors.email" class="mt-2" />
             </div>
@@ -96,7 +98,7 @@
 
         <template #actions>
             <PrimaryButton :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
-                Guardar
+                Actualizar
             </PrimaryButton>
             <a :href="route('users.index')"  class="ml-2 inline-block px-6 py-2.5 bg-green-500 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-green-600 hover:shadow-lg focus:bg-green-600 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-green-700 active:shadow-lg transition duration-150 ease-in-out">Ir al Listado</a>
         </template>

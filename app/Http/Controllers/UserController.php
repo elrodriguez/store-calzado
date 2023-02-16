@@ -45,7 +45,7 @@ class UserController extends Controller
     public function store(Request $request)
     {
         $this->validate($request, [
-            'local_id' => 'required',
+            'local_id' => 'required|unique:users,local_id',
             'name' => 'required',
             'email' => 'required|string|max:255|unique:users,email',
             'password' => 'required|string'
@@ -64,9 +64,9 @@ class UserController extends Controller
             'personal_team' => 1
         ]);
 
-        User::find($user->id)->update([
-            'current_team_id' => $team->id
-        ]);
+        $user->current_team_id = $team->id;
+
+        $user->save();
 
         return redirect()->route('users.create')
             ->with('message', __('Usuario creado con éxito'));
@@ -78,5 +78,32 @@ class UserController extends Controller
         $user->delete();
         return redirect()->route('users.index')
             ->with('message', __('Usuario eliminado con éxito'));
+    }
+
+    public function edit(User $user)
+    {
+        return Inertia::render('Users/Edit', [
+            'establishments' => LocalSale::all(),
+            'xuser' => $user
+        ]);
+    }
+    public function update(Request $request, User $user)
+    {
+        $this->validate($request, [
+            'local_id' => 'required|unique:users,local_id,' . $user->id,
+            'name' => 'required',
+            'email' => 'required|string|max:255|unique:users,email,' . $user->id,
+        ]);
+
+        $user->local_id = $request->get('local_id');
+        $user->name = $request->get('name');
+        $user->email = $request->get('email');
+        if ($request->get('password')) {
+            $user->password = Hash::make($request->get('password'));
+        }
+        $user->save();
+
+        return redirect()->route('users.edit', $user->id)
+            ->with('message', __('Usuario modificado con éxito'));
     }
 }

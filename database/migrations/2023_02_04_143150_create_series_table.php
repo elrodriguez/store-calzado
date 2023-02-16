@@ -27,7 +27,7 @@ return new class extends Migration
         });
 
         DB::table('series')->insert([
-            ['document_type_id' => 5, 'description' => 'NV01', 'number' => 1]
+            ['document_type_id' => 5, 'description' => 'NV01', 'number' => 1, 'local_id' => 1]
         ]);
     }
 

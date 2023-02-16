@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\LocalSale;
 use App\Models\Serie;
+use App\Models\User;
 use Illuminate\Http\Request;
+use PhpParser\Node\Stmt\TryCatch;
 
 class SerieController extends Controller
 {
@@ -35,7 +38,21 @@ class SerieController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $this->validate($request, [
+            'description'       => 'required|unique:series,description',
+            'number'            => 'required|numeric',
+            'document_type_id'  => 'required'
+        ]);
+
+        $user = User::where('local_id', $request->get('local_id'))->first();
+
+        Serie::create([
+            'document_type_id'      => $request->get('document_type_id'),
+            'description'           => strtoupper($request->get('description')),
+            'number'                => $request->get('number'),
+            'user_id'               => $user->id,
+            'local_id'              => $request->get('local_id')
+        ]);
     }
 
     /**
@@ -78,8 +95,13 @@ class SerieController extends Controller
      * @param  \App\Models\Serie  $serie
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Serie $serie)
+    public function destroy($id)
     {
-        //
+        try {
+            Serie::find($id)->delete();
+            return redirect()->route('establishments.index');
+        } catch (\Exception $e) {
+            return response()->json(['message' => $e]);
+        }
     }
 }

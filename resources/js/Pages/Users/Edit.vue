@@ -7,7 +7,10 @@
             type: Object,
             default: () => ({}),
         },
-
+        xuser:{
+            type: Object,
+            default: () => ({}),
+        }
     });
 
 </script>
@@ -21,7 +24,7 @@
         </template>
         <div>
             <div class="max-w-7xl mx-auto py-10 sm:px-6 lg:px-8">
-                <EditUserForm :establishments="props.establishments" />
+                <EditUserForm :establishments="props.establishments" :xuser="props.xuser" />
             </div>
         </div>
     </AppLayout>

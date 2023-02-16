@@ -9,6 +9,7 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\PettyCashController;
 use App\Http\Controllers\ProviderController;
 use App\Http\Controllers\SaleController;
+use App\Http\Controllers\SerieController;
 use App\Http\Controllers\UserController;
 
 /*
@@ -76,4 +77,11 @@ Route::middleware([
     Route::resource('clients', ClientController::class);
     Route::resource('users', UserController::class);
     Route::resource('establishments', LocalSaleController::class);
+
+    Route::post(
+        'local/series',
+        [LocalSaleController::class, 'series']
+    )->name('localseriesbyid');
+
+    Route::resource('series', SerieController::class);
 });

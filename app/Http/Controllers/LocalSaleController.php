@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\LocalSale;
+use App\Models\SaleDocumentType;
+use App\Models\Serie;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -43,6 +45,7 @@ class LocalSaleController extends Controller
         return Inertia::render('Establishments/List', [
             'locals' => $locals,
             'filters' => request()->all('search'),
+            'document_types' => SaleDocumentType::all()
         ]);
     }
 
@@ -165,5 +168,21 @@ class LocalSaleController extends Controller
     public function destroy(LocalSale $localSale)
     {
         //
+    }
+
+    public function series(Request $request)
+    {
+        $series = Serie::join('sale_document_types', 'document_type_id', 'sale_document_types.id')
+            ->select(
+                'series.document_type_id',
+                'series.description',
+                'series.number',
+                'series.id',
+                'sale_document_types.description AS type_name'
+            )
+            ->where('local_id', $request->get('id'))
+            ->get();
+
+        return response()->json($series);
     }
 }
