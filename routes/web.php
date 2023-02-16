@@ -10,6 +10,7 @@ use App\Http\Controllers\PettyCashController;
 use App\Http\Controllers\ProviderController;
 use App\Http\Controllers\SaleController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\ReportController;
 
 /*
 |--------------------------------------------------------------------------
@@ -76,4 +77,10 @@ Route::middleware([
     Route::resource('clients', ClientController::class);
     Route::resource('users', UserController::class);
     Route::resource('establishments', LocalSaleController::class);
+    Route::resource('reports', ReportController::class);
+
+    Route::get(
+         'reports/sales/{begin_date}/{end_date}',
+         [ReportController::class, 'sales_report']
+     )->name('sales_report');
 });
