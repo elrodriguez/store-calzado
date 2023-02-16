@@ -98,7 +98,8 @@ import ApplicationLogo from '@/Components/ApplicationLogo.vue';
                 </a>
             </div>
             <div class="p-6">
-                <a href="#" type="button" class="w-full inline-block px-6 py-2 border-2 border-yellow-500 text-yellow-500 font-medium text-xs leading-tight uppercase rounded hover:bg-black hover:bg-opacity-5 focus:outline-none focus:ring-0 transition duration-150 ease-in-out">
+
+                <a :href="route('reports.index')"  type="button" class="w-full inline-block px-6 py-2 border-2 border-yellow-500 text-yellow-500 font-medium text-xs leading-tight uppercase rounded hover:bg-black hover:bg-opacity-5 focus:outline-none focus:ring-0 transition duration-150 ease-in-out">
                     Reportes
                     <div class="flex flex-wrap justify-center">
                         <img
@@ -107,6 +108,7 @@ import ApplicationLogo from '@/Components/ApplicationLogo.vue';
                             style="width: 100px;"
                         />
                     </div>
+
                 </a>
             </div>
         </div>

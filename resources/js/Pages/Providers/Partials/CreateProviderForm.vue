@@ -177,7 +177,7 @@ library.add(faTrashAlt);
             <PrimaryButton :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
                 Guardar
             </PrimaryButton>
-            <a :href="route('providers.index')"  class="inline-block px-6 py-2.5 bg-green-500 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-green-600 hover:shadow-lg focus:bg-green-600 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-green-700 active:shadow-lg transition duration-150 ease-in-out mr-2">Ir al Listado</a>
+            <a :href="route('providers.index')"  class="inline-block px-6 py-2.5 bg-green-500 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-green-600 hover:shadow-lg focus:bg-green-600 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-green-700 active:shadow-lg transition duration-150 ease-in-out ml-2">Ir al Listado</a>
         </template>
     </FormSection>
 </template>
