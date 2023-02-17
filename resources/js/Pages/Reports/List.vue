@@ -51,7 +51,8 @@ export default {
   name: "Fechas",
   data: () => ({
     date_start: fecha,
-    date_end: fecha
+    date_end: fecha,
+    download: false
   })
 };
 </script>
@@ -81,11 +82,9 @@ export default {
                                     id="f2" />
                             </div>
                             <div class="">
-                                <button type='submit'
-                                    class='inline-block px-6 py-2.5 bg-gray-800 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-gray-900 hover:shadow-lg focus:bg-gray-900 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-gray-900 active:shadow-lg transition duration-150 ease-in-out'>
-                                    Buscar
-                                </button>
+                               <input type="checkbox" class="form-check-input" v-model="download"><label class="form-check-label">Descargar reportes</label>
                             </div>
+
                             <div class="text-right">
                                 <ModalCashCreate :locals="locals" />
                             </div>
@@ -93,9 +92,15 @@ export default {
 
                     <div class="bg-gray-200 bg-opacity-25 grid grid-cols-1 md:grid-cols-4">
                         <div class="p-6">
-                            <a :href="route('sales_report',[date_start,date_end])" type="button"
+                            <a :href="route('sales_report',[date_start, date_end, download])" type="button" target="_blank"
                                 class=" w-full inline-block px-6 py-2.5 bg-yellow-500 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-yellow-600 hover:shadow-lg focus:bg-yellow-600 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-yellow-700 active:shadow-lg transition duration-150 ease-in-out">
                                 Reporte de Ventas
+                            </a>
+                        </div>
+                        <div class="p-6">
+                            <a :href="route('inventory_report',[download])" type="button" target="_blank"
+                                class=" w-full inline-block px-6 py-2.5 bg-green-500 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-yellow-600 hover:shadow-lg focus:bg-yellow-600 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-yellow-700 active:shadow-lg transition duration-150 ease-in-out">
+                                Reporte de Inventario
                             </a>
                         </div>
                     </div>

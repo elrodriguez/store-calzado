@@ -23,13 +23,9 @@
 
 
 <body><div id="elemento-a-exportar">
-    <h1 class="text-center">Reporte de Ventas</h1><hr>
+    <h1 class="text-center">Reporte de Inventario</h1><hr>
     <img src="{{ env('APP_URL') }}\img\matos.png" class="rounded mx-auto d-block" alt="...">
-@if ($start==$end)
-    <label class="position-absolute end-0 fs-3 px-4">Día: {{ $start }}</label>
-@else
-    <label class="position-absolute end-0 fs-3 px-4">De: {{ $start }} al: {{ $end }}</label>
-@endif
+
 <br><button id="boton-imprimir">Imprimir</button>
 
 <br><hr>
@@ -54,18 +50,11 @@
     $quantities=0;
     $total_price=0;
 @endphp
-                            @foreach ($sales as $key => $sale)
-                            @php
-                            $products=[];
-                            foreach ($sale->saleProduct as $key => $value) {
-                                $products[$key] = json_decode($sale->saleProduct[$key]->product);
-                            }
 
-                            @endphp
                             @foreach ($products as $product)
                                     <tr class="">
                                         <td class="fs-4" style="text-align: center">{{ $x++}}</td>
-                                        <td class="fs-4" style="text-align: center">{{ $product->interne}}</td>
+                                        <td class="fs-4" style="text-align: center">{{ $product->id}}</td>
                                         <td class="fs-4" style="text-align: left"><img src="{{ app('App\Http\Controllers\ReportController')->getImage($product->id) }}" height="42px"> - {{ $product->description}}</td>
                                         <td class="fs-4" style="text-align: center">S/. {{ $product->price }}</td>
                                         <td class="fs-4" style="text-align: center">{{ $product->quantity }}</td>
@@ -75,7 +64,6 @@
                                         $quantities+=$product->quantity;
                                         $total_price += $product->price * $product->quantity;
                                     @endphp
-                            @endforeach
                             @endforeach
                             <tr class="table-dark">
                                 <td class="fs-4" style="text-align: center">#</td>

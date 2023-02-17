@@ -90,7 +90,12 @@ Route::middleware([
     Route::resource('reports', ReportController::class);
 
     Route::get(
-        'reports/sales/{begin_date}/{end_date}',
+        'reports/sales/{begin_date}/{end_date}/{download}',
         [ReportController::class, 'sales_report']
     )->name('sales_report');
+
+    Route::get(
+        'reports/inventory/{download}',
+        [ReportController::class, 'inventory_report']
+    )->name('inventory_report');
 });
