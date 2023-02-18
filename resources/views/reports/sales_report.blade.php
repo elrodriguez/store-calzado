@@ -23,14 +23,18 @@
 
 
 <body><div id="elemento-a-exportar">
-    <h1 class="text-center">Reporte de Ventas</h1><hr>
-    <img src="{{ env('APP_URL') }}\img\matos.png" class="rounded mx-auto d-block" alt="...">
+    <h1 class="text-center">Reporte de Ventas</h1><hr><h2 style="padding-left: 15px">día y hora de reporte: {{ $date }} horas</h2>
+    <img src="\img\matos.png" class="rounded mx-auto d-block" alt="...">
+
 @if ($start==$end)
-    <label class="position-absolute end-0 fs-3 px-4">Día: {{ $start }}</label>
+    <label class="position-absolute end-0 fs-3 px-4">Reporte del Día: {{ $start }}</label>
 @else
-    <label class="position-absolute end-0 fs-3 px-4">De: {{ $start }} al: {{ $end }}</label>
+    <label class="position-absolute end-0 fs-3 px-4">Reporte De: {{ $start }} al: {{ $end }}</label>
 @endif
-<br><button id="boton-imprimir">Imprimir</button>
+<br>
+@if ($print)
+<button id="boton-imprimir">Imprimir</button>
+@endif
 
 <br><hr>
     <div class="limiter">
