@@ -6,7 +6,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="calzado" content="follow">
-
+    <script src="\js\table2excel-master\dist\table2excel.js"></script>
+    <script>
+        function export_excel(date){
+            var table2excel = new Table2Excel();
+                table2excel.export(document.querySelectorAll("table"), "Reporte_Ventas_"+date);
+        }
+    </script>
     <style>
         @charset "UTF-8";
      * Bootstrap v5.0.2 (https://getbootstrap.com/)
@@ -26,14 +32,9 @@
     <h1 class="text-center">Reporte de Ventas</h1><hr><h2 style="padding-left: 15px">día y hora de reporte: {{ $date }} horas</h2>
     <img src="\img\matos.png" class="rounded mx-auto d-block" alt="...">
 
-@if ($start==$end)
-    <label class="position-absolute end-0 fs-3 px-4">Reporte del Día: {{ $start }}</label>
-@else
-    <label class="position-absolute end-0 fs-3 px-4">Reporte De: {{ $start }} al: {{ $end }}</label>
-@endif
 <br>
 @if ($print)
-<button id="boton-imprimir">Imprimir</button>
+<button id="boton-imprimir" class="btn btn-primary">Imprimir</button>-<button id="boton-imprimir" class="btn btn-success" onclick="export_excel({{ '"'.(string)$date.'"' }})">Exportar en Excel</button>
 @endif
 
 <br><hr>
@@ -43,12 +44,19 @@
                 <div>
                     <table class="table table-hover table-striped">
                         <thead>
+                            @if ($start==$end)
+                            <tr><th colspan="7" class="text-center fs-1" style="text-align: center">Matos Store - Ventas de: {{ $start }} </th></tr>
+                            @else
+                            <tr><th colspan="7" class="text-center fs-1" style="text-align: center">Matos Store - Ventas de: {{ $start }} al {{ $end }}</th></tr>
+                            @endif
+
                             <tr class="table-primary">
                                 <th class="text-center fs-3">#</th>
                                 <th class="text-center fs-3">Código</th>
                                 <th class="text-center fs-3">Producto</th>
                                 <th class="text-center fs-3">Precio Vendido</th>
                                 <th class="text-center fs-3">Cantidad</th>
+                                <th class="text-center fs-3">Talla</th>
                                 <th class="text-center fs-3">Total</th>
                             </tr>
                         </thead>
@@ -70,10 +78,11 @@
                                     <tr class="">
                                         <td class="fs-4" style="text-align: center">{{ $x++}}</td>
                                         <td class="fs-4" style="text-align: center">{{ $product->interne}}</td>
-                                        <td class="fs-4" style="text-align: left"><img src="{{ app('App\Http\Controllers\ReportController')->getImage($product->id) }}" height="42px"> - {{ $product->description}}</td>
-                                        <td class="fs-4" style="text-align: center">S/. {{ $product->price }}</td>
+                                        <td class="fs-4" style="text-align: left"><img src="{{ app('App\Http\Controllers\ReportController')->getImage($product->id) }}" height="42px"> {{ $product->description}}</td>
+                                        <td class="fs-4" style="text-align: center">S/ {{ $product->price }}</td>
                                         <td class="fs-4" style="text-align: center">{{ $product->quantity }}</td>
-                                        <td class="fs-4" style="text-align: center">S/. {{ $product->price * $product->quantity }}</td>
+                                        <td class="fs-4" style="text-align: center">{{ $product->size }}</td>
+                                        <td class="fs-4" style="text-align: center">S/ {{ $product->price * $product->quantity }}</td>
                                     </tr>
                                     @php
                                         $quantities+=$product->quantity;
@@ -81,16 +90,21 @@
                                     @endphp
                             @endforeach
                             @endforeach
-                            <tr class="table-dark">
-                                <td class="fs-4" style="text-align: center">#</td>
-                                        <td class="fs-4" style="text-align: center">Totales</td>
-                                        <td class="fs-4" style="text-align: left"></td>
-                                        <td class="fs-4" style="text-align: center"></td>
-                                        <td class="fs-4" style="text-align: center">{{ $quantities}}</td>
-                                        <td class="fs-4" style="text-align: center">S/. {{ $total_price}}</td>
-                            </tr>
-
+                            @if ($x<=1)
+                                <tr><td colspan="7" class="fs-2" style="text-align: center">No hay Registro de ventas en el rango de fechas escogido</td></tr>
+                            @endif
                         </tbody>
+                        <tfoot>
+                            <tr class="table-dark">
+                                        <th class="fs-4" style="text-align: center">#</th>
+                                        <th class="fs-4" style="text-align: center">Totales</th>
+                                        <th class="fs-4" style="text-align: left"></th>
+                                        <th class="fs-4" style="text-align: center"></th>
+                                        <th class="fs-4" style="text-align: center">{{ $quantities}}</th>
+                                        <th class="fs-4" style="text-align: center"></th>
+                                        <th class="fs-4" style="text-align: center">S/ {{ $total_price}}</th>
+                            </tr>
+                        </tfoot>
                     </table>
                 </div>
             </div>

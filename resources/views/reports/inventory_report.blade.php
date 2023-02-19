@@ -7,6 +7,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="calzado" content="follow">
 
+    <script src="\js\table2excel-master\dist\table2excel.js"></script>
+    <script>
+        function export_excel(date){
+            var table2excel = new Table2Excel();
+                table2excel.export(document.querySelectorAll("table"), "Reporte_Inventario_"+date);
+        }
+    </script>
+
     <style>
         @charset "UTF-8";
      * Bootstrap v5.0.2 (https://getbootstrap.com/)
@@ -23,12 +31,11 @@
 
 
 <body><div id="elemento-a-exportar">
-    <h1 class="text-center">Reporte de Inventario</h1><hr><h2 style="padding-left: 15px">día y hora de reporte: {{ $date }} horas</h2>
     <img src="{{ env('APP_URL') }}\img\matos.png" class="rounded mx-auto d-block" alt="...">
 
 <br>
 @if ($print)
-<button id="boton-imprimir">Imprimir</button>
+<button id="boton-imprimir" class="btn btn-primary">Imprimir</button>-<button id="boton-imprimir" class="btn btn-success" onclick="export_excel({{ '"'.(string)$date.'"' }})">Exportar en Excel</button>
 @endif
 
 <br><hr>
@@ -38,6 +45,7 @@
                 <div>
                     <table class="table table-hover table-striped">
                         <thead>
+                            <tr><th colspan="13" class="text-center fs-1" style="text-align: center">Matos Store - Inventario - {{ $date }} horas</th></tr>
                             <tr class="table-primary">
                                 <th class="text-center fs-5">#</th>
                                 <th class="text-center fs-5">Código</th>
@@ -117,14 +125,14 @@
                                         <tr class="table-info">
                                             <td></td>
                                             <td></td>
-                                            <td style="text-align:left">Totales parciales</td>
+                                            <th style="text-align:left">Totales parciales</th>
                                             <td>Disponibles</td>
-                                            <td style="text-align: center"><b>{{ $q_prod }}</b></td>
+                                            <th style="text-align: center"><b>{{ $q_prod }}</b></th>
                                             <td>Costo en producto</td>
-                                            <td class="table-warning" style="text-align: center"><b>S/ {{ $q_prod * $product->purchase_prices }}</b></td>
+                                            <th class="table-warning" style="text-align: center"><b>S/ {{ $q_prod * $product->purchase_prices }}</b></th>
                                             <td></td>
                                             <td colspan="3" style="text-align: right">Ganancias esperadas para este producto entre: </td>
-                                            <td colspan="2" class="table-warning" style="text-align: center"><b>S/ {{ $g_min }} y S/ {{ $g_max }}</b></td>
+                                            <th colspan="2" class="table-warning" style="text-align: center"><b>S/ {{ $g_min }} y S/ {{ $g_max }}</b></th>
                                             @php
                                                 $quantities_total+=$q_prod;
                                                 $costo_total+=$q_prod * $product->purchase_prices;
@@ -133,18 +141,19 @@
                                             @endphp
                                         </tr>
                             @endforeach
-                            <tr class="table-dark">
-                                <td class="fs-5" style="text-align: center">#</td>
-                                        <td class="fs-5" style="text-align: center">Totales</td>
-                                        <td colspan="2" class="fs-5" style="text-align: right">Calzados disponibles:</td>
-                                        <td class="fs-5" style="text-align: center">{{ $quantities_total}}</td>
-                                        <td class="fs-5" style="text-align: center">Costo de Inventario</td>
-                                        <td class="fs-5" style="text-align: center">S/. {{ $costo_total}}</td>
-                                        <td colspan="4" class="fs-5" style="text-align: right">Ganancias esperadas en tienda:</td>
-                                        <td colspan="2" class="fs-5" style="text-align: center"><b>S/ {{ $ganancia_min_total }} y S/ {{ $ganancia_max_total }}</b></td>
-                            </tr>
-
                         </tbody>
+                        <tfoot>
+                            <tr class="table-dark">
+                                <th class="fs-5" style="text-align: center">#</th>
+                                        <th class="fs-5" style="text-align: center">Totales</th>
+                                        <th colspan="2" class="fs-5" style="text-align: right">Calzados disponibles:</th>
+                                        <th class="fs-5" style="text-align: center">{{ $quantities_total}}</th>
+                                        <th class="fs-5" style="text-align: center">Costo de Inventario</th>
+                                        <th class="fs-5" style="text-align: center">S/. {{ $costo_total}}</th>
+                                        <th colspan="4" class="fs-5" style="text-align: right">Ganancias esperadas en tienda:</th>
+                                        <th colspan="2" class="fs-5" style="text-align: center"><b>S/ {{ $ganancia_min_total }} y S/ {{ $ganancia_max_total }}</b></th>
+                            </tr>
+                        </tfoot>
                     </table>
                 </div>
             </div>
