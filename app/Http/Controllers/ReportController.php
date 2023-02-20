@@ -20,13 +20,26 @@ class ReportController extends Controller
      */
     public function index()
     {
-        return Inertia::render('Reports/List', [
+        return Inertia::render('Reports/List');
+    }
+
+    public function sales_report()
+    {
+        return Inertia::render('Reports/SaleReport', [
             'filters' => request()->all('search'),
             'locals' => LocalSale::all(),
         ]);
     }
 
-    public function sales_report($start, $end, $download)
+    public function inventory_report()
+    {
+        return Inertia::render('Reports/InventoryReport', [
+            'filters' => request()->all('search'),
+            'locals' => LocalSale::all(),
+        ]);
+    }
+
+    public function sales_report_export($start, $end, $download)
     {
         $sales = Sale::whereDate('created_at', '>=', $start)
             ->whereDate('created_at', '<=', $end)
@@ -65,7 +78,7 @@ class ReportController extends Controller
         return Product::where('id', $product_id)->select('image')->get()->first()->image;
     }
 
-    public function inventory_report($download)
+    public function inventory_report_export($download)
     {
 
         $products = Product::where('stock', '>', 0)->get();

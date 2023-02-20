@@ -87,15 +87,29 @@ Route::middleware([
 
     Route::resource('series', SerieController::class);
 
-    Route::resource('reports', ReportController::class);
+    Route::get(
+        'reports/list',
+        [ReportController::class, 'index']
+    )->name('reports');
+
+    Route::get(
+        'reports/saleindate',
+        [ReportController::class, 'sales_report']
+    )->name('sale_report');
+
+    Route::get(
+        'reports/inventoryindate',
+        [ReportController::class, 'inventory_report']
+    )->name('inventory_report');
+
 
     Route::get(
         'reports/sales/{begin_date}/{end_date}/{download}',
-        [ReportController::class, 'sales_report']
-    )->name('sales_report');
+        [ReportController::class, 'sales_report_export']
+    )->name('sales_report_export');
 
     Route::get(
         'reports/inventory/{download}',
-        [ReportController::class, 'inventory_report']
-    )->name('inventory_report');
+        [ReportController::class, 'inventory_report_export']
+    )->name('inventory_report_export');
 });
