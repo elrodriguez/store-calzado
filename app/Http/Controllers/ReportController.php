@@ -24,6 +24,21 @@ class ReportController extends Controller
             'locals' => LocalSale::all(),
         ]);
     }
+    public function roport_sale()
+    {
+        return Inertia::render('Reports/List', [
+            'filters' => request()->all('search'),
+            'locals' => LocalSale::all(),
+        ]);
+    }
+
+    public function roport_inventory()
+    {
+        return Inertia::render('Reports/List', [
+            'filters' => request()->all('search'),
+            'locals' => LocalSale::all(),
+        ]);
+    }
 
     public function sales_report($start, $end, $download)
     {
@@ -37,7 +52,7 @@ class ReportController extends Controller
             $file = public_path('ticket/') . 'reporteVentas_' . $start . '_al_' . $end . '.pdf';
         }
 
-        if ($download =="false") {
+        if ($download == "false") {
             return view('reports.sales_report', ['sales' => $sales, 'start' => $start, 'end' => $end]);
         } else {
             $pdf = PDF::loadView('reports.sales_report', ['sales' => $sales, 'start' => $start, 'end' => $end]);
@@ -54,12 +69,13 @@ class ReportController extends Controller
         return Product::where('id', $product_id)->select('image')->get()->first()->image;
     }
 
-    public function inventory_report($download){
+    public function inventory_report($download)
+    {
 
         $products = Product::where('stock', '>', 0)->get();
         $date = new Date();
 
-        if ($download =="false") {
+        if ($download == "false") {
             return view('reports.inventory_report', ['products' => $products, 'date' => $date]);
         } else {
             $file = public_path('ticket/') . 'reporteInventario_' . $date . '.pdf';
