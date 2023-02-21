@@ -6,7 +6,8 @@
     import { useForm } from '@inertiajs/vue3';
     import ModalPrintSale from './Partials/ModalPrintSale.vue';
     import { ref, watch } from 'vue';
-    
+    import Keypad from '@/Components/Keypad.vue';
+
     const props = defineProps({
         payments: {
             type: Object,
@@ -187,10 +188,14 @@
                         </div>
                         <div class="grid grid-cols-6 gap-4">
                             <div class="col-end-7 col-span-4 text-right">
-                                <button @click="saveSale()" type="button" class=" inline-block px-6 py-2.5 bg-red-600 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-red-700 hover:shadow-lg focus:bg-red-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-red-800 active:shadow-lg transition duration-150 ease-in-out">
-                                    Cobrar
-                                </button>
-                                <a :href="route('sales.index')"  class="ml-2 inline-block px-6 py-2.5 bg-green-500 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-green-600 hover:shadow-lg focus:bg-green-600 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-green-700 active:shadow-lg transition duration-150 ease-in-out">Ir al Listado</a>
+                                <Keypad>
+                                    <template #botones>
+                                        <button @click="saveSale()" type="button" class=" inline-block px-6 py-2.5 bg-red-600 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-red-700 hover:shadow-lg focus:bg-red-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-red-800 active:shadow-lg transition duration-150 ease-in-out">
+                                            Cobrar
+                                        </button>
+                                        <a :href="route('sales.index')"  class="ml-2 inline-block px-6 py-2.5 bg-green-500 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-green-600 hover:shadow-lg focus:bg-green-600 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-green-700 active:shadow-lg transition duration-150 ease-in-out">Ir al Listado</a>
+                                    </template>
+                                </Keypad>
                             </div>
                         </div>
                     </div>

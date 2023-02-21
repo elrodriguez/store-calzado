@@ -3,9 +3,7 @@
     import { useForm } from '@inertiajs/vue3';
     import { faTrashAlt, faPencilAlt, faPrint, faWarehouse } from "@fortawesome/free-solid-svg-icons";
     import Pagination from '@/Components/Pagination.vue';
-    import DialogModal from '@/Components/DialogModal.vue';
-    import SecondaryButton from '@/Components/SecondaryButton.vue';
-
+    import Keypad from '@/Components/Keypad.vue';
     const props = defineProps({
         sales: {
             type: Object,
@@ -47,7 +45,11 @@
                             </div>
                         </form>
                         <div class="text-right">
-                            <a :href="route('sales.create')" class="inline-block px-6 py-2.5 bg-blue-900 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg transition duration-150 ease-in-out">Nuevo</a>
+                            <Keypad>
+                                <template #botones>
+                                    <a :href="route('sales.create')" class="inline-block px-6 py-2.5 bg-blue-900 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg transition duration-150 ease-in-out">Nuevo</a>
+                                </template>
+                            </Keypad>
                         </div>
                     </div>
                     <div class="relative overflow-x-auto shadow-md sm:rounded-lg mb-2">

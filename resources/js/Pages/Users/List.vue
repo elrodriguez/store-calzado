@@ -3,6 +3,7 @@
     import { useForm } from '@inertiajs/vue3';
     import { faTrashAlt, faPencilAlt, faPrint, faWarehouse } from "@fortawesome/free-solid-svg-icons";
     import Pagination from '@/Components/Pagination.vue';
+    import Keypad from '@/Components/Keypad.vue';
 
     const props = defineProps({
         users: {
@@ -49,8 +50,12 @@
                                 <input v-model="form.search" type="text" id="table-search-users" class="block p-2 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Buscar venta por fecha">
                             </div>
                         </form>
-                        <div v-can="'productos_nuevo'" class="text-right">
-                            <a :href="route('users.create')" class="inline-block px-6 py-2.5 bg-blue-900 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg transition duration-150 ease-in-out">Nuevo</a>
+                        <div class="text-right">
+                            <Keypad>
+                                <template #botones>
+                                    <a :href="route('users.create')" class="inline-block px-6 py-2.5 bg-blue-900 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg transition duration-150 ease-in-out">Nuevo</a>
+                                </template>
+                            </Keypad>
                         </div>
                     </div>
                     <div class="relative overflow-x-auto shadow-md sm:rounded-lg mb-2">
