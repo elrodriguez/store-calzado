@@ -161,7 +161,7 @@
         <div>
             <div class="max-w-7xl mx-auto py-10 sm:px-6 lg:px-8">
                 <div class="col-span-6 p-4 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
-                  <div class="grid grid-cols-2 gap-4">
+                  <div class="grid grid-cols-2 gap-4 pb-4">
                        <div class="col-span-2 sm:col-span-1">
                           <form @submit.prevent="form.get(route('products.index'))">
                               <label for="table-search" class="sr-only">Search</label>
