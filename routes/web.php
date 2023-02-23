@@ -70,12 +70,12 @@ Route::middleware([
     )->name('show_detail_product');
 
     Route::post(
-        'products/showdetails/{id}',
+        'showdetails/products/{id}',
         [ProductController::class, 'showdetails']
     )->name('showdetails');
 
     Route::post(
-        'products/input',
+        'input/products',
         [ProductController::class, 'saveInput']
     )->name('input_products');
 
@@ -114,7 +114,7 @@ Route::middleware([
     )->name('sales_report_export');
 
     Route::post(
-        'product/upload/image',
+        'upload/image/product',
         [ProductController::class, 'imageUpload']
     )->name('product_upload_image');
 });

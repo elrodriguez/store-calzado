@@ -82,18 +82,7 @@ class ProductController extends Controller
                 'sizes.*.quantity.required' => 'Ingrese Cantidad',
             ]
         );
-        $path = 'img/imagen-no-disponible.jpeg';
-        $destination = 'uploads/products';
-        $file = $request->file('image');
-        if ($file) {
-            $original_name = strtolower(trim($file->getClientOriginalName()));
-            $file_name = time() . rand(100, 999) . $original_name;
-            $path = $request->file('image')->storeAs(
-                $destination,
-                $file_name,
-                'public'
-            );
-        }
+
         $total = 0;
         foreach ($request->get('sizes') as $k => $item) {
             $total = $total + $item['quantity'];
@@ -104,7 +93,7 @@ class ProductController extends Controller
             'usine' => $request->get('usine'),
             'interne'  => $request->get('interne'),
             'description'  => $request->get('description'),
-            'image'  => $path,
+            'image'  => $request->get('image'),
             'purchase_prices'  => $request->get('purchase_prices'),
             'sale_prices'  => json_encode($request->get('sale_prices')),
             'sizes'  => json_encode($request->get('sizes')),
@@ -159,73 +148,20 @@ class ProductController extends Controller
     {
         //dd($request->all());
         $this->validate($request, [
-            $request,
-            [
-                'interne' => 'required|unique:products,interne,' . $product->id,
-                'description' => 'required',
-                'purchase_prices' => 'required',
-                'sale_prices.high' => 'required',
-                'sizes.*.size' => 'required|numeric',
-                'sizes.*.quantity' => 'required|numeric',
-            ],
-            [
-                'sizes.*.size.required' => 'Ingrese Talla',
-                'sizes.*.quantity.required' => 'Ingrese Cantidad',
-            ]
-        ]);
-
-        $path = 'img/imagen-no-disponible.jpeg';
-        $destination = 'uploads/products';
-        $file = $request->file('image');
-
-        if ($file) {
-            $original_name = strtolower(trim($file->getClientOriginalName()));
-            $file_name = time() . rand(100, 999) . $original_name;
-            $path = $request->file('image')->storeAs(
-                $destination,
-                $file_name,
-                'public'
-            );
-        }
-
-        $total = 0;
-
-        foreach ($request->get('sizes') as $k => $item) {
-            $total = $total + $item['quantity'];
-        }
-
-        if ($total < Product::find($product->id)->stock) {
-            Kardex::create([
-                'date_of_issue' => Carbon::now()->format('Y-m-d'),
-                'motion' => 'purchase',
-                'product_id' => $product->id,
-                'local_id' => 1,
-                'quantity' => - (Product::find($product->id)->stock),
-                'description' => 'Stock Modificado'
-            ]);
-        }
-
-        $product->update([
-            'usine' => $request->get('usine'),
-            'interne'  => $request->get('interne'),
-            'description'  => $request->get('description'),
-            'image'  => $path,
-            'purchase_prices'  => $request->get('purchase_prices'),
-            'sale_prices'  => json_encode($request->get('sale_prices')),
-            'sizes'  => json_encode($request->get('sizes')),
-            'stock_min'  => 1,
-            'stock'  => $total
+            'interne' => 'required|unique:products,interne,' . $product->id,
+            'description' => 'required',
+            'purchase_prices' => 'required',
+            'sale_prices.high' => 'required'
         ]);
 
 
-        Kardex::create([
-            'date_of_issue' => Carbon::now()->format('Y-m-d'),
-            'motion' => 'purchase',
-            'product_id' => $product->id,
-            'local_id' => 1,
-            'quantity' => $total,
-            'description' => 'Stock Modificado'
-        ]);
+        $product->usine = $request->get('usine');
+        $product->interne = $request->get('interne');
+        $product->description = $request->get('description');
+        $product->purchase_prices = $request->get('purchase_prices');
+        $product->sale_prices = $request->get('sale_prices');
+        $product->sizes = $request->get('sizes');
+        $product->save();
 
         return redirect()->route('products.edit', $product->id)
             ->with('message', __('Producto editado con éxito'));
@@ -371,17 +307,22 @@ class ProductController extends Controller
         $mime = mime_content_type($tempFile);
         $name = uniqid('', true) . '.' . str_replace('image/', '', $mime);
         $file = new UploadedFile($tempFile, $name, $mime, null, true);
-
+        $path = null;
         if ($file) {
             $original_name = strtolower(trim($file->getClientOriginalName()));
             $file_name = time() . rand(100, 999) . $original_name;
             $path = Storage::disk('public')->putFileAs($destination, $file, $file_name);
-
+        }
+        $product = [];
+        if ($product_id) {
             Product::find($product_id)->update([
                 'image' => $path
             ]);
+            $product = Product::find($product_id);
         }
-
-        return response()->json(Product::find($product_id));
+        return response()->json([
+            'product' => $product,
+            'path' => $path
+        ]);
     }
 }

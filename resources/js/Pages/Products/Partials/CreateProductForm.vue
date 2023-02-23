@@ -8,6 +8,7 @@ import TextInput from '@/Components/TextInput.vue';
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { faTrashAlt } from "@fortawesome/free-solid-svg-icons";
 import Keypad from '@/Components/Keypad.vue';
+import ModalCropperImage from './ModalCropperImage.vue';
 
 const props = defineProps({
     establishments: {
@@ -16,51 +17,57 @@ const props = defineProps({
     }
 });
 
-const form = useForm({
-    usine: '',
-    interne: '',
-    description: '',
-    image: '',
-    purchase_prices: '',
-    sale_prices:{
-        high:'',
-        medium: '',
-        under:''
-    },
-    sizes: [{
-        size:'',
-        quantity: ''
-    }],
-    stock_min:'',
-    stock:'',
-    local_id: 1
+    const form = useForm({
+        usine: '',
+        interne: '',
+        description: '',
+        image: '',
+        pathImage: '',
+        purchase_prices: '',
+        sale_prices:{
+            high:'',
+            medium: '',
+            under:''
+        },
+        sizes: [{
+            size:'',
+            quantity: ''
+        }],
+        stock_min:'',
+        stock:'',
+        local_id: 1
 
-});
-
-const createProduct = () => {
-    form.post(route('products.store'), {
-        forceFormData: true,
-        errorBag: 'createProduct',
-        preserveScroll: true,
-        onSuccess: () => form.reset(),
     });
-};
 
-const addSize = () => {
-    let ar = {
-        size:'',
-        quantity: ''
+    const createProduct = () => {
+        form.post(route('products.store'), {
+            forceFormData: true,
+            errorBag: 'createProduct',
+            preserveScroll: true,
+            onSuccess: () => form.reset(),
+        });
     };
-    form.sizes.push(ar);
-};
 
-const removeSize = (index) => {
-    if(index>0){
-        form.sizes.splice(index,1);
+    const addSize = () => {
+        let ar = {
+            size:'',
+            quantity: ''
+        };
+        form.sizes.push(ar);
+    };
+
+    const removeSize = (index) => {
+        if(index>0){
+            form.sizes.splice(index,1);
+        }
+    };
+
+     const getDataProductImage = (data) => {
+        form.pathImage = '/storage/' + data.path;
+        form.image = data.path;
     }
-};
 
-library.add(faTrashAlt);
+    library.add(faTrashAlt);
 
 </script>
 
@@ -119,10 +126,13 @@ library.add(faTrashAlt);
             </div>
             <div class="col-span-6 sm:col-span-4">
                 <InputLabel for="image" value="Imagen" />
-                <input type="file" @input="form.image = $event.target.files[0]" />
-                <progress v-if="form.progress" :value="form.progress.percentage" max="100">
-                    {{ form.progress.percentage }}%
-                </progress>
+                <div class="flex justify-center space-x-2">
+                    <figure class="max-w-lg">
+                        <img class="h-auto max-w-full rounded-lg" :src="form.pathImage">
+                        <figcaption class="mt-2 text-sm text-center text-gray-500 dark:text-gray-400">Imagen</figcaption>
+                    </figure>
+                </div>
+                <ModalCropperImage @eventdataproduct="getDataProductImage"></ModalCropperImage>
             </div>
             <div class="col-span-6 sm:col-span-2">
                 <InputLabel for="purchase_prices" value="Precio de compra" />

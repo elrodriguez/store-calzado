@@ -7,9 +7,9 @@
     import TextInput from '@/Components/TextInput.vue';
     import { library } from "@fortawesome/fontawesome-svg-core";
     import { faTrashAlt } from "@fortawesome/free-solid-svg-icons";
-    import { router } from '@inertiajs/vue3'
     import Keypad from '@/Components/Keypad.vue';
     import ModalCropperImage from './ModalCropperImage.vue';
+    import swal from 'sweetalert';
 
     const props = defineProps({
         product: {
@@ -26,34 +26,20 @@
         purchase_prices: props.product.purchase_prices,
         sale_prices: JSON.parse(props.product.sale_prices),
         sizes: JSON.parse(props.product.sizes),
-        stock_min:props.product.stock_min,
-        stock: props.product.stock
     });
 
     const editProduct = () => {
         form.put(route('products.update', props.product.id), {
-            //forceFormData: true,
             errorBag: 'editProduct',
             preserveScroll: true,
+            onSuccess: () => {
+                swal('Producto actualizada con éxito');
+            }
         });
     };
 
-    const addSize = () => {
-        let ar = {
-            size:'',
-            quantity: ''
-        };
-        form.sizes.push(ar);
-    };
-
-    const removeSize = (index) => {
-        if(index>0){
-            form.sizes.splice(index,1);
-        }
-    };
-
-    const getDataProductImage = (product) => {
-        form.image = product.image;
+    const getDataProductImage = (data) => {
+        form.image = data.product.image;
     }
 
     library.add(faTrashAlt);

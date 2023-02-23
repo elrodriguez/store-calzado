@@ -112,10 +112,10 @@
                     <div class="px-4 py-3 sm:px-6">
                         <input type="file" @change="onFileChange">
                         <vue-cropper 
-                            ref="cropper" 
-                            v-if="showCropper" 
-                            :src="cropperImage"
-                            :aspect-ratio="1"
+                        ref="cropper" 
+                        v-if="showCropper" 
+                        :src="cropperImage"
+                        :aspect-ratio="1"
                         ></vue-cropper>
                     </div>
                     <div class="flex flex-row justify-end px-6 py-4 bg-gray-100 text-right">
