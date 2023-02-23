@@ -4,9 +4,13 @@
     import SecondaryButton from '@/Components/SecondaryButton.vue';
     import { ref } from 'vue';
     import { useForm } from '@inertiajs/vue3';
+    import swal from 'sweetalert';
 
     const displayModal = ref(false);
 
+    const formScaner = useForm({
+        scaner: false
+    });
     const form = useForm({
         search: null,
         products: [],
@@ -22,9 +26,35 @@
         }
     });
     const searchProducts = async () => {
-        axios.post(route('search_product'), form ).then((res) => {
-            form.products = res;
-        });
+        if(formScaner.scaner){
+            axios.post(route('search_scaner_product'), form ).then((product) => {
+                if(Object.entries(product).length > 0){
+                    displayModal.value = true;
+                    form.products = [];
+                    form.product = product.data;
+                    form.data.id = product.data.id;
+                    form.data.interne = product.data.interne;
+                    form.data.stock = product.data.stock;
+                    form.data.description = product.data.description;
+                    form.data.price = JSON.parse(product.data.sale_prices).high;
+                    form.data.total = 0;
+                    form.data.quantity = 1;
+                    form.search = null;
+                }else{
+                    swal('No se encontró producto');
+                }
+                
+            });
+        }else{
+            axios.post(route('search_product'), form ).then((res) => {
+                if(res){
+                    form.products = res;
+                }else{
+                    swal('No se encontró producto');
+                }
+                
+            });
+        }
     };
     const closeModalSelectProduct  = () => {
         displayModal.value = false;
@@ -58,7 +88,7 @@
                 quantity: form.data.quantity,
                 size: form.data.size,
             }
-            emit('eventdata',data)
+            emit('eventdata',data);
             displayModal.value = false;
         }else{
             alert('Seleccionar Talla')
@@ -70,13 +100,31 @@
 <template>
     <div style="position: relative;">
         <form @submit.prevent="searchProducts()"> 
-            <label for="search" class="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white">Search</label>
-            <div class="relative">
-                <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                    <svg aria-hidden="true" class="w-5 h-5 text-gray-500 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+            <div class="flex">
+
+                <label for="search" class="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white">Search</label>
+                <div class="flex-shrink-0 z-10 inline-flex items-center py-2.5 px-4 text-sm font-medium text-center text-gray-900 bg-gray-100 border border-gray-300 dark:border-gray-700 dark:text-white rounded-l-lg hover:bg-gray-200 focus:ring-4 focus:outline-none focus:ring-gray-300 dark:bg-gray-600 dark:hover:bg-gray-700 dark:focus:ring-gray-800" >
+                    <div class="mb-[0.125rem] block min-h-[1.5rem] pl-[1.5rem]">
+                        <input
+                            class="relative float-left mt-[0.15rem] mr-[6px] -ml-[1.5rem] h-[1.125rem] w-[1.125rem] appearance-none rounded-[0.25rem] border-[0.125rem] border-solid border-[rgba(0,0,0,0.25)] bg-white outline-none before:pointer-events-none before:absolute before:h-[0.875rem] before:w-[0.875rem] before:scale-0 before:rounded-full before:bg-transparent before:opacity-0 before:shadow-[0px_0px_0px_13px_transparent] before:content-[''] checked:border-primary checked:bg-primary checked:before:opacity-[0.16] checked:after:absolute checked:after:ml-[0.25rem] checked:after:-mt-px checked:after:block checked:after:h-[0.8125rem] checked:after:w-[0.375rem] checked:after:rotate-45 checked:after:border-[0.125rem] checked:after:border-t-0 checked:after:border-l-0 checked:after:border-solid checked:after:border-white checked:after:bg-transparent checked:after:content-[''] hover:cursor-pointer hover:before:opacity-[0.04] hover:before:shadow-[0px_0px_0px_13px_rgba(0,0,0,0.6)] focus:shadow-none focus:transition-[border-color_0.2s] focus:before:scale-100 focus:before:opacity-[0.12] focus:before:shadow-[0px_0px_0px_13px_rgba(0,0,0,0.6)] focus:before:transition-[box-shadow_0.2s,transform_0.2s] focus:after:absolute focus:after:z-[1] focus:after:block focus:after:h-[0.875rem] focus:after:w-[0.875rem] focus:after:rounded-[0.125rem] focus:after:bg-white focus:after:content-[''] checked:focus:border-primary checked:focus:bg-primary checked:focus:before:scale-100 checked:focus:before:shadow-[0px_0px_0px_13px_#3b71ca] checked:focus:before:transition-[box-shadow_0.2s,transform_0.2s] checked:focus:after:ml-[0.25rem] checked:focus:after:-mt-px checked:focus:after:h-[0.8125rem] checked:focus:after:w-[0.375rem] checked:focus:after:rotate-45 checked:focus:after:rounded-none checked:focus:after:border-[0.125rem] checked:focus:after:border-t-0 checked:focus:after:border-l-0 checked:focus:after:border-solid checked:focus:after:border-white checked:focus:after:bg-transparent"
+                            type="checkbox"
+                            v-model="formScaner.scaner"
+                            id="scaner" />
+                        <label
+                            class="inline-block pl-[0.15rem] hover:cursor-pointer"
+                            for="scaner">
+                            Scaner
+                        </label>
+                    </div>
                 </div>
-                <input v-model="form.search" autocomplete="off" type="search" id="search" class="block w-full p-4 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Buscar Producto" required>
-                <button type="submit" class="text-white absolute right-2.5 bottom-2.5 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Buscar</button>
+                
+                <div class="relative w-full">
+                    <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                        <svg aria-hidden="true" class="w-5 h-5 text-gray-500 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                    </div>
+                    <input v-model="form.search" autocomplete="off" type="search" id="search" class="block w-full p-4 pl-10 text-sm text-gray-900 border border-gray-300 rounded-r-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Buscar Producto" required>
+                    <button type="submit" class="text-white absolute right-2.5 bottom-2.5 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Buscar</button>
+                </div>
             </div>
         </form>
         <div  id="result" style="position: absolute;width: 100%;">

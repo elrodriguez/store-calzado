@@ -60,6 +60,11 @@ Route::middleware([
     )->name('search_product');
 
     Route::post(
+        'search/scaner/products',
+        [ProductController::class, 'searchScanerProduct']
+    )->name('search_scaner_product');
+
+    Route::post(
         'show/detail_product',
         [ProductController::class, 'showDetailProduct']
     )->name('show_detail_product');
@@ -108,8 +113,8 @@ Route::middleware([
         [ReportController::class, 'sales_report_export']
     )->name('sales_report_export');
 
-    Route::get(
-        'reports/inventory/{download}',
-        [ReportController::class, 'inventory_report_export']
-    )->name('inventory_report_export');
+    Route::post(
+        'product/upload/image',
+        [ProductController::class, 'imageUpload']
+    )->name('product_upload_image');
 });

@@ -9,7 +9,8 @@
     import { faTrashAlt } from "@fortawesome/free-solid-svg-icons";
     import { router } from '@inertiajs/vue3'
     import Keypad from '@/Components/Keypad.vue';
-    
+    import ModalCropperImage from './ModalCropperImage.vue';
+
     const props = defineProps({
         product: {
             type: Object,
@@ -21,7 +22,7 @@
         usine: props.product.usine,
         interne: props.product.interne,
         description: props.product.description,
-        image: '',
+        image: props.product.image,
         purchase_prices: props.product.purchase_prices,
         sale_prices: JSON.parse(props.product.sale_prices),
         sizes: JSON.parse(props.product.sizes),
@@ -50,6 +51,10 @@
             form.sizes.splice(index,1);
         }
     };
+
+    const getDataProductImage = (product) => {
+        form.image = product.image;
+    }
 
     library.add(faTrashAlt);
 
@@ -100,10 +105,16 @@
                 />
                 <InputError :message="form.errors.description" class="mt-2" />
             </div>
-            <!-- <div class="col-span-6 sm:col-span-4">
+            <div class="col-span-6 sm:col-span-4">
                 <InputLabel for="image" value="Imagen" />
-                <input type="file" @input="form.image = $event.target.files[0]" />
-            </div> -->
+                <div class="flex justify-center space-x-2">
+                    <figure class="max-w-lg">
+                        <img class="h-auto max-w-full rounded-lg" :src="form.image">
+                        <figcaption class="mt-2 text-sm text-center text-gray-500 dark:text-gray-400">Imagen Actual</figcaption>
+                    </figure>
+                </div>
+                <ModalCropperImage @eventdataproduct="getDataProductImage" :product="props.product"></ModalCropperImage>
+            </div>
             <div class="col-span-6 sm:col-span-2">
                 <InputLabel for="purchase_prices" value="Precio de compra" />
                 <TextInput

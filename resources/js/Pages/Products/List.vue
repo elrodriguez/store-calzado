@@ -13,6 +13,7 @@
     import swal from 'sweetalert';
     import Keypad from '@/Components/Keypad.vue';
 
+
     const props = defineProps({
         products: {
             type: Object,
@@ -470,5 +471,6 @@
                 </DangerButton>
             </template>
         </DialogModal>
+        
     </AppLayout>
 </template>

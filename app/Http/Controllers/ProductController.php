@@ -9,6 +9,8 @@ use App\Models\Product;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 
 class ProductController extends Controller
 {
@@ -250,6 +252,13 @@ class ProductController extends Controller
         return response()->json($products);
     }
 
+    public function searchScanerProduct(Request $request)
+    {
+        $search = $request->get('search');
+        $product = Product::where('interne', $search)->first();
+        return response()->json($product);
+    }
+
     public function showdetails($id)
     {
         $product = Product::where('id', $id)->first();
@@ -348,5 +357,31 @@ class ProductController extends Controller
             'sizes' => json_encode($pro_sizes),
             'stock' => $pt
         ]);
+    }
+
+    public function imageUpload(Request $request)
+    {
+
+        $destination = 'uploads/products';
+        $base64Image = $request->get('image');
+        $product_id = $request->get('product_id');
+        $fileData = base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', $base64Image));
+        $tempFile = tempnam(sys_get_temp_dir(), 'img');
+        file_put_contents($tempFile, $fileData);
+        $mime = mime_content_type($tempFile);
+        $name = uniqid('', true) . '.' . str_replace('image/', '', $mime);
+        $file = new UploadedFile($tempFile, $name, $mime, null, true);
+
+        if ($file) {
+            $original_name = strtolower(trim($file->getClientOriginalName()));
+            $file_name = time() . rand(100, 999) . $original_name;
+            $path = Storage::disk('public')->putFileAs($destination, $file, $file_name);
+
+            Product::find($product_id)->update([
+                'image' => $path
+            ]);
+        }
+
+        return response()->json(Product::find($product_id));
     }
 }
