@@ -22,7 +22,6 @@ const props = defineProps({
         interne: '',
         description: '',
         image: '',
-        pathImage: '',
         purchase_prices: '',
         sale_prices:{
             high:'',
@@ -126,13 +125,17 @@ const props = defineProps({
             </div>
             <div class="col-span-6 sm:col-span-4">
                 <InputLabel for="image" value="Imagen" />
-                <div class="flex justify-center space-x-2">
+                <!-- <div class="flex justify-center space-x-2">
                     <figure class="max-w-lg">
                         <img class="h-auto max-w-full rounded-lg" :src="form.pathImage">
                         <figcaption class="mt-2 text-sm text-center text-gray-500 dark:text-gray-400">Imagen</figcaption>
                     </figure>
                 </div>
-                <ModalCropperImage @eventdataproduct="getDataProductImage"></ModalCropperImage>
+                <ModalCropperImage @eventdataproduct="getDataProductImage"></ModalCropperImage> -->
+                <input type="file" @input="form.image = $event.target.files[0]" />
+                <progress v-if="form.progress" :value="form.progress.percentage" max="100">
+                    {{ form.progress.percentage }}%
+                </progress>
             </div>
             <div class="col-span-6 sm:col-span-2">
                 <InputLabel for="purchase_prices" value="Precio de compra" />

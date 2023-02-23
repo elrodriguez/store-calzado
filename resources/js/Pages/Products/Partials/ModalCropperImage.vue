@@ -35,7 +35,9 @@
             };
         }
     }
+
     const emit = defineEmits(['eventdataproduct']);
+
     const cropImage = () => {
         const croppedImage = cropper.getCroppedCanvas().toDataURL()
         form.image = croppedImage;
@@ -82,7 +84,7 @@
 <script>
     export default {
         components: { VueCropper },
-            setup() {
+        setup() {
             return { image, cropperOptions, selectImage, cropImage, cropperRef,isModalOpen, openModal, closeModal }
         }
     }
@@ -113,9 +115,9 @@
                         <input type="file" @change="onFileChange">
                         <vue-cropper 
                         ref="cropper" 
-                        v-if="showCropper" 
-                        :src="cropperImage"
-                        :aspect-ratio="1"
+                            v-if="showCropper" 
+                            :src="cropperImage"
+                            :aspect-ratio="1"
                         ></vue-cropper>
                     </div>
                     <div class="flex flex-row justify-end px-6 py-4 bg-gray-100 text-right">

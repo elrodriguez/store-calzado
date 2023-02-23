@@ -82,7 +82,18 @@ class ProductController extends Controller
                 'sizes.*.quantity.required' => 'Ingrese Cantidad',
             ]
         );
-
+        $path = 'img/imagen-no-disponible.jpeg';
+        $destination = 'uploads/products';
+        $file = $request->file('image');
+        if ($file) {
+            $original_name = strtolower(trim($file->getClientOriginalName()));
+            $file_name = time() . rand(100, 999) . $original_name;
+            $path = $request->file('image')->storeAs(
+                $destination,
+                $file_name,
+                'public'
+            );
+        }
         $total = 0;
         foreach ($request->get('sizes') as $k => $item) {
             $total = $total + $item['quantity'];
@@ -93,7 +104,7 @@ class ProductController extends Controller
             'usine' => $request->get('usine'),
             'interne'  => $request->get('interne'),
             'description'  => $request->get('description'),
-            'image'  => $request->get('image'),
+            'image'  => $path,
             'purchase_prices'  => $request->get('purchase_prices'),
             'sale_prices'  => json_encode($request->get('sale_prices')),
             'sizes'  => json_encode($request->get('sizes')),
