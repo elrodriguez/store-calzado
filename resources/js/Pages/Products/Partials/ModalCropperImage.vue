@@ -60,12 +60,12 @@
 
     const openModal = () => {
         isModalOpen.value = true
-        enableBodyScroll()
+        //enableBodyScroll()
     }
 
     const closeModal = () => {
         isModalOpen.value = false
-        disableBodyScroll()
+        //disableBodyScroll()
     }
 
     // Función para permitir el desplazamiento vertical
@@ -109,7 +109,7 @@
                     <div class="text-lg px-6 py-4">
                         Imagen
                     </div>
-                    <div class="px-4 py-3 sm:px-6">
+                    <div class="px-4 py-3 sm:px-6" style="max-height: 450px; overflow-y: auto;overflow-x: hidden;">
                         <input type="file" @change="onFileChange">
                         <vue-cropper 
                         ref="cropper" 
