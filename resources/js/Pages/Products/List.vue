@@ -182,8 +182,8 @@
               local_id: objeto.data[propiedad]['local_id'],
               local_name: objeto.data[propiedad]['description'],
               local_price1: objeto.data[propiedad]['high'],
-              local_price2: objeto.data[propiedad]['under'],
-              local_price3: objeto.data[propiedad]['medium']
+              local_price2: objeto.data[propiedad]['medium'],
+              local_price3: objeto.data[propiedad]['under']
             }
           }
         }
