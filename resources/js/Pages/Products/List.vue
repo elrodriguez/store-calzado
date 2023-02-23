@@ -1,7 +1,7 @@
 <script setup>
     import AppLayout from '@/Layouts/AppLayout.vue';
     import { useForm } from '@inertiajs/vue3';
-    import { faTrashAlt, faPencilAlt, faPrint, faWarehouse } from "@fortawesome/free-solid-svg-icons";
+    import { faTrashAlt, faPencilAlt, faPrint, faWarehouse, faDollarSign } from "@fortawesome/free-solid-svg-icons";
     import Pagination from '@/Components/Pagination.vue';
     import DialogModal from '@/Components/DialogModal.vue';
     import SecondaryButton from '@/Components/SecondaryButton.vue';
@@ -12,7 +12,7 @@
     import { ref } from 'vue';
     import swal from 'sweetalert';
     import Keypad from '@/Components/Keypad.vue';
-
+    import ModalLarge from '@/Components/ModalLarge.vue';
 
     const props = defineProps({
         products: {
@@ -56,6 +56,7 @@
     const formDelete = useForm({});
     const openModalDetilsProduct = ref(false);
     const openModalEntrada = ref(false);
+    const displayModalPrices = ref(false);
         
     const showDetailProduct = (product) => {
         formDetails.interne = product.interne;
@@ -149,6 +150,62 @@
           formInput.sizes.splice(index,1);
         }
     };
+
+
+
+    const dataPrices= useForm({
+        product: {},
+        product_name: '',
+        product_id:'',
+        locals:[]
+    });
+
+    const openModalPrices = (product) => {
+      dataPrices.product = product;
+      dataPrices.product_id = product.id;
+      dataPrices.product_name = product.interne+ ' - ' +product.description;
+
+      axios.get(route('product_prices',product.id)).then((objeto) => {
+        if (Object.keys(objeto.data).length === 0) {
+          for (let propiedad in props.establishments) {
+            dataPrices.locals[propiedad] = {
+              local_id: props.establishments[propiedad]['id'],
+              local_name: props.establishments[propiedad]['description'],
+              local_price1: JSON.parse(product.sale_prices)['high'],
+              local_price2: JSON.parse(product.sale_prices)['under'],
+              local_price3: JSON.parse(product.sale_prices)['medium']
+            }
+          }
+        } else {
+          for (let propiedad in objeto.data) {
+            dataPrices.locals[propiedad] = {
+              local_id: objeto.data[propiedad]['local_id'],
+              local_name: objeto.data[propiedad]['description'],
+              local_price1: objeto.data[propiedad]['high'],
+              local_price2: objeto.data[propiedad]['under'],
+              local_price3: objeto.data[propiedad]['medium']
+            }
+          }
+        }
+      });
+
+      
+      displayModalPrices.value = true;
+    }
+
+    const closeModalPrices = () => {
+      displayModalPrices.value = false;
+    }
+
+    const saveProductPrices = () => {
+      dataPrices.post(route('product_prices_establishments'), {
+          errorBag: 'saveProductPrices',
+          preserveScroll: true,
+          onSuccess: () => {
+            swal('Precios registrados correctamente');
+          },
+      });
+    }
 </script>
 
 <template>
@@ -222,6 +279,13 @@
                                               </a>
                                               <button type="button" class="mr-1 text-white bg-gray-700 hover:bg-gray-800 focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-full text-sm p-2.5 text-center inline-flex items-center mr-2 dark:bg-gray-600 dark:hover:bg-gray-700 dark:focus:ring-gray-800">
                                                   <font-awesome-icon :icon="faPrint" />
+                                              </button>
+                                              <button 
+                                                @click="openModalPrices(product)"
+                                                title="precios por tienda" 
+                                                type="button" 
+                                                class="mr-1 text-white bg-gray-400 hover:bg-gray-400 focus:ring-4 focus:outline-none focus:ring-gray-400 font-medium rounded-full text-sm p-2.5 text-center inline-flex items-center mr-2 dark:bg-gray-400 dark:hover:bg-gray-400 dark:focus:ring-gray-400">
+                                                  <font-awesome-icon :icon="faDollarSign" />
                                               </button>
                                               <button type="button" class="mr-1 text-white bg-yellow-700 hover:bg-yellow-800 focus:ring-4 focus:outline-none focus:ring-yellow-300 font-medium rounded-full text-sm p-2.5 text-center inline-flex items-center mr-2 dark:bg-yellow-600 dark:hover:bg-yellow-700 dark:focus:ring-yellow-800"
                                                 @click="showDetailProduct(product)"
@@ -358,7 +422,11 @@
             </template>
         </DialogModal>
 
-        <DialogModal :show="openModalEntrada" @close="closeModalEntradaSalida">
+        <DialogModal 
+          :show="openModalEntrada" 
+          @close="closeModalEntradaSalida"
+          
+          >
             <template #title>
               {{ formInput.type == 1 ? 'Entrada' : 'Salida' }} de producto
             </template>
@@ -398,7 +466,7 @@
                       <template v-for="(establishment, index) in props.establishments" :key="index">
                           <option :value="establishment.id">{{ establishment.description }}</option>
                       </template>
-                  </select>
+                    </select>
                     <InputError :message="formInput.errors.local_id" class="mt-2" />
                   </div>
                   <div class="col-span-2 sm:col-span-1">
@@ -471,6 +539,71 @@
                 </DangerButton>
             </template>
         </DialogModal>
-        
+
+        <ModalLarge
+          :show="displayModalPrices"
+          :onClose="closeModalPrices"
+        >
+          <template #title>
+              {{ dataPrices.product_name }}
+          </template> 
+          <template #message>
+              Precios Por Tienda
+          </template> 
+          <template #content>
+            <div class="flex flex-col">
+              <div class="overflow-y-auto sm:-mx-6 lg:-mx-8">
+                <div class="inline-block min-w-full py-2 sm:px-6 lg:px-8">
+                  <div class="overflow-hidden">
+                    <table class="min-w-full text-sm font-light">
+                      <thead class="border font-medium dark:border-neutral-500">
+                        <tr>
+                          <th scope="col" class="px-6 py-2">Tienda</th>
+                          <th scope="col" class="px-6 py-2">P. Normal</th>
+                          <th scope="col" class="px-6 py-2">P. Medio</th>
+                          <th scope="col" class="px-6 py-2">P. Minimo</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr 
+                          v-for="(local, fe) in dataPrices.locals" :key="fe"
+                          class="border dark:border-neutral-500"
+                          >
+                          <td class=" px-6 py-2">{{  local.local_name  }}</td>
+                          <td class=" px-6 py-2">
+                            <input
+                              v-model="local.local_price1"
+                              type="text" class="text-right block w-full p-2 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 sm:text-xs focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                              <InputError :message="dataPrices.errors[`sizes.${index}.local_price1`]" class="mt-2" />
+                          </td>
+                          <td class=" px-6 py-2">
+                            <input 
+                            v-model="local.local_price2"
+                            type="text" class="text-right block w-full p-2 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 sm:text-xs focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                            <InputError :message="dataPrices.errors[`sizes.${index}.local_price2`]" class="mt-2" />
+                          </td>
+                          <td class=" px-6 py-2">
+                            <input 
+                            v-model="local.local_price3"
+                            type="text" class="text-right block w-full p-2 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 sm:text-xs focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                            <InputError :message="dataPrices.errors[`sizes.${index}.local_price3`]" class="mt-2" />
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </template>
+          <template #buttons>
+            <DangerButton
+                class="mr-3"
+                @click="saveProductPrices()"
+            >
+                Guardar
+            </DangerButton>
+          </template>
+        </ModalLarge>
     </AppLayout>
 </template>

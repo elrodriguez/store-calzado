@@ -6,6 +6,7 @@ use App\Models\Kardex;
 use App\Models\KardexSize;
 use App\Models\LocalSale;
 use App\Models\Product;
+use App\Models\ProductEstablishmentPrice;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -335,5 +336,53 @@ class ProductController extends Controller
             'product' => $product,
             'path' => $path
         ]);
+    }
+
+    public function savePrices(Request $request)
+    {
+
+        $this->validate(
+            $request,
+            [
+                'product_id' => 'required',
+                'locals.*.local_price1' => 'required',
+                'locals.*.local_price2' => 'required',
+                'locals.*.local_price3' => 'required',
+            ],
+            [
+                'locals.*.local_price1.required' => 'Ingresar precio normal',
+                'locals.*.local_price2.required' => 'Ingresar precio medio',
+                'locals.*.local_price3.required' => 'Ingresar precio minimo',
+            ]
+        );
+
+        foreach ($request->get('locals') as $local) {
+            ProductEstablishmentPrice::updateOrCreate(
+                [
+                    'local_id' => $local['local_id'],
+                    'product_id' => $request->get('product_id')
+                ], // Atributos para buscar un registro existente
+                [
+                    'high' => $local['local_price1'],
+                    'medium' => $local['local_price2'],
+                    'under' => $local['local_price3']
+                ] // Atributos para establecer en el registro si se actualiza o se crea uno nuevo
+            );
+        }
+    }
+
+    function getPricesProduct($id)
+    {
+        $prices = ProductEstablishmentPrice::join('local_sales', 'local_id', 'local_sales.id')
+            ->select(
+                'local_sales.description',
+                'product_id',
+                'local_id',
+                'high',
+                'under',
+                'medium'
+            )
+            ->where('product_id', $id)->get();
+        return response()->json($prices);
     }
 }

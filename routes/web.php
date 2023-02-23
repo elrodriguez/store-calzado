@@ -117,4 +117,13 @@ Route::middleware([
         'upload/image/product',
         [ProductController::class, 'imageUpload']
     )->name('product_upload_image');
+
+    Route::post(
+        'prices/product/bylocal',
+        [ProductController::class, 'savePrices']
+    )->name('product_prices_establishments');
+    Route::get(
+        'prices/product/{id}',
+        [ProductController::class, 'getPricesProduct']
+    )->name('product_prices');
 });
