@@ -172,8 +172,8 @@
               local_id: props.establishments[propiedad]['id'],
               local_name: props.establishments[propiedad]['description'],
               local_price1: JSON.parse(product.sale_prices)['high'],
-              local_price2: JSON.parse(product.sale_prices)['under'],
-              local_price3: JSON.parse(product.sale_prices)['medium']
+              local_price2: JSON.parse(product.sale_prices)['medium'],
+              local_price3: JSON.parse(product.sale_prices)['under']
             }
           }
         } else {
