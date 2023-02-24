@@ -305,7 +305,9 @@ class ProductController extends Controller
         $new_sizes = [];
 
         $t = 0;
-
+        foreach ($request->get('sizes') as $item) {
+            $t += $item['quantity'];
+        }
 
         $kardex = Kardex::create([
             'date_of_issue' => Carbon::now()->format('Y-m-d'),

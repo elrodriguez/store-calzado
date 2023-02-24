@@ -33,10 +33,11 @@ class ReportController extends Controller
 
     public function inventory_report()
     {
-        return Inertia::render('Reports/InventoryReport', [
-            'filters' => request()->all('search'),
-            'locals' => LocalSale::all(),
-        ]);
+        $this->inventory_report_export();
+        // return Inertia::render('Reports/InventoryReport', [
+        //     'filters' => request()->all('search'),
+        //     'locals' => LocalSale::all(),
+        // ]);
     }
 
     public function sales_report_export($start, $end, $download)
@@ -78,7 +79,7 @@ class ReportController extends Controller
         return Product::where('id', $product_id)->select('image')->get()->first()->image;
     }
 
-    public function inventory_report_export($download)
+    public function inventory_report_export()
     {
 
         $products = Product::where('stock', '>', 0)->get();
@@ -90,18 +91,7 @@ class ReportController extends Controller
         $time = date('H:i'); //obtiene la hora y los minutos actuales en formato de 24 horas separados por dos puntos
         $date = $day . "/" . $month . "/" . $year . " a las  " . $time;
 
-        if ($download == "false") {
+        return view('reports.inventory_report', ['products' => $products, 'date' => $date, 'print' => true]);
 
-            return view('reports.inventory_report', ['products' => $products, 'date' => $date, 'print' => true]);
-        } else {
-            $date = $day . "-" . $month . "-" . $year;
-            $file = public_path('ticket/') . 'reporteInventario_' . $date . '.pdf';
-            $pdf = PDF::loadView('reports.inventory_report', ['products' => $products, 'date' => $date, 'print' => false]);
-            // (Optional) Setup the paper size and orientation
-            $pdf->setPaper('A4', 'landscape');
-            $pdf->save($file);
-
-            return response()->download($file);
-        }
     }
 }

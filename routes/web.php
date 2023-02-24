@@ -109,7 +109,7 @@ Route::middleware([
 
     Route::get(
         'reports/inventoryindate',
-        [ReportController::class, 'inventory_report']
+        [ReportController::class, 'inventory_report_export']
     )->name('inventory_report');
 
 
