@@ -113,8 +113,8 @@
     });
 
     const searchProducts = async () => {
-        axios.post(route('search_product'), dataProducts ).then((res) => {
-          dataProducts.products = res;
+        axios.post(route('search_product_all'), dataProducts ).then((res) => {
+          dataProducts.products = res.data.products;
           document.getElementById('resultSearch').style.display = 'block';
         });
     };
@@ -209,7 +209,7 @@
 </script>
 
 <template>
-    <AppLayout title="Create Team">
+    <AppLayout title="Productos">
         <template #header>
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
                 Productos
@@ -448,7 +448,7 @@
                         <div style="height: 300px;overflow-y: auto;">
                             <table class="min-w-full" >
                                 <tbody>
-                                    <tr v-for="(product, index) in dataProducts.products.data" class="border-b bg-gray-100 boder-gray-900" style="cursor: pointer;">
+                                    <tr v-for="(product, index) in dataProducts.products" class="border-b bg-gray-100 boder-gray-900" style="cursor: pointer;">
                                         <td @click="selectProducts(product)" class="text-sm font-medium px-6 py-4 whitespace-nowrap">
                                             {{ product.interne }} - {{ product.description }}
                                         </td>

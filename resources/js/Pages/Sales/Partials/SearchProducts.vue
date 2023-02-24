@@ -36,7 +36,7 @@
                     form.data.interne = product.data.interne;
                     form.data.stock = product.data.stock;
                     form.data.description = product.data.description;
-                    form.data.price = JSON.parse(product.data.sale_prices).high;
+                    form.data.price = null;
                     form.data.total = 0;
                     form.data.quantity = 1;
                     form.search = null;
@@ -47,8 +47,8 @@
             });
         }else{
             axios.post(route('search_product'), form ).then((res) => {
-                if(res){
-                    form.products = res;
+                if(res.data.success){
+                    form.products = res.data.products;
                 }else{
                     swal('No se encontró producto');
                 }
@@ -77,21 +77,25 @@
 
     const addProduct = () => {
         if(form.data.size){
-            let total = parseFloat(form.data.quantity)*parseFloat(form.data.price)
-            form.data.total = total;
-            let data = {
-                id: form.data.id,
-                interne: form.data.interne,
-                description: form.data.description,
-                price: form.data.price,
-                total: form.data.total,
-                quantity: form.data.quantity,
-                size: form.data.size,
+            if(form.data.price){
+                let total = parseFloat(form.data.quantity)*parseFloat(form.data.price)
+                form.data.total = total;
+                let data = {
+                    id: form.data.id,
+                    interne: form.data.interne,
+                    description: form.data.description,
+                    price: form.data.price,
+                    total: form.data.total,
+                    quantity: form.data.quantity,
+                    size: form.data.size,
+                }
+                emit('eventdata',data);
+                displayModal.value = false;
+            }else{
+                swal('Seleccionar Precio')
             }
-            emit('eventdata',data);
-            displayModal.value = false;
         }else{
-            alert('Seleccionar Talla')
+            swal('Seleccionar Talla')
         }
     }
 </script>
@@ -131,7 +135,7 @@
             <div class="mt-1" style="height: 300px;overflow-y: auto;">
                 <table class="min-w-full" >
                     <tbody>
-                        <tr @click="openModalSelectProduct(product)" v-for="(product, index) in form.products.data" class="border-b bg-gray-100 boder-gray-900" style="cursor: pointer;">
+                        <tr @click="openModalSelectProduct(product)" v-for="(product, index) in form.products" class="border-b bg-gray-100 boder-gray-900" style="cursor: pointer;">
                             <td class="text-sm font-medium px-6 py-4 whitespace-nowrap">
                                 {{ product.interne }} - {{ product.description }}
                             </td>
@@ -153,7 +157,7 @@
                 <div class="col-span-1">
                     <div class="flex flex-wrap justify-center p-4">
                         <img
-                        :src="form.product.image"
+                        :src="'/storage/'+form.product.image"
                         class="p-1 bg-white border rounded max-w-sm"
                         :alt="form.product.description"
                         style="width: 100%;"
@@ -168,7 +172,7 @@
                             Precios Disponibles
                         </label>
                         <div class="flex">
-                            <div>
+                            <div v-if="!form.product.local_prices">
                                 <div class="form-check">
                                     <input v-model="form.data.price" :value="JSON.parse(form.product.sale_prices).high" class="form-check-input appearance-none rounded-full h-4 w-4 border border-gray-300 bg-white checked:bg-blue-600 checked:border-blue-600 focus:outline-none transition duration-200 mt-1 align-top bg-no-repeat bg-center bg-contain float-left mr-2 cursor-pointer" type="radio" name="flexRadioDefault" id="flexRadioDefault1">
                                     <label class="form-check-label inline-block text-gray-800" for="flexRadioDefault1">
@@ -188,6 +192,26 @@
                                     </label>
                                 </div>
                             </div>
+                            <div v-else>
+                                <div class="form-check">
+                                    <input v-model="form.data.price" :value="JSON.parse(form.product.local_prices).high" class="form-check-input appearance-none rounded-full h-4 w-4 border border-gray-300 bg-white checked:bg-blue-600 checked:border-blue-600 focus:outline-none transition duration-200 mt-1 align-top bg-no-repeat bg-center bg-contain float-left mr-2 cursor-pointer" type="radio" name="flexRadioDefault" id="flexRadioDefault1">
+                                    <label class="form-check-label inline-block text-gray-800" for="flexRadioDefault1">
+                                        Precio Normal {{ JSON.parse(form.product.local_prices).high  }}
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input v-model="form.data.price" :value="JSON.parse(form.product.local_prices).medium" class="form-check-input appearance-none rounded-full h-4 w-4 border border-gray-300 bg-white checked:bg-blue-600 checked:border-blue-600 focus:outline-none transition duration-200 mt-1 align-top bg-no-repeat bg-center bg-contain float-left mr-2 cursor-pointer" type="radio" name="flexRadioDefault" id="flexRadioDefault2">
+                                    <label class="form-check-label inline-block text-gray-800" for="flexRadioDefault2">
+                                        Precio Medio {{ JSON.parse(form.product.local_prices).medium  }}
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input v-model="form.data.price" :value="JSON.parse(form.product.local_prices).under" class="form-check-input appearance-none rounded-full h-4 w-4 border border-gray-300 bg-white checked:bg-blue-600 checked:border-blue-600 focus:outline-none transition duration-200 mt-1 align-top bg-no-repeat bg-center bg-contain float-left mr-2 cursor-pointer" type="radio" name="flexRadioDefault" id="flexRadioDefault3">
+                                    <label class="form-check-label inline-block text-gray-800" for="flexRadioDefault3">
+                                        Precio Minimo {{ JSON.parse(form.product.local_prices).under  }}
+                                    </label>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div class="mb-4">
@@ -195,8 +219,18 @@
                             Tallas Disponibles
                         </label>
                         <div class="flex">
-                            <div>
+                            <div v-if="!form.product.local_sizes">
                                 <template v-for="(item, key) in JSON.parse(form.product.sizes)">
+                                    <div class="form-check">
+                                        <input :disabled="item.quantity == 0 ? '' : disabled" v-model="form.data.size" :value="item.size" class="form-check-input appearance-none rounded-full h-4 w-4 border border-gray-300 bg-white checked:bg-blue-600 checked:border-blue-600 focus:outline-none transition duration-200 mt-1 align-top bg-no-repeat bg-center bg-contain float-left mr-2 cursor-pointer" type="radio" name="sizes" :id="'size'+ key">
+                                        <label :class="item.quantity == 0 ? 'text-gray-500': 'text-gray-800'" class="form-check-label inline-block" :for="'size'+ key ">
+                                            Talla: {{ item.size }} / Cantidad: {{ item.quantity }}
+                                        </label>
+                                    </div>
+                                </template>
+                            </div>
+                            <div v-else>
+                                <template v-for="(item, key) in JSON.parse(form.product.local_sizes)">
                                     <div class="form-check">
                                         <input :disabled="item.quantity == 0 ? '' : disabled" v-model="form.data.size" :value="item.size" class="form-check-input appearance-none rounded-full h-4 w-4 border border-gray-300 bg-white checked:bg-blue-600 checked:border-blue-600 focus:outline-none transition duration-200 mt-1 align-top bg-no-repeat bg-center bg-contain float-left mr-2 cursor-pointer" type="radio" name="sizes" :id="'size'+ key">
                                         <label :class="item.quantity == 0 ? 'text-gray-500': 'text-gray-800'" class="form-check-label inline-block" :for="'size'+ key ">

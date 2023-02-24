@@ -40,6 +40,8 @@
     }
 
     const removeProduct = (key) => {
+        let t = parseFloat(form.products[key].total);
+        form.total = parseFloat(form.total) - t;
         form.products.splice(key,1);
     }
 

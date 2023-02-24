@@ -11,6 +11,8 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
 class ProductController extends Controller
@@ -194,16 +196,83 @@ class ProductController extends Controller
 
     public function searchProduct(Request $request)
     {
+        $local_id = Auth::user()->local_id;
         $search = $request->get('search');
-        $products = Product::where('interne', $search)
-            ->orWhere('description', 'like', '%' . $search . '%')->get();
-        return response()->json($products);
+
+        $success = false;
+
+        $products = DB::table('products as t1')
+            ->select('t1.*')
+            ->selectSub(function ($query) use ($local_id) {
+                $query->from('product_establishment_prices')
+                    ->selectRaw("JSON_OBJECT('high', high, 'under', under,'medium',MEDIUM)")
+                    ->whereColumn('product_establishment_prices.product_id', 't1.id')
+                    ->where('product_establishment_prices.local_id', $local_id);
+            }, 'local_prices')
+            ->selectSub(function ($query) {
+                $query->from('kardex_sizes')
+                    ->join('products', 'kardex_sizes.product_id', '=', 'products.id')
+                    ->selectRaw("CONCAT('[',JSON_OBJECT('size', kardex_sizes.size, 'quantity', SUM(kardex_sizes.quantity)),']')")
+                    ->where('kardex_sizes.local_id', '=', 1)
+                    ->whereRaw('kardex_sizes.product_id = t1.id')
+                    ->groupBy('kardex_sizes.size');
+            }, 'local_sizes')
+            ->leftJoin('kardexes', 't1.id', '=', 'kardexes.product_id')
+            ->where(function ($query) use ($search) {
+                $query->where('t1.interne', '=', $search)
+                    ->orWhere('t1.description', 'like', '%' . $search . '%');
+            })
+            ->where('kardexes.local_id', '=', $local_id)
+            ->groupBy('t1.id')
+            ->get();
+
+
+        if (count($products) > 0) {
+            $success = true;
+        }
+        return response()->json([
+            'success' => $success,
+            'products' => $products
+        ]);
     }
 
     public function searchScanerProduct(Request $request)
     {
         $search = $request->get('search');
-        $product = Product::where('interne', $search)->first();
+        $local_id = Auth::user()->local_id;
+
+        // $product = Product::join('kardexes', function ($query) use ($local_id) {
+        //     $query->on('products.id', '=', 'kardexes.product_id')
+        //         ->where('kardexes.local_id', '=', $local_id);
+        // })
+        //     ->where('interne', $search)
+        //     ->groupBy('products.id')
+        //     ->first();
+
+        $product = DB::table('products as t1')
+            ->select('t1.*')
+            ->selectSub(function ($query) use ($local_id) {
+                $query->from('product_establishment_prices')
+                    ->selectRaw("JSON_OBJECT('high', high, 'under', under,'medium',MEDIUM)")
+                    ->whereColumn('product_establishment_prices.product_id', 't1.id')
+                    ->where('product_establishment_prices.local_id', $local_id);
+            }, 'local_prices')
+            ->selectSub(function ($query) {
+                $query->from('kardex_sizes')
+                    ->join('products', 'kardex_sizes.product_id', '=', 'products.id')
+                    ->selectRaw("CONCAT('[',JSON_OBJECT('size', kardex_sizes.size, 'quantity', SUM(kardex_sizes.quantity)),']')")
+                    ->where('kardex_sizes.local_id', '=', 1)
+                    ->whereRaw('kardex_sizes.product_id = t1.id')
+                    ->groupBy('kardex_sizes.size');
+            }, 'local_sizes')
+            ->leftJoin('kardexes', 't1.id', '=', 'kardexes.product_id')
+            ->where(function ($query) use ($search) {
+                $query->where('t1.interne', '=', $search);
+            })
+            ->where('kardexes.local_id', '=', $local_id)
+            ->groupBy('t1.id')
+            ->first();
+
         return response()->json($product);
     }
 
@@ -215,7 +284,6 @@ class ProductController extends Controller
 
     public function saveInput(Request $request)
     {
-        //dd($request->get('type'));
         $p_id = $request->get('product_id');
         $t_id = $request->get('type');
         $this->validate(
@@ -384,5 +452,23 @@ class ProductController extends Controller
             )
             ->where('product_id', $id)->get();
         return response()->json($prices);
+    }
+
+    public function searchProductAll(Request $request)
+    {
+
+        $search = $request->get('search');
+        $products = Product::where('interne', $search)
+            ->orWhere('description', 'like', '%' . $search . '%')
+            ->get();
+        $success = false;
+
+        if (count($products) > 0) {
+            $success = true;
+        }
+        return response()->json([
+            'success' => $success,
+            'products' => $products
+        ]);
     }
 }

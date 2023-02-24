@@ -60,6 +60,7 @@ class SaleController extends Controller
                 'series.description AS serie',
                 'sale_documents.number'
             )
+            ->where('sales.user_id', Auth::id())
             ->paginate(10)
             ->onEachSide(2);
 

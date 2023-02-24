@@ -60,6 +60,11 @@ Route::middleware([
     )->name('search_product');
 
     Route::post(
+        'search/products/all',
+        [ProductController::class, 'searchProductAll']
+    )->name('search_product_all');
+
+    Route::post(
         'search/scaner/products',
         [ProductController::class, 'searchScanerProduct']
     )->name('search_scaner_product');
