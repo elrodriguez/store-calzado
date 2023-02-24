@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ClientController;
+use App\Http\Controllers\KardexController;
 use App\Http\Controllers\LocalSaleController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -131,4 +132,9 @@ Route::middleware([
         'prices/product/{id}',
         [ProductController::class, 'getPricesProduct']
     )->name('product_prices');
+
+    Route::get(
+        'inventory/product/establishment',
+        [KardexController::class, 'index']
+    )->name('kardex_index');
 });

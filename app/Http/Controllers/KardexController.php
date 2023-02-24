@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Kardex;
+use App\Models\LocalSale;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class KardexController extends Controller
 {
@@ -14,7 +16,19 @@ class KardexController extends Controller
      */
     public function index()
     {
-        //
+        $establisment = LocalSale::all();
+
+        $kardexes = Kardex::join('products', 'product_id', 'products.id')
+            ->select('products.*')
+            ->selectRaw('SUM(quantity) AS kardex_stock')
+            ->groupBy('products.id')
+            ->paginate(20);
+
+        return Inertia::render('Kardex/List', [
+            'establisment' => $establisment,
+            'kardexes' => $kardexes,
+            'filters' => request()->all('search')
+        ]);
     }
 
     /**
