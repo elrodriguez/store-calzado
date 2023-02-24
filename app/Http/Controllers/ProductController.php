@@ -452,7 +452,8 @@ class ProductController extends Controller
                 'under',
                 'medium'
             )
-            ->where('product_id', $id)->get();
+            ->where('product_id', $id)
+            ->get();
         return response()->json($prices);
     }
 

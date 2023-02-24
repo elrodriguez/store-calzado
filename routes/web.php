@@ -137,4 +137,9 @@ Route::middleware([
         'inventory/product/establishment',
         [KardexController::class, 'index']
     )->name('kardex_index');
+
+    Route::post(
+        'inventory/product/sizes',
+        [KardexController::class, 'kardexDeailsSises']
+    )->name('kardex_sizes');
 });

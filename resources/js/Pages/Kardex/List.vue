@@ -4,6 +4,8 @@
     import { faTrashAlt, faPencilAlt, faPrint, faWarehouse } from "@fortawesome/free-solid-svg-icons";
     import Pagination from '@/Components/Pagination.vue';
     import Keypad from '@/Components/Keypad.vue';
+    import ModalSmall from '@/Components/ModalSmall.vue';
+    import {ref} from 'vue';
 
     const props = defineProps({
         establisment: {
@@ -24,7 +26,34 @@
         search: props.filters.search,
     });
 
+    const dataDetails = useForm({
+        kardex: {
+            type: Object,
+            default: () => ({}),
+        },
+        sizes:{
+            type: Object,
+            default: () => ({}),
+        }
+    });
 
+    const displayModalDetails = ref(false);
+
+    const openModalDetailsSizes = (kardex) =>{
+        axios.post(route('kardex_sizes'), {
+            product_id: kardex.id,
+            local_id: kardex.local_id,
+        }).then( (res) => {
+            //console.log(kardex)
+            dataDetails.kardex = kardex;
+            dataDetails.sizes = res.data;
+            displayModalDetails.value = true;
+        });
+    }
+
+    const closeModalDetailsSizes = () =>{
+        displayModalDetails.value = false;
+    }
 </script>
 <template>
     <AppLayout title="Usuarios">
@@ -59,25 +88,32 @@
                         <table class="w-full text-sm text-left text-blue-100 dark:text-blue-100">
                             <thead class="text-xs text-white uppercase bg-blue-600 border-b border-blue-400 dark:text-white">
                                 <tr>
-                                    <th scope="col" class="px-6 py-2">
-                                        Acciones
+                                    <th scope="col" class="text-center px-6 py-2">
+                                        Cantida Por Talla
                                     </th>
                                     <th scope="col" class="px-6 py-2">
-                                        #
+                                        Tienda
                                     </th>
                                     <th scope="col" class="px-6 py-2">
-                                        Fecha
+                                        Producto
                                     </th>
                                     <th scope="col" class="px-6 py-2">
-                                        Cliente
-                                    </th>
-                                    <th scope="col" class="px-6 py-2">
-                                        Total
+                                        Cantidad Total
                                     </th>
                                 </tr>
                             </thead>
                             <tbody>
-
+                                <tr v-for="(kardex, index) in kardexes.data" class="bg-blue-600 border-b border-blue-400 hover:bg-blue-500">
+                                    <td class="text-center px-6 py-4">
+                                        <button @click="openModalDetailsSizes(kardex)" type="button" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-full text-sm p-2.5 text-center inline-flex items-center mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                                            <svg aria-hidden="true" class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
+                                            <span class="sr-only">Icon description</span>
+                                        </button>
+                                    </td>
+                                    <td class="px-6 py-4">{{  kardex.local_names  }}</td>
+                                    <td class="px-6 py-4">{{  kardex.interne+' - '+kardex.description  }}</td>
+                                    <td class="px-6 py-4">{{  kardex.kardex_stock  }}</td>
+                                </tr>
                             </tbody>
                         </table>
                     </div>
@@ -87,5 +123,51 @@
 
             </div>
         </div>
+        <ModalSmall
+            :show="displayModalDetails"
+            :onClose="closeModalDetailsSizes"
+        >
+            <template #title>
+                {{ dataDetails.kardex.local_names }}
+            </template>
+            <template #message>
+                {{ dataDetails.kardex.interne+' - '+dataDetails.kardex.description }}
+            </template>
+            <template #content>
+                <div class="flex flex-col">
+                    <div class="overflow-y-auto sm:-mx-6 lg:-mx-8">
+                        <div class="inline-block min-w-full py-2 sm:px-6 lg:px-8">
+                            <div class="overflow-hidden">
+                                <table class="min-w-full text-sm font-light">
+                                    <thead class="border font-medium dark:border-neutral-500">
+                                        <tr>
+                                            <th scope="col" class="px-6 py-2">Talla</th>
+                                            <th scope="col" class="px-6 py-2">Cantidad</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr
+                                            v-for="(size, fe) in dataDetails.sizes" :key="fe"
+                                            class="border dark:border-neutral-500"
+                                            >
+                                            <td class="text-right px-6 py-2">{{  size.size  }}</td>
+                                            <td class="text-right px-6 py-2">
+                                                {{  parseInt(size.total)  }}
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                    <tfoot>
+                                        <tr>
+                                            <th scope="col" class="text-right px-6 py-2">TOTAL</th>
+                                            <th scope="col" class="text-right px-6 py-2">{{ parseInt(dataDetails.kardex.kardex_stock) }}</th>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </template>
+        </ModalSmall>
     </AppLayout>
 </template>

@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Kardex;
+use App\Models\KardexSize;
 use App\Models\LocalSale;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
 class KardexController extends Controller
@@ -18,10 +20,20 @@ class KardexController extends Controller
     {
         $establisment = LocalSale::all();
 
-        $kardexes = Kardex::join('products', 'product_id', 'products.id')
-            ->select('products.*')
+        $kardexes = Kardex::join('products', 'kardexes.product_id', 'products.id')
+            ->join('local_sales', 'kardexes.local_id', 'local_sales.id')
+            ->select(
+                'products.*',
+                'local_sales.id AS local_id',
+                'local_sales.description AS local_names'
+            )
             ->selectRaw('SUM(quantity) AS kardex_stock')
-            ->groupBy('products.id')
+            ->groupBy(
+                'products.id',
+                'local_sales.description',
+                'local_sales.id'
+            )
+            ->orderBy('local_sales.description')
             ->paginate(20);
 
         return Inertia::render('Kardex/List', [
@@ -31,69 +43,17 @@ class KardexController extends Controller
         ]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
+    public function kardexDeailsSises(Request $request)
     {
-        //
-    }
+        $kardex_sizes = KardexSize::select(
+            'kardex_sizes.size',
+            DB::raw('SUM(kardex_sizes.quantity) AS total')
+        )
+            ->where('local_id', $request->get('local_id'))
+            ->where('product_id', $request->get('product_id'))
+            ->groupBy('kardex_sizes.size')
+            ->get();
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Kardex  $kardex
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Kardex $kardex)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Kardex  $kardex
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Kardex $kardex)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Kardex  $kardex
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Kardex $kardex)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Kardex  $kardex
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Kardex $kardex)
-    {
-        //
+        return response()->json($kardex_sizes);
     }
 }
