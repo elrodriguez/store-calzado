@@ -215,7 +215,7 @@ class ProductController extends Controller
 
     public function saveInput(Request $request)
     {
-        //dd($request->get('type'));
+       // dd($request->get('sizes'));
         $p_id = $request->get('product_id');
         $t_id = $request->get('type');
         $this->validate(
@@ -236,8 +236,10 @@ class ProductController extends Controller
         $tallas = $product->sizes;
         $new_sizes = [];
 
-        $t = 0;
-
+        $t=0;
+        foreach($request->get('sizes') as $item){
+            $t+=$item['quantity'];
+        }
 
         $kardex = Kardex::create([
             'date_of_issue' => Carbon::now()->format('Y-m-d'),

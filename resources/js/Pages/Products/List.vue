@@ -57,7 +57,7 @@
     const openModalDetilsProduct = ref(false);
     const openModalEntrada = ref(false);
     const displayModalPrices = ref(false);
-        
+
     const showDetailProduct = (product) => {
         formDetails.interne = product.interne;
         formDetails.description = product.description;
@@ -65,15 +65,15 @@
         formDetails.sale_prices = JSON.parse(product.sale_prices);
         formDetails.sizes = JSON.parse(product.sizes);
         formDetails.stock_min = product.stock_min;
-        formDetails.stock = product.stock;   
-        formDetails.quantity_total=0;         
+        formDetails.stock = product.stock;
+        formDetails.quantity_total=0;
         formDetails.sizes.forEach(size => {
             formDetails.quantity_total+= parseFloat(size.quantity); //*1 para parsear a numero
         });
 
 
         openModalDetilsProduct.value = true;
-    }    
+    }
 
     function destroy(id) {
         if (confirm("¿Estás seguro de que quieres eliminar?")) {
@@ -89,7 +89,7 @@
     }
 
     const openModalEntradaSalida = (d) => {
-      
+
       formInput.type = d;
       openModalEntrada.value = true;
     }
@@ -136,7 +136,7 @@
       dataProducts.search = product.interne+ ' - '+ product.description;
       document.getElementById('resultSearch').style.display = 'none';
     }
-    
+
     const addSize = () => {
         let ar = {
             size:'',
@@ -189,7 +189,7 @@
         }
       });
 
-      
+
       displayModalPrices.value = true;
     }
 
@@ -230,17 +230,17 @@
                                   <input type="text" id="table-search-users" class="block p-2 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Buscar productos">
                               </div>
                           </form>
-                       </div> 
+                       </div>
                         <div class="col-span-2 sm:col-span-1 text-right">
                           <Keypad>
                             <template #botones>
-                              
+
                                 <button v-can="'productos_salida'" @click="openModalEntradaSalida(0)" type="button" class="mr-1 inline-block px-6 py-2.5 bg-green-500 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-green-600 hover:shadow-lg focus:bg-green-600 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-green-700 active:shadow-lg transition duration-150 ease-in-out">Salidas</button>
-                              
+
                                 <button v-can="'productos_entrada'" @click="openModalEntradaSalida(1)" type="button" class="mr-1 inline-block px-6 py-2.5 bg-yellow-500 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-yellow-600 hover:shadow-lg focus:bg-yellow-600 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-yellow-700 active:shadow-lg transition duration-150 ease-in-out">Entradas</button>
-          
+
                                 <a v-can="'productos_nuevo'" :href="route('products.create')" class="inline-block px-6 py-2.5 bg-blue-900 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg transition duration-150 ease-in-out">Nuevo</a>
-                           
+
                             </template>
                           </Keypad>
                         </div>
@@ -280,10 +280,10 @@
                                               <button type="button" class="mr-1 text-white bg-gray-700 hover:bg-gray-800 focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-full text-sm p-2.5 text-center inline-flex items-center mr-2 dark:bg-gray-600 dark:hover:bg-gray-700 dark:focus:ring-gray-800">
                                                   <font-awesome-icon :icon="faPrint" />
                                               </button>
-                                              <button 
+                                              <button
                                                 @click="openModalPrices(product)"
-                                                title="precios por tienda" 
-                                                type="button" 
+                                                title="precios por tienda"
+                                                type="button"
                                                 class="mr-1 text-white bg-gray-400 hover:bg-gray-400 focus:ring-4 focus:outline-none focus:ring-gray-400 font-medium rounded-full text-sm p-2.5 text-center inline-flex items-center mr-2 dark:bg-gray-400 dark:hover:bg-gray-400 dark:focus:ring-gray-400">
                                                   <font-awesome-icon :icon="faDollarSign" />
                                               </button>
@@ -392,8 +392,8 @@
                         <td class="text-right text-sm text-white font-light bg-blue-700 px-6 py-4">
                           S/. {{ formDetails.quantity_total*formDetails.purchase_prices }}
                         </td>
-                      </tr>     
-                      
+                      </tr>
+
                       <tr class="border-b">
                         <td colspan="2" class="text-right px-6 py-4 text-sm bg-green-800 font-medium text-white">
                           Ganancias Esperadas
@@ -410,7 +410,7 @@
                         <td class="text-sm text-white font-light bg-green-800 px-6 py-4">
                           <!-- no usar esta clase whitespace-nowrap -->
                         </td>
-                      </tr>  
+                      </tr>
                     </tbody>
                   </table>
             </template>
@@ -422,10 +422,10 @@
             </template>
         </DialogModal>
 
-        <DialogModal 
-          :show="openModalEntrada" 
+        <DialogModal
+          :show="openModalEntrada"
           @close="closeModalEntradaSalida"
-          
+
           >
             <template #title>
               {{ formInput.type == 1 ? 'Entrada' : 'Salida' }} de producto
@@ -453,7 +453,7 @@
                                             {{ product.interne }} - {{ product.description }}
                                         </td>
                                     </tr>
-                                </tbody> 
+                                </tbody>
                             </table>
                         </div>
                     </div>
@@ -461,7 +461,7 @@
                 </div>
                 <div class="grid grid-cols-2 gap-4">
                   <div class="col-span-2 sm:col-span-1">
-                    <InputLabel for="stablishment" value="Establesimiento" />
+                    <InputLabel for="stablishment" value="Establecimiento" />
                     <select v-model="formInput.local_id" id="stablishment" class="mt-1 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                       <template v-for="(establishment, index) in props.establishments" :key="index">
                           <option :value="establishment.id">{{ establishment.description }}</option>
@@ -546,10 +546,10 @@
         >
           <template #title>
               {{ dataPrices.product_name }}
-          </template> 
+          </template>
           <template #message>
               Precios Por Tienda
-          </template> 
+          </template>
           <template #content>
             <div class="flex flex-col">
               <div class="overflow-y-auto sm:-mx-6 lg:-mx-8">
@@ -565,7 +565,7 @@
                         </tr>
                       </thead>
                       <tbody>
-                        <tr 
+                        <tr
                           v-for="(local, fe) in dataPrices.locals" :key="fe"
                           class="border dark:border-neutral-500"
                           >
@@ -577,13 +577,13 @@
                               <InputError :message="dataPrices.errors[`sizes.${index}.local_price1`]" class="mt-2" />
                           </td>
                           <td class=" px-6 py-2">
-                            <input 
+                            <input
                             v-model="local.local_price2"
                             type="text" class="text-right block w-full p-2 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 sm:text-xs focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                             <InputError :message="dataPrices.errors[`sizes.${index}.local_price2`]" class="mt-2" />
                           </td>
                           <td class=" px-6 py-2">
-                            <input 
+                            <input
                             v-model="local.local_price3"
                             type="text" class="text-right block w-full p-2 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 sm:text-xs focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                             <InputError :message="dataPrices.errors[`sizes.${index}.local_price3`]" class="mt-2" />

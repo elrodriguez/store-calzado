@@ -25,7 +25,7 @@
                         <h2 class="mb-2 text-lg font-semibold text-gray-900 dark:text-white">Inventario</h2>
                         <ul class="max-w-md space-y-1 text-gray-500 list-disc list-inside dark:text-gray-400">
                             <li>
-                                <a :href="route('inventory_report')">Reporte de todos los productos entre fechas</a>
+                                <a :href="route('inventory_report')" target="_blank">Reporte de todos los productos(todas los locales)</a>
                             </li>
                         </ul>
                     </div>
