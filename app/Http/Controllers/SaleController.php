@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Kardex;
+use App\Models\KardexSize;
 use App\Models\LocalSale;
 use App\Models\PaymentMethod;
 use App\Models\Person;
@@ -111,7 +112,13 @@ class SaleController extends Controller
         try {
             $res = DB::transaction(function () use ($request) {
 
-                $serie_id = 1;
+
+                $local_id = Auth::user()->local_id;
+                $serie = Serie::where('document_type_id', '5')
+                    ->where('local_id', $local_id)
+                    ->first();
+
+                $serie_id = $serie->id;
 
                 $sale = Sale::create([
                     'user_id' => Auth::id(),
@@ -127,7 +134,7 @@ class SaleController extends Controller
 
                 $document = SaleDocument::create([
                     'sale_id' => $sale->id,
-                    'serie_id' => 1,
+                    'serie_id' => $serie_id,
                     'number' => $serie->number
                 ]);
 
@@ -146,15 +153,23 @@ class SaleController extends Controller
                         'total' => $produc['total']
                     ]);
 
-                    Kardex::create([
+                    $k = Kardex::create([
                         'date_of_issue' => Carbon::now()->format('Y-m-d'),
                         'motion' => 'sale',
                         'product_id' => $produc['id'],
-                        'local_id' => 1,
+                        'local_id' => $local_id,
                         'quantity' => - ($produc['quantity']),
                         'document_id' => $document->id,
                         'document_entity' => SaleDocument::class,
                         'description' => 'Venta'
+                    ]);
+
+                    KardexSize::create([
+                        'kardex_id' => $k->id,
+                        'product_id' => $produc['id'],
+                        'local_id' => $local_id,
+                        'size'      => $produc['size'],
+                        'quantity'  => (-$produc['quantity'])
                     ]);
 
                     $product = Product::find($produc['id']);
