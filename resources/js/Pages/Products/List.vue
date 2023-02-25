@@ -13,6 +13,7 @@
     import swal from 'sweetalert';
     import Keypad from '@/Components/Keypad.vue';
     import ModalLarge from '@/Components/ModalLarge.vue';
+    import swal from 'sweetalert';
 
     const props = defineProps({
         products: {
@@ -79,6 +80,7 @@
         if (confirm("¿Estás seguro de que quieres eliminar?")) {
             formDelete.delete(route('products.destroy', id));
         }
+        
     }
     const closeModalDetailsProduct = () => {
       openModalDetilsProduct.value = false;

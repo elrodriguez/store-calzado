@@ -24,7 +24,7 @@
     }
 </script>
 <template>
-    <AppLayout title="Create Team">
+    <AppLayout title="Ventas">
         <template #header>
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
                 Ventas

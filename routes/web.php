@@ -13,6 +13,7 @@ use App\Http\Controllers\SaleController;
 use App\Http\Controllers\SerieController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ReportController;
+use App\Http\Controllers\RolesController;
 
 /*
 |--------------------------------------------------------------------------
@@ -34,11 +35,8 @@ Route::get('/', function () {
     ]);
 });
 
-Route::middleware([
-    'auth:sanctum',
-    config('jetstream.auth_session'),
-    'verified',
-])->group(function () {
+Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified',])->group(function () {
+
     Route::get('/dashboard', function () {
         return Inertia::render('Dashboard');
     })->name('dashboard');
@@ -142,4 +140,10 @@ Route::middleware([
         'inventory/product/sizes',
         [KardexController::class, 'kardexDeailsSises']
     )->name('kardex_sizes');
+
+    Route::resource('roles', RolesController::class);
+
+    Route::get('/config', function () {
+        return Inertia::render('Config');
+    })->name('config');
 });
