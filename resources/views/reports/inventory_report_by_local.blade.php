@@ -45,7 +45,7 @@
                 <div>
                     <table class="table table-hover table-striped">
                         <thead>
-                            <tr><th colspan="13" class="text-center fs-1" style="text-align: center">Matos Store - Inventario - {{ $date }} horas</th></tr>
+                            <tr><th colspan="13" class="text-center fs-1" style="text-align: center"> {{ $local->description }} - Inventario - {{ $date }} horas</th></tr>
                             <tr class="table-primary">
                                 <th class="text-center fs-5">#</th>
                                 <th class="text-center fs-5">Código</th>
@@ -65,43 +65,94 @@
                         <tbody>
 @php
     $x=1;
-    $quantities_total=0;
+    $quantities_parcial_total=0;
+    $total_shoes = 0;
     $costo_total=0;
     $ganancia_min_total=0;
     $ganancia_max_total=0;
+    $comparador=$products[0]->id;
+    $primi=true;
 @endphp
 
-                            @foreach ($products as $product)
+                            @foreach ($products as $key => $product)
                             @php
                                 $prices = json_decode($product->sale_prices);
-                                $sizes = json_decode($product->sizes);
+                                $quantities_parcial_total+=$product->quantity;
+                                if ($comparador!=$product->id) {
+                                    $comparador=$product->id;
+                                    $primi=true;
+                                }
                             @endphp
                                     <tr class="">
-                                        <td class="fs-5" style="text-align: center">{{ $x++}}</td>
-                                        <td class="fs-5" style="text-align: center">{{ $product->interne}}</td>
+                                        <td class="fs-5" style="text-align: center">{{ $primi? $x++ : ""}}</td>
+                                        <td class="fs-5" style="text-align: center">{{ $primi? $product->interne : ""}}</td>
+                                        @if ($primi)
                                         <td class="fs-5" style="text-align: left"><img src="{{ app('App\Http\Controllers\ReportController')->getImage($product->id) }}" height="42px"> - {{ $product->description}}</td>
-                                        <td class="text-center fs-5">Tallas</td>
-                                        <td class="text-center fs-5">Cantidades</td>
-                                        <td class="text-center fs-5">Precio Costo</td>
-                                        <td class="text-center fs-5">Precio Costo total</td>
-                                        <td class="text-center fs-5">P. Venta Min</td>
-                                        <td class="text-center fs-5">P. Venta Medio</td>
-                                        <td class="text-center fs-5">P. Venta Normal</td>
-                                        <td class="text-center fs-5">Ganancia Min.</td>
-                                        <td class="text-center fs-5">Ganancia Max.</td>
-                                        <td class="text-center fs-5">Ganancia Max. Total</td>
-                                    </tr>
-                                    @php
-                                        $q_prod=0;
-                                        $g_max=0;
-                                        $g_min=0;
+                                        @else
+                                        <td class="fs-5" style="text-align: left"></td>
+                                        @endif
+                                        <td class="text-center fs-5">{{ $product->size }}</td>
+                                        <td class="text-center fs-5">{{ (integer)$product->quantity }}</td>
 
-                                        //ordenar por tallas
-                                        usort($sizes, function($a, $b) {
-                                        return $a->size - $b->size;
-                                        });
+                                        <td class="text-center fs-5">{{ $product->purchase_prices }}</td>
+                                        <td class="text-center fs-5">{{ $product->purchase_prices*$product->quantity }}</td>
+                                        <td class="text-center fs-5" style="text-align: center">S/ {{ $prices->under }}</td>
+                                        <td class="text-center fs-5" style="text-align: center">S/ {{ $prices->medium }}</td>
+                                        <td class="text-center fs-5" style="text-align: center">S/ {{ $prices->high }}</td>
+                                        <td class="text-center fs-5" style="text-align: center">S/ {{ $prices->under - $product->purchase_prices }}</td>
+                                        <td class="text-center fs-5" style="text-align: center">S/ {{ $prices->high - $product->purchase_prices }}</td>
+                                        <td class="text-center fs-5" style="text-align: center"><b>S/ {{ ($prices->high - $product->purchase_prices)*$product->quantity }}</b></td>
+                                    </tr>
+
+<!--    ---------------------         Parciales totales       ---------------------          -->
+                                    <tr class="table-info">
+                                    @if ($key < count($products)-1)
+                                            @if ($products[$key]->id != $products[$key+1]->id)
+                                                <td></td>
+                                                <td></td>
+                                                <th style="text-align:left">Totales parciales</th>
+                                                <td>Disponibles</td>
+                                                <th style="text-align: center"><b>{{ $quantities_parcial_total }}</b></th>
+                                                <td>Costo en productos</td>
+                                                <th class="table-warning" style="text-align: center"><b>S/ {{ $quantities_parcial_total * $product->purchase_prices }}</b></th>
+                                                <td></td>
+                                                <td colspan="3" style="text-align: right">Ganancias esperadas para este producto entre: </td>
+                                                <th colspan="2" class="table-warning" style="text-align: center"><b>S/ {{ ($quantities_parcial_total*$prices->under)-($quantities_parcial_total * $product->purchase_prices)}} y S/ {{ ($quantities_parcial_total*$prices->high)-($quantities_parcial_total * $product->purchase_prices) }}</b></th>
+                                                @php
+                                                    $ganancia_max_total+=($quantities_parcial_total*$prices->high)-($quantities_parcial_total * $product->purchase_prices);
+                                                    $ganancia_min_total+=($quantities_parcial_total*$prices->high)-($quantities_parcial_total * $product->purchase_prices);
+                                                    $total_shoes+=$quantities_parcial_total;
+                                                    $costo_total+=$quantities_parcial_total * $product->purchase_prices;
+                                                    $quantities_parcial_total=0;
+                                                @endphp
+                                             @endif
+                                    @else
+                                            <td></td>
+                                            <td></td>
+                                            <th style="text-align:left">Totales parciales</th>
+                                            <td>Disponibles</td>
+                                            <th style="text-align: center"><b>{{ $quantities_parcial_total }}</b></th>
+                                            <td>Costo en productos</td>
+                                            <th class="table-warning" style="text-align: center"><b>S/ {{ $quantities_parcial_total * $product->purchase_prices }}</b></th>
+                                            <td></td>
+                                            <td colspan="3" style="text-align: right">Ganancias esperadas para este producto entre: </td>
+                                            <th colspan="2" class="table-warning" style="text-align: center"><b>S/ {{ ($quantities_parcial_total*$prices->under)-($quantities_parcial_total * $product->purchase_prices)}} y S/ {{ ($quantities_parcial_total*$prices->high)-($quantities_parcial_total * $product->purchase_prices) }}</b></th>
+                                            @php
+                                                $ganancia_max_total+=($quantities_parcial_total*$prices->high)-($quantities_parcial_total * $product->purchase_prices);
+                                                $ganancia_min_total+=($quantities_parcial_total*$prices->high)-($quantities_parcial_total * $product->purchase_prices);
+                                                $total_shoes+=$quantities_parcial_total;
+                                                $costo_total+=$quantities_parcial_total * $product->purchase_prices;
+                                                $quantities_parcial_total=0;
+                                            @endphp
+                                    @endif
+                                </tr>
+
+
+                                    @php
+
+                                        $primi=false;
                                     @endphp
-                                        @foreach ($sizes as $size)
+                                        {{-- @foreach ($sizes as $size)
                                         @if ($size->quantity > 0)
                                         <tr>
                                             <td></td>
@@ -126,8 +177,9 @@
                                             @endphp
                                         </tr>
                                         @endif
-                                        @endforeach
-                                        <tr class="table-info">
+                                        @endforeach --}}
+
+                                        {{-- <tr class="table-info">
                                             <td></td>
                                             <td></td>
                                             <th style="text-align:left">Totales parciales</th>
@@ -139,12 +191,12 @@
                                             <td colspan="3" style="text-align: right">Ganancias esperadas para este producto entre: </td>
                                             <th colspan="2" class="table-warning" style="text-align: center"><b>S/ {{ $g_min }} y S/ {{ $g_max }}</b></th>
                                             @php
-                                                $quantities_total+=$q_prod;
+                                                $quantities_parcial_total+=$q_prod;
                                                 $costo_total+=$q_prod * $product->purchase_prices;
                                                 $ganancia_max_total+=$g_max;
                                                 $ganancia_min_total+=$g_min;
                                             @endphp
-                                        </tr>
+                                        </tr> --}}
                             @endforeach
                         </tbody>
                         <tfoot>
@@ -152,7 +204,7 @@
                                 <th class="fs-5" style="text-align: center">#</th>
                                         <th class="fs-5" style="text-align: center">Totales</th>
                                         <th colspan="2" class="fs-5" style="text-align: right">Calzados disponibles:</th>
-                                        <th class="fs-5" style="text-align: center">{{ $quantities_total}}</th>
+                                        <th class="fs-5" style="text-align: center">{{ $total_shoes}}</th>
                                         <th class="fs-5" style="text-align: center">Costo de Inventario</th>
                                         <th class="fs-5" style="text-align: center">S/. {{ $costo_total}}</th>
                                         <th colspan="4" class="fs-5" style="text-align: right">Ganancias esperadas en tienda:</th>
