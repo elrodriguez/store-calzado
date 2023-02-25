@@ -113,6 +113,10 @@ Route::middleware([
         [ReportController::class, 'inventory_report_export']
     )->name('inventory_report');
 
+    Route::get(
+        'reports/inventory/{local_id}',
+        [ReportController::class, 'inventory_report_by_local']
+    )->name('inventory_report_by_local');
 
     Route::get(
         'reports/sales/{begin_date}/{end_date}/{download}',

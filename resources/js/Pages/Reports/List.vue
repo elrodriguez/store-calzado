@@ -27,6 +27,18 @@
                             <li>
                                 <a :href="route('inventory_report')" target="_blank">Reporte de todos los productos(todas los locales)</a>
                             </li>
+
+                            <li>
+                                <a :href="route('inventory_report_by_local', 1)" target="_blank">Reporte de productos(Local: Principal con id 1)</a>
+                            </li>
+
+                            <li>
+                                <a :href="route('inventory_report_by_local', 2)" target="_blank">Reporte de productos(Local: algun lado con id 2)</a>
+                            </li>
+
+                            <li>
+                                <a :href="route('inventory_report_by_local', 3)" target="_blank">Reporte de productos(Local: Principal con id 3), falta hacer un for o foreach</a>
+                            </li>
                         </ul>
                     </div>
                 </div>

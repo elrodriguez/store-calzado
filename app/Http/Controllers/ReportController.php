@@ -7,6 +7,7 @@ use App\Models\Product;
 use App\Models\Sale;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Date;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use PDF;
 use SebastianBergmann\Type\TrueType;
@@ -29,15 +30,6 @@ class ReportController extends Controller
             'filters' => request()->all('search'),
             'locals' => LocalSale::all(),
         ]);
-    }
-
-    public function inventory_report()
-    {
-        $this->inventory_report_export();
-        // return Inertia::render('Reports/InventoryReport', [
-        //     'filters' => request()->all('search'),
-        //     'locals' => LocalSale::all(),
-        // ]);
     }
 
     public function sales_report_export($start, $end, $download)
@@ -93,5 +85,28 @@ class ReportController extends Controller
 
         return view('reports.inventory_report', ['products' => $products, 'date' => $date, 'print' => true]);
 
+    }
+
+    public function inventory_report_by_local($local_id)
+    {
+        $products = Product::where('products.stock', '>', 0)
+                            ->join('kardex_sizes', 'kardex_sizes.product_id', 'products.id')
+                            ->select('size', 'products.id', 'products.interne', 'products.description', 'products.sale_prices', 'products.purchase_prices', DB::raw('SUM(quantity) as quantity'))
+                            ->groupBy('size', 'products.id', 'products.interne', 'products.description', 'products.sale_prices', 'products.purchase_prices')
+                            ->where('kardex_sizes.local_id', '=', $local_id)
+                            ->orderBy('products.id', 'asc')
+                            ->orderBy('size', 'asc')
+                            ->get();
+        $local = LocalSale::where('id', $local_id)->get()->first();
+        //dd($local);
+        date_default_timezone_set('America/Lima');
+        $date = date('Y-m-d H:i:s');
+        $year = date('Y'); //obtiene el año actual en formato de 4 dígitos
+        $month = date('m'); //obtiene el mes actual en formato de 2 dígitos
+        $day = date('d'); //obtiene el día actual en formato de 2 dígitos
+        $time = date('H:i'); //obtiene la hora y los minutos actuales en formato de 24 horas separados por dos puntos
+        $date = $day . "/" . $month . "/" . $year . " a las  " . $time;
+
+        return view('reports.inventory_report_by_local', ['products' => $products, 'local' => $local, 'date' => $date, 'print' => true]);
     }
 }
