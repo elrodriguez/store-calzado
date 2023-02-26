@@ -202,21 +202,34 @@ class ProductController extends Controller
         $success = false;
 
         $products = DB::table('products as t1')
-            ->select('t1.*')
+            ->select(
+                't1.*',
+                DB::raw(`
+                SELECT 
+                    JSON_ARRAYAGG(JSON_OBJECT('size', size, 'quantity', quantity_sum)) AS productos 
+                    FROM (
+                        SELECT size, SUM(quantity) AS quantity_sum
+                        FROM kardex_sizes
+                        WHERE kardex_sizes.product_id=t1.id AND local_id = ` . $local_id . `
+                        GROUP BY size
+                    ) AS local_sizes
+                `)
+            )
             ->selectSub(function ($query) use ($local_id) {
                 $query->from('product_establishment_prices')
                     ->selectRaw("JSON_OBJECT('high', high, 'under', under,'medium',MEDIUM)")
                     ->whereColumn('product_establishment_prices.product_id', 't1.id')
                     ->where('product_establishment_prices.local_id', $local_id);
             }, 'local_prices')
-            ->selectSub(function ($query) {
-                $query->from('kardex_sizes')
-                    ->join('products', 'kardex_sizes.product_id', '=', 'products.id')
-                    ->selectRaw("CONCAT('[',JSON_OBJECT('size', kardex_sizes.size, 'quantity', SUM(kardex_sizes.quantity)),']')")
-                    ->where('kardex_sizes.local_id', '=', 1)
-                    ->whereRaw('kardex_sizes.product_id = t1.id')
-                    ->groupBy('kardex_sizes.size');
-            }, 'local_sizes')
+            // ->selectSub(function ($query) use ($local_id) {
+            //     $query->from('kardex_sizes')
+            //         ->join('products', 'kardex_sizes.product_id', '=', 'products.id')
+            //         ->selectRaw("CONCAT('[',GROUP_CONCAT(JSON_OBJECT('size', kardex_sizes.size, 'quantity', SUM(kardex_sizes.quantity))),']')")
+            //         ->where('kardex_sizes.local_id', '=', $local_id)
+            //         ->whereColumn('kardex_sizes.product_id = t1.id')
+            //         ->groupBy('kardex_sizes.size');
+            // }, 'local_sizes')
+
             ->leftJoin('kardexes', 't1.id', '=', 'kardexes.product_id')
             ->where(function ($query) use ($search) {
                 $query->where('t1.interne', '=', $search)
@@ -250,21 +263,33 @@ class ProductController extends Controller
         //     ->first();
 
         $product = DB::table('products as t1')
-            ->select('t1.*')
+            ->select(
+                't1.*',
+                DB::raw(`
+                SELECT 
+                    JSON_ARRAYAGG(JSON_OBJECT('size', size, 'quantity', quantity_sum)) AS productos 
+                    FROM (
+                        SELECT size, SUM(quantity) AS quantity_sum
+                        FROM kardex_sizes
+                        WHERE kardex_sizes.product_id=t1.id AND local_id = ` . $local_id . `
+                        GROUP BY size
+                    ) AS local_sizes
+                `)
+            )
             ->selectSub(function ($query) use ($local_id) {
                 $query->from('product_establishment_prices')
                     ->selectRaw("JSON_OBJECT('high', high, 'under', under,'medium',MEDIUM)")
                     ->whereColumn('product_establishment_prices.product_id', 't1.id')
                     ->where('product_establishment_prices.local_id', $local_id);
             }, 'local_prices')
-            ->selectSub(function ($query) {
-                $query->from('kardex_sizes')
-                    ->join('products', 'kardex_sizes.product_id', '=', 'products.id')
-                    ->selectRaw("CONCAT('[',JSON_OBJECT('size', kardex_sizes.size, 'quantity', SUM(kardex_sizes.quantity)),']')")
-                    ->where('kardex_sizes.local_id', '=', 1)
-                    ->whereRaw('kardex_sizes.product_id = t1.id')
-                    ->groupBy('kardex_sizes.size');
-            }, 'local_sizes')
+            // ->selectSub(function ($query) {
+            //     $query->from('kardex_sizes')
+            //         ->join('products', 'kardex_sizes.product_id', '=', 'products.id')
+            //         ->selectRaw("CONCAT('[',JSON_OBJECT('size', kardex_sizes.size, 'quantity', SUM(kardex_sizes.quantity)),']')")
+            //         ->where('kardex_sizes.local_id', '=', 1)
+            //         ->whereRaw('kardex_sizes.product_id = t1.id')
+            //         ->groupBy('kardex_sizes.size');
+            // }, 'local_sizes')
             ->leftJoin('kardexes', 't1.id', '=', 'kardexes.product_id')
             ->where(function ($query) use ($search) {
                 $query->where('t1.interne', '=', $search);
