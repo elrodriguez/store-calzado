@@ -34,7 +34,7 @@ class KardexController extends Controller
                 'local_sales.id'
             )
             ->where('products.interne', '=', request()->input('search'))
-            ->where('products.description', 'Like', '%' . request()->input('search') . '%')
+            ->orWhere('products.description', 'Like', '%' . request()->input('search') . '%')
             ->orderBy('local_sales.description')
             ->paginate(20);
 
