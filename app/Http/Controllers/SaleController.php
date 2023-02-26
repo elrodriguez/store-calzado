@@ -94,7 +94,7 @@ class SaleController extends Controller
      */
     public function store(Request $request)
     {
-        dd($request->all());
+
         $this->validate(
             $request,
             [
@@ -117,7 +117,7 @@ class SaleController extends Controller
                 $serie = Serie::where('document_type_id', '5')
                     ->where('local_id', $local_id)
                     ->first();
-
+                dd($local_id);
                 $serie_id = $serie->id;
 
                 $sale = Sale::create([
