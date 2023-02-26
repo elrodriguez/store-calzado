@@ -51,7 +51,6 @@
     }
 
     const printSales = () => {
-        
         window.location.href = "../print/sales/user/" + formPrint.date;
     }
 </script>
