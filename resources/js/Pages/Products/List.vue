@@ -79,7 +79,7 @@
         if (confirm("¿Estás seguro de que quieres eliminar?")) {
             formDelete.delete(route('products.destroy', id));
         }
-        
+
     }
     const closeModalDetailsProduct = () => {
       openModalDetilsProduct.value = false;
