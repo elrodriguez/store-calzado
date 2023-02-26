@@ -150,4 +150,6 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified',
     Route::get('/config', function () {
         return Inertia::render('Config');
     })->name('config');
+
+    Route::resource('permissions', PermissionsController::class);
 });
