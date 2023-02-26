@@ -142,7 +142,7 @@ const logout = () => {
                                             Perfil
                                         </DropdownLink>
 
-                                        <DropdownLink :href="route('config')">
+                                        <DropdownLink v-role="'admin'" :href="route('config')">
                                             Configuracion
                                         </DropdownLink>
 
