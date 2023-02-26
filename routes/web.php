@@ -94,6 +94,11 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified',
         [LocalSaleController::class, 'series']
     )->name('localseriesbyid');
 
+    Route::get(
+        'get/locals',
+        [LocalSaleController::class, 'get_locals']
+    )->name('get_locals');
+
     Route::resource('series', SerieController::class);
 
     Route::get(

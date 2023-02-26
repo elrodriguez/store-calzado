@@ -185,4 +185,9 @@ class LocalSaleController extends Controller
 
         return response()->json($series);
     }
+
+    public function get_locals(){
+        $locals = LocalSale::all();
+        return response()->json($locals);
+    }
 }
