@@ -18,6 +18,10 @@
         xuser:{
             type: Object,
             default: () => ({}),
+        },
+        roles:{
+            type: Object,
+            default: () => ({}),
         }
     });
 
@@ -25,8 +29,8 @@
         name: props.xuser.name,
         email: props.xuser.email,
         password: props.xuser.password,
-        local_id: props.xuser.local_id
-
+        local_id: props.xuser.local_id,
+        role:''
     });
 
     const updateUser = () => {
@@ -94,6 +98,15 @@
                     autofocus
                 />
                 <InputError :message="form.errors.password" class="mt-2" />
+            </div>
+            <div class="col-span-6 sm:col-span-3">
+                <InputLabel for="rol" value="Rol" />
+                <select v-model="form.role" id="rol" class="mt-1 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                    <template v-for="(row, g) in props.roles" :key="g">
+                        <option :value="row.name">{{ row.name }}</option>
+                    </template>
+                </select>
+                <InputError :message="form.errors.rol" class="mt-2" />
             </div>
         </template>
 

@@ -8,6 +8,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Inertia\Inertia;
+use Spatie\Permission\Models\Role;
 
 class UserController extends Controller
 {
@@ -84,7 +85,8 @@ class UserController extends Controller
     {
         return Inertia::render('Users/Edit', [
             'establishments' => LocalSale::all(),
-            'xuser' => $user
+            'xuser' => $user,
+            'roles' => Role::all();
         ]);
     }
     public function update(Request $request, User $user)
@@ -101,6 +103,7 @@ class UserController extends Controller
         if ($request->get('password')) {
             $user->password = Hash::make($request->get('password'));
         }
+        $user->assignRole($request->get('role'));
         $user->save();
 
         return redirect()->route('users.edit', $user->id)
