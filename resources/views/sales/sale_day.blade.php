@@ -8,7 +8,14 @@
 </head>
 <body>
     <div>
-        <div></div>
+        <div>
+            <div style="text-align: center">
+                <h1>Reporte ventas del Día</h1>
+            </div>
+            <p><strong>Fecha:</strong> {{ $header['date'] }} </p>
+            <p><strong>Usuario:</strong> {{ $header['user_name'] }} </p>
+            <p><strong>Tienda:</strong> {{ $header['local_name'] }} </p>
+        </div>
         <table style="width: 100%;border: 1px solid #000;border-collapse: collapse;">
             <tr>
                 <td style="text-align: left;
@@ -65,7 +72,7 @@
                 border: 1px solid #000;
                 border-collapse: collapse;
                 padding: 0.3em;
-                caption-side: bottom;">{{ $total }}</td>
+                caption-side: bottom;">{{ number_format($total, 2, '.', ',') }}</td>
 
             </tr>
         </table>

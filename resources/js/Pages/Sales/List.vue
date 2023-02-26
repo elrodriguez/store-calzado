@@ -52,14 +52,7 @@
 
     const printSales = () => {
         
-        axios.post(route('print_sale_user'), formPrint ).then((res) => {
-            if(res.data.status){
-                displayModalPrint.value = false;
-            }else{
-                swal('No hay ventas para la fecha');
-            }
-            
-        });
+        window.location.href = "../print/sales/user/" + formPrint.date;
     }
 </script>
 

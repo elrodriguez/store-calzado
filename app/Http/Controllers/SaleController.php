@@ -281,8 +281,13 @@ class SaleController extends Controller
         return response()->download($file);
     }
 
-    public function printSalesDay(Request $request)
+    public function printSalesDay($date)
     {
+        $header = [
+            'user_name'     => Auth::user()->name,
+            'date'          => $date,
+            'local_name'    => LocalSale::find(Auth::user()->local_id)->description
+        ];
         $payments = PaymentMethod::all();
         $sales = Sale::join('sale_documents', 'sale_id', 'sales.id')
             ->join('people', 'client_id', 'people.id')
@@ -294,18 +299,24 @@ class SaleController extends Controller
                 'people.full_name'
             )
             ->where('sales.user_id', Auth::id())
-            ->whereDate('sales.created_at', $request->get('date'))
+            ->whereDate('sales.created_at', $date)
             ->get();
         $status = false;
         if (count($sales) > 0) {
             $status = true;
 
             $file = public_path('ventas/') . 'ventas.pdf';
-            $pdf = PDF::loadView('sales.sale_day', ['sales' => $sales, 'payments' => $payments]);
+            $pdf = PDF::loadView('sales.sale_day', [
+                'header' => $header,
+                'sales' => $sales,
+                'payments' => $payments
+            ]);
             $pdf->setPaper('A4', 'portrait');
             $pdf->save($file);
 
-            return response()->download($file);
+            return response()->download($file, 'ventas_' . $date . '.pdf', [
+                'Content-Type' => 'application/pdf',
+            ]);
         } else {
             return response()->json(['status' => $status]);
         }

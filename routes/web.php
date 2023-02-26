@@ -159,8 +159,8 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified',
 
     Route::resource('permissions', PermissionsController::class);
 
-    Route::post(
-        'print/sales/user',
+    Route::get(
+        'print/sales/user/{date}',
         [SaleController::class, 'printSalesDay']
     )->name('print_sale_user');
 });
