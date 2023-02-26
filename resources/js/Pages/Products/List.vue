@@ -1,7 +1,7 @@
 <script setup>
     import AppLayout from '@/Layouts/AppLayout.vue';
     import { useForm } from '@inertiajs/vue3';
-    import { faTrashAlt, faPencilAlt, faPrint, faWarehouse, faDollarSign } from "@fortawesome/free-solid-svg-icons";
+    import { faTrashAlt, faPencilAlt, faPrint, faWarehouse, faDollarSign, faTruck } from "@fortawesome/free-solid-svg-icons";
     import Pagination from '@/Components/Pagination.vue';
     import DialogModal from '@/Components/DialogModal.vue';
     import SecondaryButton from '@/Components/SecondaryButton.vue';
@@ -56,6 +56,7 @@
     const formDelete = useForm({});
     const openModalDetilsProduct = ref(false);
     const openModalEntrada = ref(false);
+    const _openModalEntrada = ref(false);
     const displayModalPrices = ref(false);
 
     const showDetailProduct = (product) => {
@@ -89,11 +90,21 @@
       openModalEntrada.value = false;
     }
 
+    const _closeModalEntradaSalida = () => {
+      _openModalEntrada.value = false;
+    }
+
     const openModalEntradaSalida = (d) => {
 
       formInput.type = d;
       openModalEntrada.value = true;
     }
+
+    const _openModalEntradaSalida = (d) => {
+
+formInput.type = d;
+_openModalEntrada.value = true;
+}
 
     const formInput = useForm({
         type: 1,
@@ -275,9 +286,14 @@
                                   <td class="px-6 py-2">
                                       <div class="flex space-x-2 justify-center">
                                           <div>
-                                              <a v-permission="'productos_editar'" :href="route('products.edit',product.id)" class="mr-1 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-full text-sm p-2.5 text-center inline-flex items-center mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                                              <a v-permission="'productos_editar'" title="Editar" :href="route('products.edit',product.id)" class="mr-1 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-full text-sm p-2.5 text-center inline-flex items-center mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
                                                   <font-awesome-icon :icon="faPencilAlt" />
                                               </a>
+                                              <button title="Mover Mercadería/Calzados" type="button" class="mr-1 text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-full text-sm p-2.5 text-center inline-flex items-center mr-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
+                                              @click="_openModalEntradaSalida(0)"
+                                              >
+                                                <font-awesome-icon :icon="faTruck" />
+                                              </button>
                                               <button type="button" class="mr-1 text-white bg-gray-700 hover:bg-gray-800 focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-full text-sm p-2.5 text-center inline-flex items-center mr-2 dark:bg-gray-600 dark:hover:bg-gray-700 dark:focus:ring-gray-800">
                                                   <font-awesome-icon :icon="faPrint" />
                                               </button>
@@ -288,7 +304,7 @@
                                                 class="mr-1 text-white bg-gray-400 hover:bg-gray-400 focus:ring-4 focus:outline-none focus:ring-gray-400 font-medium rounded-full text-sm p-2.5 text-center inline-flex items-center mr-2 dark:bg-gray-400 dark:hover:bg-gray-400 dark:focus:ring-gray-400">
                                                   <font-awesome-icon :icon="faDollarSign" />
                                               </button>
-                                              <button type="button" class="mr-1 text-white bg-yellow-700 hover:bg-yellow-800 focus:ring-4 focus:outline-none focus:ring-yellow-300 font-medium rounded-full text-sm p-2.5 text-center inline-flex items-center mr-2 dark:bg-yellow-600 dark:hover:bg-yellow-700 dark:focus:ring-yellow-800"
+                                              <button title="ver Stock" type="button" class="mr-1 text-white bg-yellow-700 hover:bg-yellow-800 focus:ring-4 focus:outline-none focus:ring-yellow-300 font-medium rounded-full text-sm p-2.5 text-center inline-flex items-center mr-2 dark:bg-yellow-600 dark:hover:bg-yellow-700 dark:focus:ring-yellow-800"
                                                 @click="showDetailProduct(product)"
                                               >
                                                 <font-awesome-icon :icon="faWarehouse" />
@@ -540,6 +556,130 @@
                 </DangerButton>
             </template>
         </DialogModal>
+
+
+
+
+        <DialogModal
+          :show="_openModalEntrada"
+          @close="_closeModalEntradaSalida"
+
+          >
+            <template #title>
+              Traslado de producto/Calzado
+            </template>
+
+            <template #content>
+                <div class="mt-4 mb-1">
+                  <div style="position: relative;">
+                    <div class="bg-white dark:bg-gray-900">
+                      <label for="table-search" class="sr-only">Search</label>
+                      <div class="relative mt-1">
+                          <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                              <svg class="w-5 h-5 text-gray-500 dark:text-gray-400" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"></path></svg>
+                          </div>
+                          <input @keyup.enter="searchProducts" v-model="dataProducts.search" autocomplete="off" type="text" id="table-search" class="block p-2 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Buscar producto">
+                      </div>
+
+                    </div>
+                    <div class="mt-1" id="resultSearch" style="position: absolute;width: 100%;z-index: 1000000;display: none;">
+                        <div style="height: 300px;overflow-y: auto;">
+                            <table class="min-w-full" >
+                                <tbody>
+                                    <tr v-for="(product, index) in dataProducts.products" class="border-b bg-gray-100 boder-gray-900" style="cursor: pointer;">
+                                        <td @click="selectProducts(product)" class="text-sm font-medium px-6 py-4 whitespace-nowrap">
+                                            {{ product.interne }} - {{ product.description }}
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                  <div class="col-span-2 sm:col-span-1">
+                    <InputLabel for="stablishment" value="Establecimiento" />
+                    <select v-model="formInput.local_id" id="stablishment" class="mt-1 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                      <template v-for="(establishment, index) in props.establishments" :key="index">
+                          <option :value="establishment.id">{{ establishment.description }}</option>
+                      </template>
+                    </select>
+                    <InputError :message="formInput.errors.local_id" class="mt-2" />
+                  </div>
+                  <div class="col-span-2 sm:col-span-1">
+                    <InputLabel for="description" value="Descripción" />
+                    <TextInput
+                        id="description"
+                        v-model="formInput.description"
+                        type="text"
+                        class="block w-full mt-1"
+                        autofocus
+                    />
+                    <InputError :message="formInput.errors.description" class="mt-2" />
+                  </div>
+                  <div class="col-span-6 sm:col-span-6">
+                      <label>
+                          Tallas
+                          <button @click="addSize" type="button" class="inline-block px-6 py-2.5 bg-transparent text-blue-600 font-medium text-xs leading-tight uppercase rounded hover:text-blue-700 hover:bg-gray-100 focus:bg-gray-100 focus:outline-none focus:ring-0 active:bg-gray-200 transition duration-150 ease-in-out">Agregar</button>
+                      </label>
+                      <div v-for="(item, index) in formInput.sizes" v-bind:key="index">
+                          <table style="width: 100%;">
+                              <tr>
+                                  <td style="padding: 4px;">
+                                      <div class="col-span-3 sm:col-span-2">
+                                          <InputLabel value="Talla" />
+                                          <TextInput
+                                              v-model="item.size"
+                                              type="text"
+                                              class="block w-full mt-1"
+                                              autofocus
+                                          />
+                                          <InputError :message="formInput.errors[`sizes.${index}.size`]" class="mt-2" />
+                                      </div>
+                                  </td>
+                                  <td style="padding: 4px;">
+                                      <div class="col-span-3 sm:col-span-2">
+                                          <InputLabel value="Cantidad" />
+                                          <TextInput
+                                              v-model="item.quantity"
+                                              type="number"
+                                              class="block w-full mt-1"
+                                              autofocus
+                                          />
+                                          <InputError :message="formInput.errors[`sizes.${index}.quantity`]" class="mt-2" />
+                                      </div>
+                                  </td>
+                                  <td style="padding: 4px;" valign="bottom">
+                                      <button @click="removeSize(index)" type="button" class="inline-block rounded-full bg-blue-600 text-white leading-normal uppercase shadow-md hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg transition duration-150 ease-in-out w-9 h-9">
+                                          <font-awesome-icon :icon="faTrashAlt" />
+                                      </button>
+                                  </td>
+                              </tr>
+                          </table>
+                      </div>
+                  </div>
+                </div>
+            </template>
+
+            <template #footer>
+                <SecondaryButton @click="closeModalEntradaSalida">
+                    Cancel
+                </SecondaryButton>
+
+                <DangerButton
+                    class="ml-3"
+                    :class="{ 'opacity-25': formInput.processing }"
+                    :disabled="formInput.processing"
+                    @click="saveProductInput"
+                >
+                    Guardar
+                </DangerButton>
+            </template>
+        </DialogModal>
+
+
+
 
         <ModalLarge
           :show="displayModalPrices"
