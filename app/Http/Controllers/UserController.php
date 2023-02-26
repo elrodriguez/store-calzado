@@ -86,7 +86,7 @@ class UserController extends Controller
         return Inertia::render('Users/Edit', [
             'establishments' => LocalSale::all(),
             'xuser' => $user,
-            'roles' => Role::all();
+            'roles' => Role::all()
         ]);
     }
     public function update(Request $request, User $user)
