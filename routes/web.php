@@ -3,6 +3,7 @@
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\KardexController;
 use App\Http\Controllers\LocalSaleController;
+use App\Http\Controllers\PermissionsController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -157,4 +158,9 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified',
     })->name('config');
 
     Route::resource('permissions', PermissionsController::class);
+
+    Route::post(
+        'print/sales/user',
+        [SaleController::class, 'printSalesDay']
+    )->name('print_sale_user');
 });

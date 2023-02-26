@@ -280,4 +280,34 @@ class SaleController extends Controller
 
         return response()->download($file);
     }
+
+    public function printSalesDay(Request $request)
+    {
+        $payments = PaymentMethod::all();
+        $sales = Sale::join('sale_documents', 'sale_id', 'sales.id')
+            ->join('people', 'client_id', 'people.id')
+            ->join('series', 'serie_id', 'series.id')
+            ->select(
+                'series.description',
+                'sale_documents.number',
+                'sales.total',
+                'people.full_name'
+            )
+            ->where('sales.user_id', Auth::id())
+            ->whereDate('sales.created_at', $request->get('date'))
+            ->get();
+        $status = false;
+        if (count($sales) > 0) {
+            $status = true;
+
+            $file = public_path('ventas/') . 'ventas.pdf';
+            $pdf = PDF::loadView('sales.sale_day', ['sales' => $sales, 'payments' => $payments]);
+            $pdf->setPaper('A4', 'portrait');
+            $pdf->save($file);
+
+            return response()->download($file);
+        } else {
+            return response()->json(['status' => $status]);
+        }
+    }
 }

@@ -4,6 +4,10 @@
     import { faTrashAlt, faPencilAlt, faPrint, faWarehouse } from "@fortawesome/free-solid-svg-icons";
     import Pagination from '@/Components/Pagination.vue';
     import Keypad from '@/Components/Keypad.vue';
+    import PrimaryButton from '@/Components/PrimaryButton.vue';
+    import { ref } from 'vue';
+    import ModalSmall from '@/Components/ModalSmall.vue';
+
     const props = defineProps({
         sales: {
             type: Object,
@@ -22,7 +26,43 @@
     const printTicket = (id) => {
         window.location.href = "../pdf/sales/ticket/" + id;
     }
+
+
+    const displayModalPrint = ref(false);
+
+    const formPrint = useForm({
+        date: '',
+    });
+
+    const openPrintSaleDay = async () => {
+        var fecha = new Date(); //Fecha actual
+        var mes = fecha.getMonth()+1; //obteniendo mes
+        var dia = fecha.getDate(); //obteniendo dia
+        var ano = fecha.getFullYear(); //obteniendo año
+        if(dia<10)dia='0'+dia; //agrega cero si el menor de 10
+        if(mes<10)mes='0'+mes //agrega cero si el menor de 10
+        fecha=ano+"-"+mes+"-"+dia;
+
+        formPrint.date = fecha;
+        displayModalPrint.value = true;
+    }
+    const closePrintSaleDay = async () => {
+        displayModalPrint.value = false;
+    }
+
+    const printSales = () => {
+        
+        axios.post(route('print_sale_user'), formPrint ).then((res) => {
+            if(res.data.status){
+                displayModalPrint.value = false;
+            }else{
+                swal('No hay ventas para la fecha');
+            }
+            
+        });
+    }
 </script>
+
 <template>
     <AppLayout title="Ventas">
         <template #header>
@@ -47,6 +87,12 @@
                         <div class="text-right">
                             <Keypad>
                                 <template #botones>
+                                    <PrimaryButton
+                                        class="mr-2"
+                                        @click="openPrintSaleDay()"
+                                    >
+                                        Imprimir Ventas Del día
+                                    </PrimaryButton>
                                     <a :href="route('sales.create')" class="inline-block px-6 py-2.5 bg-blue-900 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg transition duration-150 ease-in-out">Nuevo</a>
                                 </template>
                             </Keypad>
@@ -108,5 +154,24 @@
 
             </div>
         </div>
+        <ModalSmall
+            :show="displayModalPrint"
+            :onClose="closePrintSaleDay"
+        >
+            <template #title>
+                Imprimir Ventas del Día
+            </template>
+            <template #content>
+                <input type="date" v-model="formPrint.date"
+                    class="form-control block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
+                />
+            </template>
+            <template #buttons>
+               <PrimaryButton
+                    @click="printSales()"
+                    class="mr-2"
+               >Imprimir</PrimaryButton> 
+            </template>
+        </ModalSmall>
     </AppLayout>
 </template>

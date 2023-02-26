@@ -25,37 +25,26 @@ const form = useForm({
     },
 });
 
-
-const formDelete = useForm({});
-
-function destroy(id) {
-    if (confirm("¿Estás seguro de que quieres eliminar?")) {
-        formDelete.delete(route('pettycash.destroy', id));
-    }
-}
-
-
 </script>
 
 
 <script>
-//////////////////////////////// obteniendo fecha actual
-var fecha = new Date(); //Fecha actual
-  var mes = fecha.getMonth()+1; //obteniendo mes
-  var dia = fecha.getDate(); //obteniendo dia
-  var ano = fecha.getFullYear(); //obteniendo año
-  if(dia<10)dia='0'+dia; //agrega cero si el menor de 10
-  if(mes<10)mes='0'+mes //agrega cero si el menor de 10
-  fecha=ano+"-"+mes+"-"+dia;
+    var fecha = new Date(); //Fecha actual
+    var mes = fecha.getMonth()+1; //obteniendo mes
+    var dia = fecha.getDate(); //obteniendo dia
+    var ano = fecha.getFullYear(); //obteniendo año
+    if(dia<10)dia='0'+dia; //agrega cero si el menor de 10
+    if(mes<10)mes='0'+mes //agrega cero si el menor de 10
+    fecha=ano+"-"+mes+"-"+dia;
 
-export default {
-  name: "Fechas",
-  data: () => ({
-    date_start: fecha,
-    date_end: fecha,
-    download: false
-  })
-};
+    export default {
+        name: "Fechas",
+        data: () => ({
+            date_start: fecha,
+            date_end: fecha,
+            download: false
+        })
+    };
 </script>
 
 

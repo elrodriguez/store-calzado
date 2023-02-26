@@ -59,11 +59,15 @@
         }
     };
     const saveSale = async () => {
-        axios.post(route('sales.store'), form ).then((res) => {
-            console.log(res)
-            //form.reset();
-            //printPdf(res.data.id);
-        });
+        if(form.total>0){
+            axios.post(route('sales.store'), form ).then((res) => {
+                form.reset();
+                printPdf(res.data.id);
+            });
+        }else{
+            swal('Agregar Productos para realizar la venta');
+        }
+        
     }
 
     const printPdf = (id) => {
