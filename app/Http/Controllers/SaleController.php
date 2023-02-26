@@ -110,94 +110,94 @@ class SaleController extends Controller
         );
 
         try {
-            //$res = DB::transaction(function () use ($request) {
+            $res = DB::transaction(function () use ($request) {
 
 
-            $local_id = Auth::user()->local_id;
-            $serie = Serie::where('document_type_id', '5')
-                ->where('local_id', $local_id)
-                ->first();
+                $local_id = Auth::user()->local_id;
+                $serie = Serie::where('document_type_id', '5')
+                    ->where('local_id', $local_id)
+                    ->first();
 
-            $serie_id = $serie->id;
+                $serie_id = $serie->id;
 
-            $sale = Sale::create([
-                'user_id' => Auth::id(),
-                'client_id' => $request->get('client')['id'],
-                'local_id' => Auth::user()->local_id,
-                'total' => $request->get('total'),
-                'advancement' => $request->get('total'),
-                'total_discount' => 0,
-                'payments' => json_encode($request->get('payments'))
-            ]);
+                $sale = Sale::create([
+                    'user_id' => Auth::id(),
+                    'client_id' => $request->get('client')['id'],
+                    'local_id' => Auth::user()->local_id,
+                    'total' => $request->get('total'),
+                    'advancement' => $request->get('total'),
+                    'total_discount' => 0,
+                    'payments' => json_encode($request->get('payments'))
+                ]);
 
-            $serie = Serie::find($serie_id);
+                $serie = Serie::find($serie_id);
 
-            $document = SaleDocument::create([
-                'sale_id' => $sale->id,
-                'serie_id' => $serie_id,
-                'number' => $serie->number
-            ]);
-
-            $serie->increment('number', 1);
-
-            $products = $request->get('products');
-
-            foreach ($products as $produc) {
-                SaleProduct::create([
+                $document = SaleDocument::create([
                     'sale_id' => $sale->id,
-                    'product_id' => $produc['id'],
-                    'product' => json_encode($produc),
-                    'price' => $produc['price'],
-                    'discount' => 0,
-                    'quantity' => $produc['quantity'],
-                    'total' => $produc['total']
+                    'serie_id' => $serie_id,
+                    'number' => $serie->number
                 ]);
 
-                $k = Kardex::create([
-                    'date_of_issue' => Carbon::now()->format('Y-m-d'),
-                    'motion' => 'sale',
-                    'product_id' => $produc['id'],
-                    'local_id' => $local_id,
-                    'quantity' => - ($produc['quantity']),
-                    'document_id' => $document->id,
-                    'document_entity' => SaleDocument::class,
-                    'description' => 'Venta'
-                ]);
+                $serie->increment('number', 1);
 
-                KardexSize::create([
-                    'kardex_id' => $k->id,
-                    'product_id' => $produc['id'],
-                    'local_id' => $local_id,
-                    'size'      => $produc['size'],
-                    'quantity'  => (-$produc['quantity'])
-                ]);
+                $products = $request->get('products');
 
-                $product = Product::find($produc['id']);
+                foreach ($products as $produc) {
+                    SaleProduct::create([
+                        'sale_id' => $sale->id,
+                        'product_id' => $produc['id'],
+                        'product' => json_encode($produc),
+                        'price' => $produc['price'],
+                        'discount' => 0,
+                        'quantity' => $produc['quantity'],
+                        'total' => $produc['total']
+                    ]);
 
-                $tallas = $product->sizes;
-                $n_tallas = [];
-                foreach (json_decode($tallas, true) as $k => $talla) {
-                    if ($talla['size'] == $produc['size']) {
-                        $n_tallas[$k] = array(
-                            'size' => $talla['size'],
-                            'quantity' => ($talla['quantity'] - $produc['quantity'])
-                        );
-                    } else {
-                        $n_tallas[$k] = array(
-                            'size' => $talla['size'],
-                            'quantity' => $talla['quantity']
-                        );
+                    $k = Kardex::create([
+                        'date_of_issue' => Carbon::now()->format('Y-m-d'),
+                        'motion' => 'sale',
+                        'product_id' => $produc['id'],
+                        'local_id' => $local_id,
+                        'quantity' => - ($produc['quantity']),
+                        'document_id' => $document->id,
+                        'document_entity' => SaleDocument::class,
+                        'description' => 'Venta'
+                    ]);
+
+                    KardexSize::create([
+                        'kardex_id' => $k->id,
+                        'product_id' => $produc['id'],
+                        'local_id' => $local_id,
+                        'size'      => $produc['size'],
+                        'quantity'  => (-$produc['quantity'])
+                    ]);
+
+                    $product = Product::find($produc['id']);
+
+                    $tallas = $product->sizes;
+                    $n_tallas = [];
+                    foreach (json_decode($tallas, true) as $k => $talla) {
+                        if ($talla['size'] == $produc['size']) {
+                            $n_tallas[$k] = array(
+                                'size' => $talla['size'],
+                                'quantity' => ($talla['quantity'] - $produc['quantity'])
+                            );
+                        } else {
+                            $n_tallas[$k] = array(
+                                'size' => $talla['size'],
+                                'quantity' => $talla['quantity']
+                            );
+                        }
                     }
+                    $product->update([
+                        'sizes' => json_encode($n_tallas)
+                    ]);
+                    Product::find($produc['id'])->decrement('stock', $produc['quantity']);
                 }
-                $product->update([
-                    'sizes' => json_encode($n_tallas)
-                ]);
-                Product::find($produc['id'])->decrement('stock', $produc['quantity']);
-            }
-            return $sale;
-            // });
+                return $sale;
+            });
 
-            //return response()->json($res);
+            return response()->json($res);
         } catch (\Exception $e) {
             return response()->json(['message' => $e]);
         }
