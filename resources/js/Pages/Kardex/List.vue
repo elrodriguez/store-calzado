@@ -56,8 +56,8 @@
     }
 </script>
 <template>
-    <AppLayout title="Usuarios">
-        <template #Inventario>
+    <AppLayout title="Inventario">
+        <template #header>
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
                 Inventario
             </h2>

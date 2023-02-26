@@ -60,8 +60,9 @@
     };
     const saveSale = async () => {
         axios.post(route('sales.store'), form ).then((res) => {
-            form.reset();
-            printPdf(res.data.id);
+            console.log(res)
+            //form.reset();
+            //printPdf(res.data.id);
         });
     }
 
