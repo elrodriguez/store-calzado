@@ -13,6 +13,8 @@
     import swal from 'sweetalert';
     import Keypad from '@/Components/Keypad.vue';
     import ModalLarge from '@/Components/ModalLarge.vue';
+    import VueMagnifier from '@websitebeaver/vue-magnifier'
+    import '@websitebeaver/vue-magnifier/styles.css'
 
     const props = defineProps({
         products: {
@@ -257,7 +259,7 @@ _openModalEntrada.value = true;
                           </Keypad>
                         </div>
                     </div>
-                    <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+                    <div class="relative shadow-md sm:rounded-lg">
                       <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
                           <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                               <tr>
@@ -320,7 +322,12 @@ _openModalEntrada.value = true;
                                       </div>
                                   </td>
                                   <td class="w-32 p-4">
-                                      <img :src="product.image" >
+                                      
+                                    <VueMagnifier 
+                                      :src="product.image"
+                                      :mgWidth = "200"
+                                      :mgHeight = "200"
+                                    width="600" />
                                   </td>
                                   <td class="px-6 py-4">
                                       {{ product.interne }}
