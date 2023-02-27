@@ -5,6 +5,7 @@
     import { ref } from 'vue';
     import { useForm } from '@inertiajs/vue3';
     import swal from 'sweetalert';
+    import NumberInput from '../../../Components/NumberInput.vue';
 
     const displayModal = ref(false);
 
@@ -22,7 +23,8 @@
             description:'',
             price:'',
             size:'',
-            quantity: 1
+            quantity: 1,
+            discount: 0
         }
     });
     const searchProducts = async () => {
@@ -39,6 +41,7 @@
                     form.data.price = null;
                     form.data.total = 0;
                     form.data.quantity = 1;
+                    form.data.discount = 0;
                     form.search = null;
                 }else{
                     swal('No se encontró producto');
@@ -70,6 +73,7 @@
         form.data.price = JSON.parse(product.sale_prices).high;
         form.data.total = 0;
         form.data.quantity = 1;
+        form.data.discount = 0;
         form.search = null;
     }
 
@@ -78,7 +82,7 @@
     const addProduct = () => {
         if(form.data.size){
             if(form.data.price){
-                let total = parseFloat(form.data.quantity)*parseFloat(form.data.price)
+                let total = parseFloat(form.data.quantity)*(parseFloat(form.data.price)-parseFloat(form.data.discount))
                 form.data.total = total;
                 let data = {
                     id: form.data.id,
@@ -88,6 +92,7 @@
                     total: form.data.total,
                     quantity: form.data.quantity,
                     size: form.data.size,
+                    discount: form.data.discount,
                 }
                 emit('eventdata',data);
                 displayModal.value = false;
@@ -131,8 +136,8 @@
                 </div>
             </div>
         </form>
-        <div  id="result" style="position: absolute;width: 100%;">
-            <div class="mt-1" style="height: 300px;overflow-y: auto;">
+        <div  id="result" style="position: absolute;width: 100%;z-index: 999999;">
+            <div class="mt-1" style="max-height: 300px;overflow-y: auto;">
                 <table class="min-w-full" >
                     <tbody>
                         <tr @click="openModalSelectProduct(product)" v-for="(product, index) in form.products" class="border-b bg-gray-100 boder-gray-900" style="cursor: pointer;">
@@ -247,11 +252,19 @@
                         </label>
                         <input v-model="form.data.quantity" type="number" id="quantity" class="block w-full p-2 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 sm:text-xs focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                     </div>
+                    <div class="mb-4">
+                        <label for="discount" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                            Descuento
+                        </label>
+                        <NumberInput
+                            v-model="form.data.discount"
+                            id="discount"
+                        ></NumberInput>
+                    </div>
                 </div>
             </div>
         </template>
         <template #footer>
-            
             <DangerButton
                 class="mr-3"
                 @click="addProduct()"

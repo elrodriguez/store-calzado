@@ -101,10 +101,10 @@
     }
 </script>
 <template>
-    <AppLayout title="Usuarios">
+    <AppLayout title="Tiendas">
         <template #header>
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                Usuarios
+                Tiendas
             </h2>
         </template>
 

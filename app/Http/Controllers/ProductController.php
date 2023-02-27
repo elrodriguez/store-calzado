@@ -25,8 +25,10 @@ class ProductController extends Controller
     public function index()
     {
         $products = (new Product())->newQuery();
+        //dd(request()->all());
         if (request()->has('search')) {
-            $products->where('description', 'Like', '%' . request()->input('search') . '%');
+            $products->where('interne', '=', request()->input('search'))
+                ->orWhere('description', 'Like', '%' . request()->input('search') . '%');
         }
         if (request()->query('sort')) {
             $attribute = request()->query('sort');

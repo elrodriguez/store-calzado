@@ -58,6 +58,12 @@
                     border: 1px solid #000;
                     border-collapse: collapse;
                     padding: 0.3em;
+                    caption-side: bottom;">Descuento.</td>
+                    <td style="text-align: left;
+                    vertical-align: top;
+                    border: 1px solid #000;
+                    border-collapse: collapse;
+                    padding: 0.3em;
                     caption-side: bottom;">Importe</td>
                 </tr>
                 @foreach ($products as $item)
@@ -71,12 +77,17 @@
                         border: 1px solid #000;
                         border-collapse: collapse;
                         padding: 0.3em;
-                        caption-side: bottom;">{{ json_decode($item->product,true)['interne'] }}-{{ json_decode($item->product,true)['description'] }}</td>
+                        caption-side: bottom;">{{ json_decode($item->product,true)['interne'] }}-{{ json_decode($item->product,true)['description'] }} / {{ json_decode($item->product,true)['size'] }}</td>
                         <td style="text-align: right;vertical-align: top;
                         border: 1px solid #000;
                         border-collapse: collapse;
                         padding: 0.3em;
                         caption-side: bottom;">{{ $item->price }}</td>
+                        <td style="text-align: right;vertical-align: top;
+                        border: 1px solid #000;
+                        border-collapse: collapse;
+                        padding: 0.3em;
+                        caption-side: bottom;">{{ $item->discount }}</td>
                         <td style="text-align: right;vertical-align: top;
                         border: 1px solid #000;
                         border-collapse: collapse;

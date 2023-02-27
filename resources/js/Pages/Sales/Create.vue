@@ -89,22 +89,22 @@
                 <div class="grid grid-cols-12 gap-4">
                     <div class="col-span-12 sm:col-span-12 md:col-span-6 bg-teal-400 p-4">
                         <SearchProducts @eventdata="getDataTable" />
-                        <div class="mt-4 mb-4" style="height: 255px;">
+                        <div class="mt-4 relative overflow-x-auto shadow-md sm:rounded-lg">
                             <table style="width: 100%;">
                                 <thead class="border-b bg-gray-800">
                                     <tr>
                                         <th class="text-sm font-medium text-white px-6 py-2"></th>
                                         <th scope="col" class="text-sm font-medium text-white px-6 py-2">
-                                            Código
-                                        </th>
-                                        <th class="text-sm font-medium text-white px-6 py-2">
-                                            Descripción
+                                            Código & Descripción
                                         </th>
                                         <th class="text-sm font-medium text-white px-6 py-2">
                                             Cantidad
                                         </th>
                                         <th class="text-sm font-medium text-white px-6 py-2">
                                             Precio
+                                        </th>
+                                        <th class="text-sm font-medium text-white px-6 py-2">
+                                            Descuento
                                         </th>
                                         <th class="text-sm font-medium text-white px-6 py-2">
                                             Importe
@@ -122,16 +122,16 @@
                                             </div>
                                         </td>
                                         <td class="text-sm text-white font-medium px-6 py-2">
-                                            {{ product.interne  }}
-                                        </td>
-                                        <td class="text-sm text-white font-medium px-6 py-2">
-                                            {{ product.description  }} / {{ product.size  }}
+                                            {{ product.interne  }} - {{ product.description  }} / {{ product.size  }}
                                         </td>
                                         <td class="text-right text-sm text-white font-medium px-6 py-2">
                                             {{ product.quantity  }}
                                         </td>
                                         <td class="text-right text-sm text-white font-medium px-6 py-2">
                                             {{ product.price  }}
+                                        </td>
+                                        <td class="text-right text-sm text-white font-medium px-6 py-2">
+                                            {{ product.discount  }}
                                         </td>
                                         <td class="text-right text-sm text-white font-medium px-6 py-2">
                                             {{ product.total  }}

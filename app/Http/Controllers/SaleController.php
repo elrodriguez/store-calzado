@@ -148,7 +148,7 @@ class SaleController extends Controller
                         'product_id' => $produc['id'],
                         'product' => json_encode($produc),
                         'price' => $produc['price'],
-                        'discount' => 0,
+                        'discount' => $produc['discount'],
                         'quantity' => $produc['quantity'],
                         'total' => $produc['total']
                     ]);

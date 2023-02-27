@@ -108,7 +108,6 @@ const props = defineProps({
                     v-model="form.interne"
                     type="text"
                     class="block w-full mt-1"
-                    autofocus
                 />
                 <InputError :message="form.errors.interne" class="mt-2" />
             </div>
@@ -119,7 +118,6 @@ const props = defineProps({
                     v-model="form.description"
                     type="text"
                     class="block w-full mt-1"
-                    autofocus
                 />
                 <InputError :message="form.errors.description" class="mt-2" />
             </div>
@@ -144,7 +142,6 @@ const props = defineProps({
                     v-model="form.purchase_prices"
                     type="text"
                     class="block w-full mt-1"
-                    autofocus
                 />
                 <InputError :message="form.errors.purchase_prices" class="mt-2" />
             </div>
@@ -155,7 +152,6 @@ const props = defineProps({
                     v-model="form.sale_prices.high"
                     type="text"
                     class="block w-full mt-1"
-                    autofocus
                 />
                 <InputError :message="form.errors[`sale_prices.high`]" class="mt-2" />
             </div>
@@ -166,7 +162,6 @@ const props = defineProps({
                     v-model="form.sale_prices.medium"
                     type="text"
                     class="block w-full mt-1"
-                    autofocus
                 />
                 <InputError :message="form.errors[`sale_prices.medium`]" class="mt-2" />
             </div>
@@ -177,7 +172,6 @@ const props = defineProps({
                     v-model="form.sale_prices.under"
                     type="text"
                     class="block w-full mt-1"
-                    autofocus
                 />
                 <InputError :message="form.errors[`sale_prices.under`]" class="mt-2" />
             </div>
