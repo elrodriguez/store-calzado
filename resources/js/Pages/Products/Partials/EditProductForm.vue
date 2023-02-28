@@ -23,6 +23,7 @@
         interne: props.product.interne,
         description: props.product.description,
         image: props.product.image,
+        imageNew: '',
         purchase_prices: props.product.purchase_prices,
         sale_prices: JSON.parse(props.product.sale_prices),
         sizes: JSON.parse(props.product.sizes),
@@ -99,6 +100,12 @@
                         <figcaption class="mt-2 text-sm text-center text-gray-500 dark:text-gray-400">Imagen Actual</figcaption>
                     </figure>
                 </div>
+                <!-- <div class="mb-4">
+                    <input type="file" @input="form.imageNew = $event.target.files[0]" />
+                    <progress v-if="form.progress" :value="form.progress.percentage" max="100">
+                        {{ form.progress.percentage }}%
+                    </progress>
+                </div> -->
                 <ModalCropperImage @eventdataproduct="getDataProductImage" :product="props.product"></ModalCropperImage>
             </div>
             <div class="col-span-6 sm:col-span-2">

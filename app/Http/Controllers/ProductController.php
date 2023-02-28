@@ -87,11 +87,15 @@ class ProductController extends Controller
                 'sizes.*.quantity.required' => 'Ingrese Cantidad',
             ]
         );
+        // $path = 'img' . DIRECTORY_SEPARATOR . 'imagen-no-disponible.jpeg';
+        // $destination = 'uploads' . DIRECTORY_SEPARATOR . 'products';
         $path = 'img/imagen-no-disponible.jpeg';
         $destination = 'uploads/products';
         $file = $request->file('image');
         if ($file) {
             $original_name = strtolower(trim($file->getClientOriginalName()));
+            $original_name = str_replace(" ", "_", $original_name);
+            //$extension = $file->getClientOriginalExtension();
             $file_name = time() . rand(100, 999) . $original_name;
             $path = $request->file('image')->storeAs(
                 $destination,
@@ -169,7 +173,6 @@ class ProductController extends Controller
             'purchase_prices' => 'required',
             'sale_prices.high' => 'required'
         ]);
-
 
         $product->usine = $request->get('usine');
         $product->interne = $request->get('interne');
@@ -502,15 +505,15 @@ class ProductController extends Controller
         ]);
     }
 
-    public function getProductByLocal(Request $request){
+    public function getProductByLocal(Request $request)
+    {
         $local_id = $request->get('local_id_origen');
         $product_id = $request->get('product_id');
-        $product = Product::join('kardex_sizes', 'kardex_sizes.product_id', '=','products.id')
-                            ->where('kardex_sizes.product_id', $product_id)
-                            ->where('kardex_sizes.local_id', $local_id)
-                            ->select('products.description', 'products.interne', 'kardex_sizes.size', 'kardex_sizes.quantity', 'products.image')
-                            ->get();
+        $product = Product::join('kardex_sizes', 'kardex_sizes.product_id', '=', 'products.id')
+            ->where('kardex_sizes.product_id', $product_id)
+            ->where('kardex_sizes.local_id', $local_id)
+            ->select('products.description', 'products.interne', 'kardex_sizes.size', 'kardex_sizes.quantity', 'products.image')
+            ->get();
         return response()->json($product);
-
     }
 }

@@ -3,7 +3,6 @@
     import VueCropper from 'vue-cropperjs';
     import { ref } from 'vue';
     import { useForm } from '@inertiajs/vue3';
-    import DialogModal from '@/Components/DialogModal.vue';
     import DangerButton from '@/Components/DangerButton.vue';
     import SecondaryButton from '@/Components/SecondaryButton.vue';
     import swal from 'sweetalert';
