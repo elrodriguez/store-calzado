@@ -259,7 +259,7 @@ _openModalEntrada.value = true;
                           </Keypad>
                         </div>
                     </div>
-                    <div class="relative shadow-md sm:rounded-lg">
+                    <div class="mb-4 relative shadow-md sm:rounded-lg">
                       <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
                           <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                               <tr>
@@ -322,12 +322,11 @@ _openModalEntrada.value = true;
                                       </div>
                                   </td>
                                   <td class="w-32 p-4">
-                                      
                                     <VueMagnifier 
-                                      :src="product.image"
-                                      :mgWidth = "200"
-                                      :mgHeight = "200"
-                                    width="600" />
+                                      :src="product.image" width="500"
+                                      :mgWidth="200"
+                                      :mgHeight="200"
+                                      />
                                   </td>
                                   <td class="px-6 py-4">
                                       {{ product.interne }}
