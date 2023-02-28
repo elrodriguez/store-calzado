@@ -344,6 +344,7 @@
 
                                     <VueMagnifier 
                                       :src="product.image" width="500"
+                                      :zoomImgSrc="product.image"
                                       :mgWidth="200"
                                       :mgHeight="200"
                                       />
