@@ -207,8 +207,8 @@ class ProductController extends Controller
             ->select(
                 't1.*',
                 DB::raw(`
-                SELECT 
-                    JSON_ARRAYAGG(JSON_OBJECT('size', size, 'quantity', quantity_sum)) AS productos 
+                SELECT
+                    JSON_ARRAYAGG(JSON_OBJECT('size', size, 'quantity', quantity_sum)) AS productos
                     FROM (
                         SELECT size, SUM(quantity) AS quantity_sum
                         FROM kardex_sizes
@@ -268,8 +268,8 @@ class ProductController extends Controller
             ->select(
                 't1.*',
                 DB::raw(`
-                SELECT 
-                    JSON_ARRAYAGG(JSON_OBJECT('size', size, 'quantity', quantity_sum)) AS productos 
+                SELECT
+                    JSON_ARRAYAGG(JSON_OBJECT('size', size, 'quantity', quantity_sum)) AS productos
                     FROM (
                         SELECT size, SUM(quantity) AS quantity_sum
                         FROM kardex_sizes
@@ -500,5 +500,17 @@ class ProductController extends Controller
             'success' => $success,
             'products' => $products
         ]);
+    }
+
+    public function getProductByLocal(Request $request){
+        $local_id = $request->get('local_id_origen');
+        $product_id = $request->get('product_id');
+        $product = Product::join('kardex_sizes', 'kardex_sizes.product_id', '=','products.id')
+                            ->where('kardex_sizes.product_id', $product_id)
+                            ->where('kardex_sizes.local_id', $local_id)
+                            ->select('products.description', 'products.interne', 'kardex_sizes.size', 'kardex_sizes.quantity', 'products.image')
+                            ->get();
+        return response()->json($product);
+
     }
 }

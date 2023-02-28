@@ -65,6 +65,11 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified',
     )->name('search_product_all');
 
     Route::post(
+        'get/product/local/',
+        [ProductController::class, 'getProductByLocal']
+    )->name('get_product_by_local');
+
+    Route::post(
         'search/scaner/products',
         [ProductController::class, 'searchScanerProduct']
     )->name('search_scaner_product');
