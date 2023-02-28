@@ -505,12 +505,14 @@ class ProductController extends Controller
     public function getProductByLocal(Request $request){
         $local_id = $request->get('local_id_origen');
         $product_id = $request->get('product_id');
-        $product = Product::join('kardex_sizes', 'kardex_sizes.product_id', '=','products.id')
-                            ->where('kardex_sizes.product_id', $product_id)
-                            ->where('kardex_sizes.local_id', $local_id)
-                            ->select('products.description', 'products.interne', 'kardex_sizes.size', 'kardex_sizes.quantity', 'products.image')
-                            ->get();
-        return response()->json($product);
+        $product = Product::join('kardex_sizes', 'kardex_sizes.product_id', '=', 'products.id')
+                        ->where('kardex_sizes.product_id', $product_id)
+                        ->where('kardex_sizes.local_id', $local_id)
+                        ->selectRaw('products.description, products.interne, kardex_sizes.size, sum(kardex_sizes.quantity) quantity, products.image')
+                        ->groupBy('products.description', 'products.interne', 'kardex_sizes.size', 'products.image')
+                        ->get();
+
+        return response()->json(['product' => $product]);
 
     }
 }
