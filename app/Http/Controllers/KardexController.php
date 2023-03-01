@@ -19,7 +19,7 @@ class KardexController extends Controller
     public function index()
     {
         $establisment = LocalSale::all();
-
+        $local_id = request()->input('local_id');
         $kardexes = Kardex::join('products', 'kardexes.product_id', 'products.id')
             ->join('local_sales', 'kardexes.local_id', 'local_sales.id')
             ->select(
@@ -35,6 +35,9 @@ class KardexController extends Controller
             )
             ->where('products.interne', '=', request()->input('search'))
             ->orWhere('products.description', 'Like', '%' . request()->input('search') . '%')
+            ->where(function ($query) use ($local_id) {
+                $query->where('kardexes.local_id', $local_id);
+            })
             ->orderBy('local_sales.description')
             ->paginate(20);
 

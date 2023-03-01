@@ -507,13 +507,28 @@ class ProductController extends Controller
 
     public function getProductByLocal(Request $request)
     {
-        $local_id = $request->get('local_id_origen');
+        $local_id = $request->get('local_id_origin');
         $product_id = $request->get('product_id');
-        $product = Product::join('kardex_sizes', 'kardex_sizes.product_id', '=', 'products.id')
-            ->where('kardex_sizes.product_id', $product_id)
-            ->where('kardex_sizes.local_id', $local_id)
-            ->select('products.description', 'products.interne', 'kardex_sizes.size', 'kardex_sizes.quantity', 'products.image')
+
+        $sizes = KardexSize::where('product_id', $product_id)
+            ->where('local_id', $local_id)
+            ->select('size', DB::raw('CONVERT(sum(quantity), SIGNED INTEGER) AS quantity_relocate'))
+            ->selectRaw('CONVERT(sum(quantity), SIGNED INTEGER) quantity')
+            ->groupBy('size')
             ->get();
-        return response()->json($product);
+
+        return response()->json($sizes);
+    }
+
+    public function saveRelocate(Request $request)
+    {
+
+        $this->validate($request, [
+            'local_id_destiny' => 'required',
+            'description' => 'required',
+
+        ], [
+            'local_id_destiny.required' => 'El local destino es obligatorio'
+        ]);
     }
 }

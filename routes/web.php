@@ -168,4 +168,9 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified',
         'print/sales/user/{date}',
         [SaleController::class, 'printSalesDay']
     )->name('print_sale_user');
+
+    Route::post(
+        'relocate/product/sizes',
+        [ProductController::class, 'saveRelocate']
+    )->name('relocate_product_sizes');
 });
