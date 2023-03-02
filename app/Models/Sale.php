@@ -17,7 +17,8 @@ class Sale extends Model
         'total',
         'advancement',
         'total_discount',
-        'payments'
+        'payments',
+        'petty_cash_id'
     ];
 
     public function saleProduct()

@@ -7,6 +7,7 @@ use App\Models\KardexSize;
 use App\Models\LocalSale;
 use App\Models\PaymentMethod;
 use App\Models\Person;
+use App\Models\PettyCash;
 use App\Models\Product;
 use App\Models\Sale;
 use App\Models\SaleDocument;
@@ -31,9 +32,8 @@ class SaleController extends Controller
     {
         $sales = (new Sale())->newQuery();
 
-        if (request()->has('search')) {
-            $sales->whereDate('sales.created_at', request()->input('search'));
-        }
+        $search = request()->input('search');
+
         if (request()->query('sort')) {
             $attribute = request()->query('sort');
             $sort_order = 'ASC';
@@ -62,6 +62,10 @@ class SaleController extends Controller
                 'sale_documents.number'
             )
             ->where('sales.user_id', Auth::id())
+            ->when($search, function ($q) use ($search) {
+                return $q->whereRaw('CONCAT("series.description","-",sale_documents.number) = ?', [$search])
+                    ->orWhere('people.full_name', 'like', '%' . $search . '%');
+            })
             ->paginate(10)
             ->onEachSide(2);
 
@@ -118,16 +122,27 @@ class SaleController extends Controller
                     ->where('local_id', $local_id)
                     ->first();
 
+                $petty_cash = PettyCash::firstOrCreate([
+                    'user_id' => Auth::id(),
+                    'state' => 1,
+                    'local_sale_id' => $local_id
+                ], [
+                    'date_opening' => Carbon::now()->format('Y-m-d'),
+                    'time_opening' => date('H:i:s'),
+                    'income' => 0
+                ]);
+
                 $serie_id = $serie->id;
 
                 $sale = Sale::create([
                     'user_id' => Auth::id(),
                     'client_id' => $request->get('client')['id'],
-                    'local_id' => Auth::user()->local_id,
+                    'local_id' => $local_id,
                     'total' => $request->get('total'),
                     'advancement' => $request->get('total'),
                     'total_discount' => 0,
-                    'payments' => json_encode($request->get('payments'))
+                    'payments' => json_encode($request->get('payments')),
+                    'petty_cash_id' => $petty_cash->id
                 ]);
 
                 $serie = Serie::find($serie_id);
@@ -301,16 +316,36 @@ class SaleController extends Controller
             ->where('sales.user_id', Auth::id())
             ->whereDate('sales.created_at', $date)
             ->get();
+
+        $products = SaleProduct::join('sales', 'sale_id', 'sales.id')
+            ->join('products', 'product_id', 'products.id')
+            ->whereDate('sale_products.created_at', $date)
+            ->where('sales.user_id', Auth::id())
+            ->select(
+                'products.interne',
+                'products.image',
+                'products.description',
+                'sale_products.product',
+                'sale_products.price',
+                'sale_products.discount',
+                'sale_products.quantity',
+                'sale_products.total'
+            )
+            ->get();
+
         $status = false;
         if (count($sales) > 0) {
             $status = true;
 
             $file = public_path('ventas/') . 'ventas.pdf';
+
             $pdf = PDF::loadView('sales.sale_day', [
                 'header' => $header,
                 'sales' => $sales,
-                'payments' => $payments
+                'payments' => $payments,
+                'products' => $products
             ]);
+
             $pdf->setPaper('A4', 'portrait');
             $pdf->save($file);
 
