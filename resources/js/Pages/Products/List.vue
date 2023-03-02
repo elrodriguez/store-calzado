@@ -103,7 +103,7 @@
     }
 
 
-    
+
 
     const formInput = useForm({
         type: 1,
@@ -136,16 +136,6 @@
         });
     };
 
-    const getProductByLocal = async () => {
-        axios.post(route('get_product_by_local'), formInput ).then((res) => {
-            dataProductByLocal.product = res.data.product;
-            for (let item of dataProductByLocal.product){
-                item.quantity = parseInt(item.quantity);
-                item.quantity_relocate = 0;
-            }
-        });
-        console.log('mierda',dataProductByLocal.product);
-    };
 
     const saveProductInput = () => {
       formInput.post(route('input_products'), {
@@ -250,6 +240,11 @@
     const openModalTrasladoMercaderia = (product) => {
         formReLocate.product_id = product.id;
         formReLocate.product_full_name = product.interne+' - '+product.description
+        getProductByLocal();
+        openModalTraslado.value = true;
+    }
+
+    function getProductByLocal(){
         formReLocate.sizes = [];
         axios.post(route('get_product_by_local'), formReLocate ).then((res) => {
             let dataSizes = res.data;
@@ -257,7 +252,6 @@
               formReLocate.sizes[i] = dataSizes[i];
             }
         });
-        openModalTraslado.value = true;
     }
 
     function saveRelocate(){
@@ -266,6 +260,10 @@
           preserveScroll: true,
           onSuccess: () => {
             swal('Traslado registrados correctamente');
+            formReLocate.sizes = [];
+            formReLocate.description="";
+            formReLocate.local_id_destiny="";
+            openModalTraslado.value = false;
           },
       });
     }
@@ -638,7 +636,7 @@
 
                                                                                                              <!-- ----------Origen -------->
                     <InputLabel for="stablishment" value="Establecimiento Origen" />
-                    <select v-model="formReLocate.local_id_origin"  v-on:change="onChangeLocalOrigen(formInput.local_id_origen)" id="stablishment" class="mt-1 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                    <select v-model="formReLocate.local_id_origin"  v-on:change="getProductByLocal()" id="stablishment" class="mt-1 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                       <template v-for="(establishment, index) in props.establishments" :key="index">
                           <option :value="establishment.id">{{ establishment.description }}</option>
                       </template>
@@ -669,7 +667,7 @@
                   </div>
                   <div class="col-span-6 sm:col-span-6">
                       <label>
-                          Tallas Disponibles en el local de origen                          
+                          Tallas Disponibles en el local de origen
                       </label>
                       <div v-for="(item, index) in formReLocate.sizes" v-bind:key="index">
                           <table style="width: 100%;">
@@ -684,32 +682,32 @@
                                               class="bg-gray-200 block w-full mt-1"
                                               autofocus
                                           />
-                                          
+
                                       </div>
                                   </td>
                                   <td style="padding: 4px;">
                                       <div class="col-span-3 sm:col-span-2">
                                           <InputLabel value="Cantidad" />
                                           <TextInput
-                                            
+
                                             readonly
                                               v-model="item.quantity"
                                               type="number"
                                               class="bg-gray-200 block w-full mt-1"
                                               autofocus
                                           />
-                                          
+
                                       </div>
                                   </td>
                                   <td style="padding: 4px;" valign="bottom">
                                     <div class="col-span-3 sm:col-span-2">
                                           <InputLabel value="Cantidad a trasladar" />
-                                          <TextInput                                              
+                                          <TextInput
                                           v-model="item.quantity_relocate"
                                               type="text"
                                               class="block w-full mt-1"
-                                              autofocus
-                                          />
+                                              autofocus/>
+                                              <InputError :message="formReLocate[`sizes.${index}.quantity_relocate`]" class="mt-2" />
                                       </div>
                                   </td>
                               </tr>
@@ -797,7 +795,7 @@
           <template #buttons>
             <DangerButton
                 class="mr-3"
-                @click="getProductByLocal()"
+                @click="saveProductPrices()"
             >
                 Guardar
             </DangerButton>

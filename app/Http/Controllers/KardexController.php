@@ -18,16 +18,17 @@ class KardexController extends Controller
      */
     public function index()
     {
-        $establisment = LocalSale::all();
+        $establishments = LocalSale::all();
         $local_id = request()->input('local_id');
-        $kardexes = Kardex::join('products', 'kardexes.product_id', 'products.id')
+        if($local_id!=null && $local_id!=0){
+            $kardexes = Kardex::join('products', 'kardexes.product_id', 'products.id')
             ->join('local_sales', 'kardexes.local_id', 'local_sales.id')
             ->select(
                 'products.*',
                 'local_sales.id AS local_id',
                 'local_sales.description AS local_names'
             )
-            ->selectRaw('SUM(quantity) AS kardex_stock')
+            ->selectRaw('CONVERT(SUM(quantity), SIGNED INTEGER) AS kardex_stock')
             ->groupBy(
                 'products.id',
                 'local_sales.description',
@@ -40,10 +41,31 @@ class KardexController extends Controller
             })
             ->orderBy('local_sales.description')
             ->paginate(20);
+        }else{
+            $kardexes = Kardex::join('products', 'kardexes.product_id', 'products.id')
+            ->join('local_sales', 'kardexes.local_id', 'local_sales.id')
+            ->select(
+                'products.*',
+                'local_sales.id AS local_id',
+                'local_sales.description AS local_names'
+            )
+            ->selectRaw('CONVERT(SUM(quantity), SIGNED INTEGER) AS kardex_stock')
+            ->groupBy(
+                'products.id',
+                'local_sales.description',
+                'local_sales.id'
+            )
+            ->where('products.interne', '=', request()->input('search'))
+            ->orWhere('products.description', 'Like', '%' . request()->input('search') . '%')
+            ->orderBy('local_sales.description')
+            ->paginate(20);
+        }
+
 
         return Inertia::render('Kardex/List', [
-            'establisment' => $establisment,
+            'establishments' => $establishments,
             'kardexes' => $kardexes,
+            'local_id' => $local_id,
             'filters' => request()->all('search')
         ]);
     }

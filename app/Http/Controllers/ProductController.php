@@ -8,12 +8,13 @@ use App\Models\LocalSale;
 use App\Models\Product;
 use App\Models\ProductEstablishmentPrice;
 use Carbon\Carbon;
+use Exception;
 use Illuminate\Http\Request;
-use Inertia\Inertia;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Inertia\Inertia;
 
 class ProductController extends Controller
 {
@@ -60,7 +61,7 @@ class ProductController extends Controller
     public function create()
     {
         return Inertia::render('Products/Create', [
-            'establishments' => LocalSale::all()
+            'establishments' => LocalSale::all(),
         ]);
     }
 
@@ -111,14 +112,14 @@ class ProductController extends Controller
         //dd($request->get('sale_prices'));
         $pr = Product::create([
             'usine' => $request->get('usine'),
-            'interne'  => $request->get('interne'),
-            'description'  => $request->get('description'),
-            'image'  => $path,
-            'purchase_prices'  => $request->get('purchase_prices'),
-            'sale_prices'  => json_encode($request->get('sale_prices')),
-            'sizes'  => json_encode($request->get('sizes')),
-            'stock_min'  => 1,
-            'stock'  => $total
+            'interne' => $request->get('interne'),
+            'description' => $request->get('description'),
+            'image' => $path,
+            'purchase_prices' => $request->get('purchase_prices'),
+            'sale_prices' => json_encode($request->get('sale_prices')),
+            'sizes' => json_encode($request->get('sizes')),
+            'stock_min' => 1,
+            'stock' => $total,
         ]);
 
         $k = Kardex::create([
@@ -127,16 +128,16 @@ class ProductController extends Controller
             'product_id' => $pr->id,
             'local_id' => $request->get('local_id'),
             'quantity' => $total,
-            'description' => 'Stock Inicial'
+            'description' => 'Stock Inicial',
         ]);
 
         foreach ($request->get('sizes') as $row) {
             KardexSize::create([
-                'kardex_id'         => $k->id,
-                'product_id'        => $pr->id,
-                'local_id'          => $request->get('local_id'),
-                'size'              => $row['size'],
-                'quantity'          => $row['quantity']
+                'kardex_id' => $k->id,
+                'product_id' => $pr->id,
+                'local_id' => $request->get('local_id'),
+                'size' => $row['size'],
+                'quantity' => $row['quantity'],
             ]);
         }
 
@@ -153,7 +154,7 @@ class ProductController extends Controller
     public function edit(Product $product)
     {
         return Inertia::render('Products/Edit', [
-            'product' => $product
+            'product' => $product,
         ]);
     }
 
@@ -171,7 +172,7 @@ class ProductController extends Controller
             'interne' => 'required|unique:products,interne,' . $product->id,
             'description' => 'required',
             'purchase_prices' => 'required',
-            'sale_prices.high' => 'required'
+            'sale_prices.high' => 'required',
         ]);
 
         $product->usine = $request->get('usine');
@@ -215,10 +216,9 @@ class ProductController extends Controller
                     FROM (
                         SELECT size, SUM(quantity) AS quantity_sum
                         FROM kardex_sizes
-                        WHERE kardex_sizes.product_id=t1.id AND local_id = ` . $local_id . `
-                        GROUP BY size
+                        WHERE kardex_sizes.product_id=t1.id AND local_id = ` . $local_id . `GROUP BY size
                     ) AS local_sizes
-                `)
+`)
             )
             ->selectSub(function ($query) use ($local_id) {
                 $query->from('product_establishment_prices')
@@ -226,14 +226,14 @@ class ProductController extends Controller
                     ->whereColumn('product_establishment_prices.product_id', 't1.id')
                     ->where('product_establishment_prices.local_id', $local_id);
             }, 'local_prices')
-            // ->selectSub(function ($query) use ($local_id) {
-            //     $query->from('kardex_sizes')
-            //         ->join('products', 'kardex_sizes.product_id', '=', 'products.id')
-            //         ->selectRaw("CONCAT('[',GROUP_CONCAT(JSON_OBJECT('size', kardex_sizes.size, 'quantity', SUM(kardex_sizes.quantity))),']')")
-            //         ->where('kardex_sizes.local_id', '=', $local_id)
-            //         ->whereColumn('kardex_sizes.product_id = t1.id')
-            //         ->groupBy('kardex_sizes.size');
-            // }, 'local_sizes')
+        // ->selectSub(function ($query) use ($local_id) {
+        //     $query->from('kardex_sizes')
+        //         ->join('products', 'kardex_sizes.product_id', '=', 'products.id')
+        //         ->selectRaw("CONCAT('[',GROUP_CONCAT(JSON_OBJECT('size', kardex_sizes.size, 'quantity', SUM(kardex_sizes.quantity))),']')")
+        //         ->where('kardex_sizes.local_id', '=', $local_id)
+        //         ->whereColumn('kardex_sizes.product_id = t1.id')
+        //         ->groupBy('kardex_sizes.size');
+        // }, 'local_sizes')
 
             ->leftJoin('kardexes', 't1.id', '=', 'kardexes.product_id')
             ->where(function ($query) use ($search) {
@@ -244,13 +244,12 @@ class ProductController extends Controller
             ->groupBy('t1.id')
             ->get();
 
-
         if (count($products) > 0) {
             $success = true;
         }
         return response()->json([
             'success' => $success,
-            'products' => $products
+            'products' => $products,
         ]);
     }
 
@@ -276,10 +275,9 @@ class ProductController extends Controller
                     FROM (
                         SELECT size, SUM(quantity) AS quantity_sum
                         FROM kardex_sizes
-                        WHERE kardex_sizes.product_id=t1.id AND local_id = ` . $local_id . `
-                        GROUP BY size
+                        WHERE kardex_sizes.product_id=t1.id AND local_id = ` . $local_id . `GROUP BY size
                     ) AS local_sizes
-                `)
+`)
             )
             ->selectSub(function ($query) use ($local_id) {
                 $query->from('product_establishment_prices')
@@ -287,14 +285,14 @@ class ProductController extends Controller
                     ->whereColumn('product_establishment_prices.product_id', 't1.id')
                     ->where('product_establishment_prices.local_id', $local_id);
             }, 'local_prices')
-            // ->selectSub(function ($query) {
-            //     $query->from('kardex_sizes')
-            //         ->join('products', 'kardex_sizes.product_id', '=', 'products.id')
-            //         ->selectRaw("CONCAT('[',JSON_OBJECT('size', kardex_sizes.size, 'quantity', SUM(kardex_sizes.quantity)),']')")
-            //         ->where('kardex_sizes.local_id', '=', 1)
-            //         ->whereRaw('kardex_sizes.product_id = t1.id')
-            //         ->groupBy('kardex_sizes.size');
-            // }, 'local_sizes')
+        // ->selectSub(function ($query) {
+        //     $query->from('kardex_sizes')
+        //         ->join('products', 'kardex_sizes.product_id', '=', 'products.id')
+        //         ->selectRaw("CONCAT('[',JSON_OBJECT('size', kardex_sizes.size, 'quantity', SUM(kardex_sizes.quantity)),']')")
+        //         ->where('kardex_sizes.local_id', '=', 1)
+        //         ->whereRaw('kardex_sizes.product_id = t1.id')
+        //         ->groupBy('kardex_sizes.size');
+        // }, 'local_sizes')
             ->leftJoin('kardexes', 't1.id', '=', 'kardexes.product_id')
             ->where(function ($query) use ($search) {
                 $query->where('t1.interne', '=', $search);
@@ -341,11 +339,11 @@ class ProductController extends Controller
 
         $kardex = Kardex::create([
             'date_of_issue' => Carbon::now()->format('Y-m-d'),
-            'motion'        => $request->get('type') == 1 ? $request->get('motion') : 'Sale',
-            'product_id'    => $request->get('product_id'),
-            'local_id'      => $request->get('local_id'),
-            'quantity'      => $request->get('type') == 1 ? $t : -$t,
-            'description'   => $request->get('description')
+            'motion' => $request->get('type') == 1 ? $request->get('motion') : 'Sale',
+            'product_id' => $request->get('product_id'),
+            'local_id' => $request->get('local_id'),
+            'quantity' => $request->get('type') == 1 ? $t : -$t,
+            'description' => $request->get('description'),
         ]);
 
         $c = 0;
@@ -354,7 +352,7 @@ class ProductController extends Controller
         foreach (json_decode($tallas, true) as $k => $talla) {
             $pro_sizes[$k] = array(
                 'size' => $talla['size'],
-                'quantity' => $talla['quantity']
+                'quantity' => $talla['quantity'],
             );
         }
         foreach ($request->get('sizes') as $g => $row) {
@@ -364,23 +362,23 @@ class ProductController extends Controller
             if ($key === false) {
                 array_push($pro_sizes, [
                     'size' => $row['size'],
-                    'quantity' => 0
+                    'quantity' => 0,
                 ]);
             }
         }
 
-        foreach ($request->get('sizes') as  $row) {
+        foreach ($request->get('sizes') as $row) {
             if ($request->get('type') == 1) {
                 $c = $row['quantity'];
             } else {
                 $c = -$row['quantity'];
             }
             KardexSize::create([
-                'kardex_id'         => $kardex->id,
-                'product_id'        => $request->get('product_id'),
-                'local_id'          => $request->get('local_id'),
-                'size'              => $row['size'],
-                'quantity'          => $c
+                'kardex_id' => $kardex->id,
+                'product_id' => $request->get('product_id'),
+                'local_id' => $request->get('local_id'),
+                'size' => $row['size'],
+                'quantity' => $c,
             ]);
 
             for ($r = 0; $r < count($pro_sizes); $r++) {
@@ -403,7 +401,7 @@ class ProductController extends Controller
 
         $product->update([
             'sizes' => json_encode($pro_sizes),
-            'stock' => $pt
+            'stock' => $pt,
         ]);
     }
 
@@ -428,13 +426,13 @@ class ProductController extends Controller
         $product = [];
         if ($product_id) {
             Product::find($product_id)->update([
-                'image' => $path
+                'image' => $path,
             ]);
             $product = Product::find($product_id);
         }
         return response()->json([
             'product' => $product,
-            'path' => $path
+            'path' => $path,
         ]);
     }
 
@@ -460,18 +458,18 @@ class ProductController extends Controller
             ProductEstablishmentPrice::updateOrCreate(
                 [
                     'local_id' => $local['local_id'],
-                    'product_id' => $request->get('product_id')
+                    'product_id' => $request->get('product_id'),
                 ], // Atributos para buscar un registro existente
                 [
                     'high' => $local['local_price1'],
                     'medium' => $local['local_price2'],
-                    'under' => $local['local_price3']
-                ] // Atributos para establecer en el registro si se actualiza o se crea uno nuevo
+                    'under' => $local['local_price3'],
+                ]// Atributos para establecer en el registro si se actualiza o se crea uno nuevo
             );
         }
     }
 
-    function getPricesProduct($id)
+    public function getPricesProduct($id)
     {
         $prices = ProductEstablishmentPrice::join('local_sales', 'local_id', 'local_sales.id')
             ->select(
@@ -501,7 +499,7 @@ class ProductController extends Controller
         }
         return response()->json([
             'success' => $success,
-            'products' => $products
+            'products' => $products,
         ]);
     }
 
@@ -525,10 +523,80 @@ class ProductController extends Controller
 
         $this->validate($request, [
             'local_id_destiny' => 'required',
+            'local_id_origin' => 'required',
             'description' => 'required',
-
+            'item.*.quantity_relocate' => 'required',
         ], [
-            'local_id_destiny.required' => 'El local destino es obligatorio'
+            'local_id_destiny.required' => 'El local destino es obligatorio',
+            'description.required' => 'Debe ingresar el Motivo del traslado',
         ]);
+
+        try {
+            DB::beginTransaction();
+            $tallas = $request->get('sizes');
+
+            $t = 0;
+            foreach ($request->get('sizes') as $item) {
+                if ($item['quantity'] >= $item['quantity_relocate']) {
+                    $t += $item['quantity_relocate'];
+                } else {
+                    return Inertia::location('/products/');
+                    break;
+                }
+
+            }
+
+            $kardex_id_origin = 0;
+            $kardex_id_destiny = 0;
+
+            if ($t > 0) {
+                $kardex = Kardex::create([
+                    'date_of_issue' => Carbon::now()->format('Y-m-d'),
+                    'motion' => 'relocate',
+                    'product_id' => $request->get('product_id'),
+                    'local_id' => $request->get('local_id_origin'),
+                    'quantity' => -$t,
+                    'description' => $request->get('description'),
+                ]);
+
+                $kardex_id_origin = $kardex->id;
+
+                $kardex = Kardex::create([
+                    'date_of_issue' => Carbon::now()->format('Y-m-d'),
+                    'motion' => 'relocate',
+                    'product_id' => $request->get('product_id'),
+                    'local_id' => $request->get('local_id_destiny'),
+                    'quantity' => $t,
+                    'description' => $request->get('description'),
+                ]);
+
+                $kardex_id_destiny = $kardex->id;
+
+                foreach ($tallas as $talla) {
+                    if ($talla['quantity_relocate'] > 0) {
+                        KardexSize::create([
+                            'kardex_id' => $kardex_id_origin,
+                            'product_id' => $request->get('product_id'),
+                            'local_id' => $request->get('local_id_origin'),
+                            'size' => $talla['size'],
+                            'quantity' => -$talla['quantity_relocate'],
+                        ]);
+                        KardexSize::create([
+                            'kardex_id' => $kardex_id_destiny,
+                            'product_id' => $request->get('product_id'),
+                            'local_id' => $request->get('local_id_destiny'),
+                            'size' => $talla['size'],
+                            'quantity' => $talla['quantity_relocate'],
+                        ]);
+                    }
+                }
+            }
+
+            DB::commit();
+        } catch (Exception $e) {
+            DB::rollback();
+            return $e->getMessage();
+        }
+
     }
 }
