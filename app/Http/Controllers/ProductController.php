@@ -96,8 +96,8 @@ class ProductController extends Controller
         if ($file) {
             $original_name = strtolower(trim($file->getClientOriginalName()));
             $original_name = str_replace(" ", "_", $original_name);
-            //$extension = $file->getClientOriginalExtension();
-            $file_name = time() . rand(100, 999) . $original_name;
+            $extension = $file->getClientOriginalExtension();
+            $file_name = date('YmdHis') . $extension;
             $path = $request->file('image')->storeAs(
                 $destination,
                 $file_name,
@@ -217,8 +217,7 @@ class ProductController extends Controller
                         SELECT size, SUM(quantity) AS quantity_sum
                         FROM kardex_sizes
                         WHERE kardex_sizes.product_id=t1.id AND local_id = ` . $local_id . `GROUP BY size
-                    ) AS local_sizes
-`)
+                    ) AS local_sizes`)
             )
             ->selectSub(function ($query) use ($local_id) {
                 $query->from('product_establishment_prices')
@@ -226,15 +225,6 @@ class ProductController extends Controller
                     ->whereColumn('product_establishment_prices.product_id', 't1.id')
                     ->where('product_establishment_prices.local_id', $local_id);
             }, 'local_prices')
-        // ->selectSub(function ($query) use ($local_id) {
-        //     $query->from('kardex_sizes')
-        //         ->join('products', 'kardex_sizes.product_id', '=', 'products.id')
-        //         ->selectRaw("CONCAT('[',GROUP_CONCAT(JSON_OBJECT('size', kardex_sizes.size, 'quantity', SUM(kardex_sizes.quantity))),']')")
-        //         ->where('kardex_sizes.local_id', '=', $local_id)
-        //         ->whereColumn('kardex_sizes.product_id = t1.id')
-        //         ->groupBy('kardex_sizes.size');
-        // }, 'local_sizes')
-
             ->leftJoin('kardexes', 't1.id', '=', 'kardexes.product_id')
             ->where(function ($query) use ($search) {
                 $query->where('t1.interne', '=', $search)
@@ -258,14 +248,6 @@ class ProductController extends Controller
         $search = $request->get('search');
         $local_id = Auth::user()->local_id;
 
-        // $product = Product::join('kardexes', function ($query) use ($local_id) {
-        //     $query->on('products.id', '=', 'kardexes.product_id')
-        //         ->where('kardexes.local_id', '=', $local_id);
-        // })
-        //     ->where('interne', $search)
-        //     ->groupBy('products.id')
-        //     ->first();
-
         $product = DB::table('products as t1')
             ->select(
                 't1.*',
@@ -276,8 +258,7 @@ class ProductController extends Controller
                         SELECT size, SUM(quantity) AS quantity_sum
                         FROM kardex_sizes
                         WHERE kardex_sizes.product_id=t1.id AND local_id = ` . $local_id . `GROUP BY size
-                    ) AS local_sizes
-`)
+                    ) AS local_sizes`)
             )
             ->selectSub(function ($query) use ($local_id) {
                 $query->from('product_establishment_prices')
@@ -285,14 +266,7 @@ class ProductController extends Controller
                     ->whereColumn('product_establishment_prices.product_id', 't1.id')
                     ->where('product_establishment_prices.local_id', $local_id);
             }, 'local_prices')
-        // ->selectSub(function ($query) {
-        //     $query->from('kardex_sizes')
-        //         ->join('products', 'kardex_sizes.product_id', '=', 'products.id')
-        //         ->selectRaw("CONCAT('[',JSON_OBJECT('size', kardex_sizes.size, 'quantity', SUM(kardex_sizes.quantity)),']')")
-        //         ->where('kardex_sizes.local_id', '=', 1)
-        //         ->whereRaw('kardex_sizes.product_id = t1.id')
-        //         ->groupBy('kardex_sizes.size');
-        // }, 'local_sizes')
+
             ->leftJoin('kardexes', 't1.id', '=', 'kardexes.product_id')
             ->where(function ($query) use ($search) {
                 $query->where('t1.interne', '=', $search);
@@ -464,7 +438,7 @@ class ProductController extends Controller
                     'high' => $local['local_price1'],
                     'medium' => $local['local_price2'],
                     'under' => $local['local_price3'],
-                ]// Atributos para establecer en el registro si se actualiza o se crea uno nuevo
+                ] // Atributos para establecer en el registro si se actualiza o se crea uno nuevo
             );
         }
     }
@@ -543,7 +517,6 @@ class ProductController extends Controller
                     return Inertia::location('/products/');
                     break;
                 }
-
             }
 
             $kardex_id_origin = 0;
@@ -597,6 +570,5 @@ class ProductController extends Controller
             DB::rollback();
             return $e->getMessage();
         }
-
     }
 }
