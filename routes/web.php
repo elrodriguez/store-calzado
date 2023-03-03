@@ -4,6 +4,7 @@ use App\Http\Controllers\ClientController;
 use App\Http\Controllers\KardexController;
 use App\Http\Controllers\LocalSaleController;
 use App\Http\Controllers\PermissionsController;
+use App\Http\Controllers\PersonController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -173,4 +174,17 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified',
         'relocate/product/sizes',
         [ProductController::class, 'saveRelocate']
     )->name('relocate_product_sizes');
+
+    Route::post(
+        'search/person/number',
+        [PersonController::class, 'searchByNumberType']
+    )->name('search_person_number');
+    Route::post(
+        'save/person/update/create',
+        [PersonController::class, 'saveUpdateOrCreate']
+    )->name('save_person_update_create');
+    Route::post(
+        'search/person/full_name/number',
+        [PersonController::class, 'searchByNameOrNumber']
+    )->name('search_person_fullname_number');
 });

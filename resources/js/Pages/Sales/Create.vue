@@ -5,8 +5,9 @@
     import { faTrashAlt } from "@fortawesome/free-solid-svg-icons";
     import { useForm } from '@inertiajs/vue3';
     import ModalPrintSale from './Partials/ModalPrintSale.vue';
-    import { ref, watch } from 'vue';
+    
     import Keypad from '@/Components/Keypad.vue';
+    
 
     const props = defineProps({
         payments: {
@@ -14,6 +15,10 @@
             default: () => ({}),
         },
         client: {
+            type: Object,
+            default: () => ({}),
+        },
+        documentTypes: {
             type: Object,
             default: () => ({}),
         }
@@ -74,6 +79,10 @@
         window.location.href = "../../pdf/sales/ticket/" + id;
     }
 
+    const getClient = async (data) => {
+        form.client.id = data.id;
+        form.client.full_name = data.full_name;
+    }
 </script>
 
 <template>
@@ -162,7 +171,7 @@
                         </div>
                     </div>
                     <div class="col-span-12 sm:col-span-12 md:col-span-6 bg-teal-400 p-4">
-                        <SearchClients :clientDefault="client" />
+                        <SearchClients @clientId="getClient" :clientDefault="form.client" :documentTypes="documentTypes" />
                         <InputError :message="form.errors[`client.id`]" class="mt-2" />
                         <div>
                             <h4 class="italic font-bold mb-4">Medio de Pago</h4>
@@ -210,5 +219,6 @@
 
             </div>
         </div>
+        
     </AppLayout>
 </template>

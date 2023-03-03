@@ -84,9 +84,11 @@ class SaleController extends Controller
     {
         $payments = PaymentMethod::all();
         $client = Person::find(1);
+        $documentTypes = DB::table('identity_document_type')->get();
         return Inertia::render('Sales/Create', [
-            'payments' => $payments,
-            'client' => $client
+            'payments'      => $payments,
+            'client'        => $client,
+            'documentTypes' => $documentTypes
         ]);
     }
 
