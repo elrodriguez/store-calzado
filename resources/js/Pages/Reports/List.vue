@@ -44,8 +44,13 @@ export default {
                         <h2 class="mb-2 text-lg font-semibold text-gray-900 dark:text-white">Ventas</h2>
                         <ul class="max-w-md space-y-1 text-gray-500 list-disc list-inside dark:text-gray-400">
                             <li>
-                                <a :href="route('sale_report')">Reporte de ventas entre fechas</a>
+                                <a :href="route('sale_report')">Reporte de ventas entre fechas(todos los locales )</a>
                             </li>
+
+                            <li v-for="local in locals" :key="local.id">
+                                <a :href="route('sale_report')" target="_blank">en Proceso... Reporte de Ventas(De: {{ local.description }})</a>
+                            </li>
+
                         </ul>
                     </div>
                 </div>
@@ -54,7 +59,7 @@ export default {
                         <h2 class="mb-2 text-lg font-semibold text-gray-900 dark:text-white">Inventario</h2>
                         <ul class="max-w-md space-y-1 text-gray-500 list-disc list-inside dark:text-gray-400" id="locales">
                             <li>
-                                <a :href="route('inventory_report')" target="_blank">Reporte de todos los productos(todas los locales)</a>
+                                <a :href="route('inventory_report')" target="_blank">Reporte de todos los productos(todos los locales)</a>
                             </li>
 
                             <li v-for="local in locals" :key="local.id">
