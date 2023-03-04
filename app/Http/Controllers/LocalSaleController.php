@@ -39,7 +39,8 @@ class LocalSaleController extends Controller
             'local_sales.description',
             'local_sales.address',
             'local_sales.phone'
-        )->selectRaw('(SELECT name FROM users WHERE users.local_id=local_sales.id) AS user_name')
+        )
+            ->selectRaw('(SELECT GROUP_CONCAT(name) FROM users WHERE users.local_id=local_sales.id) AS user_name')
             ->paginate(10)->onEachSide(2);
 
         return Inertia::render('Establishments/List', [
@@ -96,16 +97,6 @@ class LocalSaleController extends Controller
             ->with('message', __('Tienda creada con éxito'));
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\LocalSale  $localSale
-     * @return \Illuminate\Http\Response
-     */
-    public function show(LocalSale $localSale)
-    {
-        //
-    }
 
     /**
      * Show the form for editing the specified resource.
@@ -186,7 +177,8 @@ class LocalSaleController extends Controller
         return response()->json($series);
     }
 
-    public function get_locals(){
+    public function get_locals()
+    {
         $locals = LocalSale::all();
         return response()->json($locals);
     }
