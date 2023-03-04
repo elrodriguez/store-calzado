@@ -52,6 +52,8 @@
 
                             <tr class="table-primary">
                                 <th class="text-center fs-3">#</th>
+                                <th class="text-center fs-3">Fecha</th>
+                                <th class="text-center fs-3">Tienda</th>
                                 <th class="text-center fs-3">Código</th>
                                 <th class="text-center fs-3">Producto</th>
                                 <th class="text-center fs-3">Precio Vendido</th>
@@ -77,6 +79,8 @@
                             @foreach ($products as $product)
                                     <tr class="">
                                         <td class="fs-4" style="text-align: center">{{ $x++}}</td>
+                                        <td class="fs-4" style="text-align: center">{{ $sale->created_at}}</td>
+                                        <td class="fs-4" style="text-align: center">{{ app('App\Http\Controllers\ReportController')->getLocal($sale->local_id)}}</td>
                                         <td class="fs-4" style="text-align: center">{{ $product->interne}}</td>
                                         <td class="fs-4" style="text-align: left"><img src="{{ app('App\Http\Controllers\ReportController')->getImage($product->id) }}" height="42px"> {{ $product->description}}</td>
                                         <td class="fs-4" style="text-align: center">S/ {{ $product->price }}</td>

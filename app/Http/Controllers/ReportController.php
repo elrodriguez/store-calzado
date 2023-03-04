@@ -71,6 +71,11 @@ class ReportController extends Controller
         return Product::where('id', $product_id)->select('image')->get()->first()->image;
     }
 
+    public function getLocal($local_id)
+    {
+        return LocalSale::where('id', $local_id)->select('description')->get()->first()->description;
+    }
+
     public function inventory_report_export()
     {
 
