@@ -1,12 +1,13 @@
 <script setup>
     import AppLayout from '@/Layouts/AppLayout.vue';
     import { useForm } from '@inertiajs/vue3';
-    import { faTrashAlt, faPencilAlt, faPrint, faWarehouse } from "@fortawesome/free-solid-svg-icons";
+    import { faTimes, faPencilAlt, faPrint, faWarehouse } from "@fortawesome/free-solid-svg-icons";
     import Pagination from '@/Components/Pagination.vue';
     import Keypad from '@/Components/Keypad.vue';
     import PrimaryButton from '@/Components/PrimaryButton.vue';
     import { ref } from 'vue';
     import ModalSmall from '@/Components/ModalSmall.vue';
+    import Swal2 from 'sweetalert2';
 
     const props = defineProps({
         sales: {
@@ -52,6 +53,30 @@
 
     const printSales = () => {
         window.location.href = "../print/sales/user/" + formPrint.date;
+    }
+
+    const formDelete= useForm({});
+
+    const deleteSale = (id) => {
+        Swal2.fire({
+            title: 'Estas seguro',
+            text: "No podrás revertir esto!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            cancelButtonText: 'Cancelar',
+            confirmButtonText: 'Si, anular'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                formDelete.delete(route('sales.destroy',id),{
+                    preserveScroll: true,
+                    onSuccess: () => {
+                        Swal2.fire('Venta Anulada correctamente');
+                    }
+                });
+            }
+        });
     }
 </script>
 
@@ -112,6 +137,9 @@
                                     <th scope="col" class="px-6 py-2">
                                         Total
                                     </th>
+                                    <th scope="col" class="px-6 py-2">
+                                        Estado
+                                    </th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -119,6 +147,11 @@
                                     <td class="px-6 py-4">
                                         <button @click="printTicket(sale.id)" type="button" class="mr-1 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-full text-sm p-2.5 text-center inline-flex items-center mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
                                             <font-awesome-icon :icon="faPrint" />
+                                        </button>
+                                        <button type="button" class="mr-1 text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-full text-sm p-2.5 text-center inline-flex items-center mr-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800"
+                                            @click="deleteSale(sale.id)"
+                                            >
+                                            <font-awesome-icon :icon="faTimes" />
                                         </button>
                                     </td>
                                     <td class="px-6 py-4">
@@ -135,6 +168,10 @@
                                     </td>
                                     <td class="px-6 py-4">
                                         {{ sale.total }}
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <span v-if="sale.status == 1" class="bg-yellow-100 text-yellow-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-gray-700 dark:text-yellow-300 border border-yellow-300">Registrado</span>
+                                        <span v-else class="bg-red-100 text-red-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-gray-700 dark:text-red-400 border border-red-400">Anulado</span>
                                     </td>
                                 </tr>
                             </tbody>
