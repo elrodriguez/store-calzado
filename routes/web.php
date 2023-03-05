@@ -139,7 +139,7 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified',
     )->name('sales_report_export');
 
     Route::get(
-        'reports/sales/by/dates',
+        'reports/sales/by/dates/{start?}/{end?}/{local_id?}/{consulta?}',
         [ReportController::class, 'sales_report_dates']
     )->name('sales_report_dates');
 

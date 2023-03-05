@@ -65,51 +65,70 @@ class ReportController extends Controller
         }
     }
 
-    public function sales_report_dates(Request $request)
+    public function sales_report_dates($start = null, $end = null, $local_id = 0, $consulta = false)
     {
+
         date_default_timezone_set('America/Lima');
         $date = date('Y-m-d H:i:s');
+        $date_ = date('Y-m-d');
         $year = date('Y'); //obtiene el año actual en formato de 4 dígitos
         $month = date('m'); //obtiene el mes actual en formato de 2 dígitos
         $day = date('d'); //obtiene el día actual en formato de 2 dígitos
         $time = date('H:i'); //obtiene la hora y los minutos actuales en formato de 24 horas separados por dos puntos
         $date = $day . "/" . $month . "/" . $year . " a las  " . $time;
-        $start = $request->get('start');
-        $end = $request->get('end');
-        if ($start == null || $end == null) {
-            $sales = Sale::join('local_sales','sales.local_id', 'local_sales.id')
-                            ->join('sale_products', 'sale_products.sale_id', 'sales.id')
-                            ->join('products', 'products.id', 'sale_products.product_id')                
-            ->select('sales.*', 'products.interne', 'products.description as product_description', 'products.image', 'sale_products.product as product')
-            ->where('sales.created_at', '>=', date('Y-m-d'))
-            ->orderBy('id', 'desc')->orderBy('sale_products.id', 'desc')
-            ->get();
-            return Inertia::render('Reports/SaleReportByDates', [
-                'locals' => LocalSale::all(),
-                'sales'  => $sales,
-                'date' => $date,
-            ]);
+        $start = $start == null ? $date_ : $start;
+        $end = $end == null ? $date_ : $end;
+        if ($local_id == 0 || $local_id == null) {
+            $sales = $this->getSales($start, $end);
+
+            if ($consulta) {
+                return response()->json($sales);
+            } else {
+                return Inertia::render('Reports/SaleReportByDates', [
+                    'locals' => LocalSale::all(),
+                    'sales' => $sales,
+                    'date' => $date,
+                    'start' => $start,
+                    'end' => $end,
+                ]);
+            }
         } else {
-            $sales = Sale::whereDate('created_at', '>=', $start)
-                ->whereDate('created_at', '<=', $end)
-                ->get();
+            $sales = $this->getSales($start, $end, $local_id);
+            // $start = date('d-m-Y', strtotime($start));
+            // $end = date('d-m-Y', strtotime($end));
 
-            $start = date('d-m-Y', strtotime($start));
-            $end = date('d-m-Y', strtotime($end));
+            // $start = date('d/m/Y', strtotime($start));
+            // $end = date('d/m/Y', strtotime($end));
 
-            $start = date('d/m/Y', strtotime($start));
-            $end = date('d/m/Y', strtotime($end));
-
-            return Inertia::render('Reports/SaleReportByDates', [
-                'locals' => LocalSale::all(),
-                'date' => $date,
-            ]);
+            return response()->json($sales);
         }
 
         // return view('reports.sales_report', ['sales' => $sales, 'start' => $start, 'end' => $end, 'date' => $date, 'print' => true]);
 
     }
-
+    public function getSales($start, $end, $local_id = 0)
+    {
+        if ($local_id==0) {
+            return Sale::join('local_sales', 'sales.local_id', 'local_sales.id')
+                ->join('sale_products', 'sale_products.sale_id', 'sales.id')
+                ->join('products', 'products.id', 'sale_products.product_id')
+                ->select('sales.*', 'products.interne', 'products.description as product_description', 'products.image', 'sale_products.product as product')
+                ->whereDate('sales.created_at', '>=', $start)
+                ->whereDate('sales.created_at', '<=', $end)
+                ->orderBy('id', 'desc')->orderBy('sale_products.id', 'desc')
+                ->get();
+        } else {
+            return Sale::join('local_sales', 'sales.local_id', 'local_sales.id')
+                ->join('sale_products', 'sale_products.sale_id', 'sales.id')
+                ->join('products', 'products.id', 'sale_products.product_id')
+                ->select('sales.*', 'products.interne', 'products.description as product_description', 'products.image', 'sale_products.product as product')
+                ->whereDate('sales.created_at', '>=', $start)
+                ->whereDate('sales.created_at', '<=', $end)
+                ->where('sales.local_id', '=', $local_id)
+                ->orderBy('id', 'desc')->orderBy('sale_products.id', 'desc')
+                ->get();
+        }
+    }
     public function getImage($product_id)
     {
         return Product::where('id', $product_id)->select('image')->get()->first()->image;
