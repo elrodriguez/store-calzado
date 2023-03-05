@@ -47,6 +47,10 @@ export default {
                                 <a :href="route('sales_report_dates')">Reporte de ventas entre fechas(todos los locales )</a>
                             </li>
 
+                            <li>
+                                <a :href="route('sale_report',)">Reporte de ventas ANTERIOR  fechas(todos los locales )</a>
+                            </li>
+
                             <li v-for="local in locals" :key="local.id">
                                 <a :href="route('sale_report')" target="_blank">en Proceso... Reporte de Ventas(De: {{ local.description }})</a>
                             </li>
