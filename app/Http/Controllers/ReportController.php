@@ -10,7 +10,6 @@ use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use PDF;
-use SebastianBergmann\Type\TrueType;
 
 class ReportController extends Controller
 {
@@ -35,7 +34,7 @@ class ReportController extends Controller
     public function sales_report_export($start, $end, $download)
     {
         $sales = Sale::whereDate('created_at', '>=', $start)
-            ->whereDate('created_at', '<=', $end)
+            ->whereDate('created_at', '<=', $end)->orderBy('id', 'desc')->orderBy('created_at', 'desc')
             ->get();
 
         date_default_timezone_set('America/Lima');
@@ -64,6 +63,51 @@ class ReportController extends Controller
 
             return response()->download($file);
         }
+    }
+
+    public function sales_report_dates(Request $request)
+    {
+        date_default_timezone_set('America/Lima');
+        $date = date('Y-m-d H:i:s');
+        $year = date('Y'); //obtiene el año actual en formato de 4 dígitos
+        $month = date('m'); //obtiene el mes actual en formato de 2 dígitos
+        $day = date('d'); //obtiene el día actual en formato de 2 dígitos
+        $time = date('H:i'); //obtiene la hora y los minutos actuales en formato de 24 horas separados por dos puntos
+        $date = $day . "/" . $month . "/" . $year . " a las  " . $time;
+        $start = $request->get('start');
+        $end = $request->get('end');
+        if ($start == null || $end == null) {
+            $sales = Sale::join('local_sales','sales.local_id', 'local_sales.id')
+                            ->join('sale_products', 'sale_products.sale_id', 'sales.id')
+                            ->join('products', 'products.id', 'sale_products.product_id')                
+            ->select('sales.*', 'products.interne', 'products.description as product_description', 'products.image', 'sale_products.product as product')
+            ->where('sales.created_at', '>=', date('Y-m-d'))
+            ->orderBy('id', 'desc')->orderBy('sale_products.id', 'desc')
+            ->get();
+            return Inertia::render('Reports/SaleReportByDates', [
+                'locals' => LocalSale::all(),
+                'sales'  => $sales,
+                'date' => $date,
+            ]);
+        } else {
+            $sales = Sale::whereDate('created_at', '>=', $start)
+                ->whereDate('created_at', '<=', $end)
+                ->get();
+
+            $start = date('d-m-Y', strtotime($start));
+            $end = date('d-m-Y', strtotime($end));
+
+            $start = date('d/m/Y', strtotime($start));
+            $end = date('d/m/Y', strtotime($end));
+
+            return Inertia::render('Reports/SaleReportByDates', [
+                'locals' => LocalSale::all(),
+                'date' => $date,
+            ]);
+        }
+
+        // return view('reports.sales_report', ['sales' => $sales, 'start' => $start, 'end' => $end, 'date' => $date, 'print' => true]);
+
     }
 
     public function getImage($product_id)
@@ -95,13 +139,13 @@ class ReportController extends Controller
     public function inventory_report_by_local($local_id)
     {
         $products = Product::where('products.stock', '>', 0)
-                            ->join('kardex_sizes', 'kardex_sizes.product_id', 'products.id')
-                            ->select('size', 'products.id', 'products.interne', 'products.description', 'products.sale_prices', 'products.purchase_prices', DB::raw('SUM(quantity) as quantity'))
-                            ->groupBy('size', 'products.id', 'products.interne', 'products.description', 'products.sale_prices', 'products.purchase_prices')
-                            ->where('kardex_sizes.local_id', '=', $local_id)
-                            ->orderBy('products.id', 'asc')
-                            ->orderBy('size', 'asc')
-                            ->get();
+            ->join('kardex_sizes', 'kardex_sizes.product_id', 'products.id')
+            ->select('size', 'products.id', 'products.interne', 'products.description', 'products.sale_prices', 'products.purchase_prices', DB::raw('SUM(quantity) as quantity'))
+            ->groupBy('size', 'products.id', 'products.interne', 'products.description', 'products.sale_prices', 'products.purchase_prices')
+            ->where('kardex_sizes.local_id', '=', $local_id)
+            ->orderBy('products.id', 'asc')
+            ->orderBy('size', 'asc')
+            ->get();
         $local = LocalSale::where('id', $local_id)->get()->first();
         //dd($local);
         date_default_timezone_set('America/Lima');

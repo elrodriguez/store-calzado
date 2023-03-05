@@ -101,7 +101,7 @@
                         <tfoot>
                             <tr class="table-dark">
                                         <th class="fs-4" style="text-align: center">#</th>
-                                        <th class="fs-4" style="text-align: center">Totales</th>
+                                        <th class="fs-4" style="text-align: center" colspan="3">Totales</th>
                                         <th class="fs-4" style="text-align: left"></th>
                                         <th class="fs-4" style="text-align: center"></th>
                                         <th class="fs-4" style="text-align: center">{{ $quantities}}</th>

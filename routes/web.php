@@ -47,6 +47,11 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified',
     Route::resource('pettycash', PettyCashController::class);
     Route::resource('providers', ProviderController::class);
 
+    Route::post(
+        'petty/cash/close/{petty_id}',
+        [PettyCashController::class, 'close_petty']
+    )->name('close_petty_cash');
+
     Route::resource('sales', SaleController::class);
 
     Route::get(
@@ -132,6 +137,11 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified',
         'reports/sales/{begin_date}/{end_date}/{download}',
         [ReportController::class, 'sales_report_export']
     )->name('sales_report_export');
+
+    Route::get(
+        'reports/sales/by/dates',
+        [ReportController::class, 'sales_report_dates']
+    )->name('sales_report_dates');
 
     Route::post(
         'upload/image/product',

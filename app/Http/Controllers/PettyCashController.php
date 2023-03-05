@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\LocalSale;
 use App\Models\PettyCash;
+use App\Models\Sale;
 use Carbon\Carbon;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
@@ -20,7 +22,7 @@ class PettyCashController extends Controller
             if ($search['date_start'] && $search['date_end']) {
                 $pettycashes->whereBetween('date_opening', [$search['date_start'], $search['date_end']]);
             } else if ($search['date_start']) {
-                $pettycashes->whereDate('date_opening', $search['date_start'])->get();;
+                $pettycashes->whereDate('date_opening', $search['date_start'])->get();
             }
         }
         // if (request()->query('sort')) {
@@ -57,7 +59,7 @@ class PettyCashController extends Controller
         return Inertia::render('Pettycashes/List', [
             'pettycashes' => $pettycashes,
             'filters' => request()->all('search'),
-            'locals' => LocalSale::all()
+            'locals' => LocalSale::all(),
         ]);
     }
 
@@ -71,9 +73,10 @@ class PettyCashController extends Controller
             'user_id' => Auth::id(),
             'date_opening' => Carbon::now()->format('Y-m-d'),
             'time_opening' => date('H:i:s'),
-            'income' => $request->input('starting_amount'),
+            //'income' => $request->input('starting_amount'),
+            'beginning_balance' => $request->input('starting_amount'),
             'state' => '1',
-            'local_sale_id' => $request->input('local_id')
+            'local_sale_id' => $request->input('local_id'),
         ]);
 
         return redirect()->route('pettycash.index')
@@ -85,5 +88,22 @@ class PettyCashController extends Controller
         $product->delete();
         return redirect()->route('pettycash.index')
             ->with('message', __('Caja Chica eliminado con éxito'));
+    }
+
+    public function close_petty($petty_id)
+    {
+        try {
+            $amount = Sale::where('petty_cash_id', $petty_id)->sum('total');
+            PettyCash::where('id', $petty_id)->update([
+                'state' => false,
+                'date_closed' => Carbon::now()->format('Y-m-d'),
+                'time_closed' => date('H:i:s'),
+                'final_balance' => PettyCash::where('id', $petty_id)->select('beginning_balance')->first()->beginning_balance + $amount,
+                'income' => $amount
+            ]);
+            return true;
+        } catch (Exception $e) {
+            return "<script>console.log(" . $e->getMessage() . ");</script>";
+        }
     }
 }
