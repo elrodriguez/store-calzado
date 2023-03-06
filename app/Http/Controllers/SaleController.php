@@ -370,7 +370,9 @@ class SaleController extends Controller
             'date'          => $date,
             'local_name'    => LocalSale::find(Auth::user()->local_id)->description
         ];
+
         $payments = PaymentMethod::all();
+
         $sales = Sale::join('sale_documents', 'sale_id', 'sales.id')
             ->join('people', 'client_id', 'people.id')
             ->join('series', 'serie_id', 'series.id')
@@ -378,7 +380,8 @@ class SaleController extends Controller
                 'series.description',
                 'sale_documents.number',
                 'sales.total',
-                'people.full_name'
+                'people.full_name',
+                'sales.payments'
             )
             ->where('sales.user_id', Auth::id())
             ->whereDate('sales.created_at', $date)
@@ -400,6 +403,33 @@ class SaleController extends Controller
             )
             ->get();
 
+        $pays = [];
+        $arrays = [];
+
+        foreach ($sales as $k => $sale) {
+            $arrays[$k] = json_decode($sale->payments, true);
+        }
+        $merged = [];
+        foreach ($arrays as $array) {
+            $merged = array_merge($merged, $array);
+        }
+
+        $sums = [];
+        foreach ($merged as $item) {
+            $type = $item['type'];
+            $amount = $item['amount'];
+            if (isset($sums[$type])) {
+                $sums[$type] += $amount;
+            } else {
+                $sums[$type] = $amount;
+            }
+        }
+
+        $new_array = [];
+        foreach ($sums as $type => $amount) {
+            $new_array[] = ['type' => $type, 'amount' => $amount];
+        }
+
         $status = false;
         if (count($sales) > 0) {
             $status = true;
@@ -410,7 +440,8 @@ class SaleController extends Controller
                 'header' => $header,
                 'sales' => $sales,
                 'payments' => $payments,
-                'products' => $products
+                'products' => $products,
+                'pays' => $new_array
             ]);
 
             $pdf->setPaper('A4', 'portrait');

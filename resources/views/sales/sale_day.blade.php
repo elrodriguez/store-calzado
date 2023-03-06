@@ -18,6 +18,60 @@
         </div>
         <br>
         <div style="text-align: center">
+            <h1>Metodos de pagos</h1>
+        </div>
+        <table style="width: 100%;border: 1px solid #000;border-collapse: collapse;">
+            <tr>
+                <th
+                    style="text-align: center;
+                    vertical-align: top;
+                    border: 1px solid #000;
+                    border-collapse: collapse;
+                    padding: 0.3em;
+                    caption-side: bottom;
+                    color: #fff;
+                    background: #000;"
+                >Metodo</th>
+                <th
+                    style="color: #fff;
+                    background: #000;
+                    text-align: center;
+                    vertical-align: top;
+                    border: 1px solid #000;
+                    border-collapse: collapse;
+                    padding: 0.3em;
+                    caption-side: bottom;"
+                >Importe</th>
+            </tr>
+
+            @foreach($payments as $payment)
+            <tr>
+                <td
+                    style="text-align: left;
+                    vertical-align: top;
+                    border: 1px solid #000;
+                    border-collapse: collapse;
+                    padding: 0.3em;
+                    caption-side: bottom;"
+                >{{ $payment->description }}</td>
+                <td
+                    style="text-align: right;
+                    vertical-align: top;
+                    border: 1px solid #000;
+                    border-collapse: collapse;
+                    padding: 0.3em;
+                    caption-side: bottom;" 
+                >@foreach($pays as $pay)
+                    @if($payment->id == $pay['type'])
+                        <span>{{ $pay['amount'] }}</span>
+                    @endif
+                @endforeach</td>
+            </tr>
+            @endforeach
+            
+        </table>
+        <br>
+        <div style="text-align: center">
             <h1>Productos Vendidos</h1>
         </div>
         <table style="width: 100%;border: 1px solid #000;border-collapse: collapse;">
