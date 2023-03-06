@@ -53,12 +53,12 @@
                     border-collapse: collapse;
                     padding: 0.3em;
                     caption-side: bottom;">Precio U.</td>
-                    <td style="text-align: left;
+                    {{-- <td style="text-align: left;
                     vertical-align: top;
                     border: 1px solid #000;
                     border-collapse: collapse;
                     padding: 0.3em;
-                    caption-side: bottom;">Descuento.</td>
+                    caption-side: bottom;">Descuento.</td> --}}
                     <td style="text-align: left;
                     vertical-align: top;
                     border: 1px solid #000;
@@ -83,11 +83,11 @@
                         border-collapse: collapse;
                         padding: 0.3em;
                         caption-side: bottom;">{{ $item->price }}</td>
-                        <td style="text-align: right;vertical-align: top;
+                        {{-- <td style="text-align: right;vertical-align: top;
                         border: 1px solid #000;
                         border-collapse: collapse;
                         padding: 0.3em;
-                        caption-side: bottom;">{{ $item->discount }}</td>
+                        caption-side: bottom;">{{ $item->discount }}</td> --}}
                         <td style="text-align: right;vertical-align: top;
                         border: 1px solid #000;
                         border-collapse: collapse;
