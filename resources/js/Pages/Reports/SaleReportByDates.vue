@@ -2,6 +2,7 @@
 <script setup>
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { useForm } from '@inertiajs/vue3';
+import * as XLSX from 'xlsx/dist/xlsx.full.min';
 import { faTrashAlt, faPencilAlt, faPrint } from "@fortawesome/free-solid-svg-icons";
 import { propsToAttrMap } from '@vue/shared';
 
@@ -28,7 +29,8 @@ const form = useForm({
     start:props.start,
     end:props.end,
     local_id:0,
-    sales:props.sales
+    sales:props.sales,
+    local_name:"TODOS LOS LOCALES"
 });
 
 function getLocal(id){
@@ -71,6 +73,13 @@ axios.get(url)
   .catch(err => {
     console.log("ERROR ENCONTRADO", err);
   });
+
+  props.locals.forEach(local => {
+    if(form.local_id == local.id){
+        form.local_name = local.description;
+    }
+    if(form.local_id == 0)form.local_name= "TODOS LOS LOCALES";
+  });
 }
 
 // const botonImprimir = document.getElementById('boton-imprimir');
@@ -78,7 +87,41 @@ axios.get(url)
 //   window.print();
 // });
 
+function downloadExcel(){
+    /* Create worksheet from HTML DOM TABLE */
+    const table = document.getElementById("table_export");
+    const wb = XLSX.utils.table_to_book(table);
+    wb['!autofit'] = true;
 
+    /* Export to file (start a download) */
+    let filename="ventas-"+form.start+"-"+form.end+".xlsx";
+    XLSX.writeFile(wb, filename);
+    test();
+}
+
+function test(){
+    const workbook = XLSX.utils.book_new();
+
+// Obtén la tabla HTML que deseas convertir
+const table = document.getElementById('table_export');
+
+// Convierte la tabla HTML en una hoja de cálculo
+const worksheet = XLSX.utils.table_to_sheet(table);
+worksheet['!cols'] = [
+  {width:4}, // Columna "A" #
+  {width:12}, // Columna "B" Fecha
+  { width: 30 }, // Columna "C" Tienda
+  {width:9}, // Columna "D" Cod. Prod.
+  { width: 35 }, // Columna "E" Producto
+  {width:12}, // Columna "F" Precio Vendido
+  {width:9}, // Columna "G" Cantidad
+  {width:9}, // Columna "H" Talla
+  {width:9}, // Columna "I" Total
+];
+
+XLSX.utils.book_append_sheet(workbook, worksheet, form.start+'-'+form.end);
+XLSX.writeFile(workbook, 'Ventas'+form.start+'-'+form.end+'.xlsx');
+}
 
 </script>
 
@@ -118,6 +161,14 @@ axios.get(url)
                                     id="f2" />
                             </div>
 
+                            <div>
+                                <button v-on:click="downloadExcel()"
+                                    class="form-control block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
+                                     >Exportar a Excel</button>
+                            </div>
+
+
+
                             <div class="text-right">
                                 <ModalCashCreate :locals="locals" />
                             </div>
@@ -127,11 +178,12 @@ axios.get(url)
             </div>
         </div><hr>
         <div id="ContenidoTabla">
-            <table id="table" class="table border mb-4 table-fixed" style="width: 100%;">
+            <table id="table_export" class="table border mb-4 table-fixed" style="width: 100%;">
                         <thead class="border-b">
 
-                            <tr v-if="form.start==form.end"><th colspan="7" class="text-center fs-1" style="text-align: center">Matos Store - Ventas del día: {{ form.start }} </th></tr>
+                            <tr v-if="form.start==form.end"><th colspan="7" class="text-center fs-1" style="text-align: center">Ventas del día: {{ form.start }} </th></tr>
                             <tr v-else><th colspan="7" class="text-center fs-1" style="text-align: center">Matos Store - Ventas del: {{ form.start }} al {{ form.end }}</th></tr>
+                            <tr><th colspan="7" class="text-center fs-1" style="text-align: center">De: {{ form.local_name }}</th></tr>
 
                             <tr>
                                 <th scope="col" class="w-2.5 text-sm font-medium text-gray-900 px-6 py-4 border-r">
@@ -208,7 +260,7 @@ axios.get(url)
                                         <th class="fs-4" style="text-align: center">S/ {{ getTotalPrices()}}</th>
                             </tr>
                         </tfoot>
-                        
+
                     </table>
                     <Pagination :data="sales" />
 
