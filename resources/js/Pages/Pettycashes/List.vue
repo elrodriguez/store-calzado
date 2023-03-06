@@ -1,7 +1,7 @@
 <script setup>
     import AppLayout from '@/Layouts/AppLayout.vue';
     import { useForm } from '@inertiajs/vue3';
-    import { faTrashAlt, faPencilAlt, faPrint } from "@fortawesome/free-solid-svg-icons";
+    import { faTrashAlt, faPencilAlt, faPrint, faCashRegister} from "@fortawesome/free-solid-svg-icons";
     import Pagination from '@/Components/Pagination.vue'
     import ModalCashCreate from './ModalCashCreate.vue';
 
@@ -31,6 +31,16 @@
     function destroy(id) {
         if (confirm("¿Estás seguro de que quieres eliminar?")) {
             formDelete.delete(route('pettycash.destroy', id));
+        }
+    }
+
+    function closePettyCash(id){
+        if (confirm("¿Estás seguro de que quieres Cerrar la Caja?")) {
+            axios.post(route('close_petty_cash', {id}))
+        .then(response => {
+            location.reload();
+        })
+        .catch(error => console.log(error));
         }
     }
 
@@ -96,8 +106,11 @@
                                 <th scope="col" class="w-4 text-sm font-medium text-gray-900 px-6 py-4 border-r">
                                     Fecha Cerrado
                                 </th>
+                                <th scope="col" class="text-left text-sm font-medium text-gray-900 px-6 py-4 border-r">
+                                    Monto en Caja
+                                </th>
                                 <th scope="col" class="text-left text-sm font-medium text-gray-900 px-6 py-4">
-                                    Monto total
+                                    Ingreso por ventas
                                 </th>
                             </tr>
                         </thead>
@@ -118,19 +131,34 @@
                                             <font-awesome-icon :icon="faTrashAlt" />
                                         </button>
                                         </div>
+
+                                        <div>
+                                            <!-- <a :href="route('products.edit',pettycash.id)" class="mr-1 inline-block px-6 py-2.5 bg-green-500 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-green-600 hover:shadow-lg focus:bg-green-600 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-green-700 active:shadow-lg transition duration-150 ease-in-out">
+                                                <font-awesome-icon :icon="faPencilAlt" />
+                                            </a> -->
+                                            <button type="button" class="inline-block px-6 py-2.5 bg-blue-600 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg transition duration-150 ease-in-out"
+                                            @click="closePettyCash(pettycash.id)"
+                                            title="Cerrar Caja"
+                                            >
+                                            <font-awesome-icon :icon="faCashRegister" />
+                                        </button>
+                                        </div>
                                     </div>
                                 </td>
                                 <td class="text-center text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap border-r">
                                     {{ pettycash.name_user }}
                                 </td>
                                 <td class="text-center text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap border-r">
-                                    {{ pettycash.date_opening }}
+                                    {{ pettycash.date_opening }} | {{ pettycash.time_opening.slice(0, -3) }} hrs
                                 </td>
                                 <td class="text-center text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap border-r">
-                                    {{ pettycash.date_closed }}
+                                    {{ pettycash.date_closed==null? "Abierto" : pettycash.date_closed+" | "+pettycash.time_closed.slice(0, -3)+" hrs"}}
+                                </td>
+                                <td class="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap border-r">
+                                    {{ pettycash.final_balance }}
                                 </td>
                                 <td class="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
-                                    {{ pettycash.final_balance }}
+                                    {{ pettycash.income }}
                                 </td>
                             </tr>
 
