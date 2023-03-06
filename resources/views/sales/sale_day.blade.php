@@ -18,60 +18,6 @@
         </div>
         <br>
         <div style="text-align: center">
-            <h1>Metodos de pagos</h1>
-        </div>
-        <table style="width: 100%;border: 1px solid #000;border-collapse: collapse;">
-            <tr>
-                <th
-                    style="text-align: center;
-                    vertical-align: top;
-                    border: 1px solid #000;
-                    border-collapse: collapse;
-                    padding: 0.3em;
-                    caption-side: bottom;
-                    color: #fff;
-                    background: #000;"
-                >Metodo</th>
-                <th
-                    style="color: #fff;
-                    background: #000;
-                    text-align: center;
-                    vertical-align: top;
-                    border: 1px solid #000;
-                    border-collapse: collapse;
-                    padding: 0.3em;
-                    caption-side: bottom;"
-                >Importe</th>
-            </tr>
-
-            @foreach($payments as $payment)
-            <tr>
-                <td
-                    style="text-align: left;
-                    vertical-align: top;
-                    border: 1px solid #000;
-                    border-collapse: collapse;
-                    padding: 0.3em;
-                    caption-side: bottom;"
-                >{{ $payment->description }}</td>
-                <td
-                    style="text-align: right;
-                    vertical-align: top;
-                    border: 1px solid #000;
-                    border-collapse: collapse;
-                    padding: 0.3em;
-                    caption-side: bottom;" 
-                >@foreach($pays as $pay)
-                    @if($payment->id == $pay['type'])
-                        <span>{{ $pay['amount'] }}</span>
-                    @endif
-                @endforeach</td>
-            </tr>
-            @endforeach
-            
-        </table>
-        <br>
-        <div style="text-align: center">
             <h1>Productos Vendidos</h1>
         </div>
         <table style="width: 100%;border: 1px solid #000;border-collapse: collapse;">
@@ -173,31 +119,34 @@
         <div style="text-align: center">
             <h1>Documentos Emitidos</h1>
         </div>
-        <table style="width: 100%;border: 1px solid #000;border-collapse: collapse;">
-            <tr>
-                <td style="text-align: left;
-                vertical-align: top;
-                border: 1px solid #000;
-                border-collapse: collapse;
-                padding: 0.3em;
-                caption-side: bottom;">Documento</td>
-                <td style="text-align: left;
-                vertical-align: top;
-                border: 1px solid #000;
-                border-collapse: collapse;
-                padding: 0.3em;
-                caption-side: bottom;">Cliente</td>
-                <td style="text-align: left;
-                vertical-align: top;
-                border: 1px solid #000;
-                border-collapse: collapse;
-                padding: 0.3em;
-                caption-side: bottom;">Total</td>
-            </tr>
-            @php
-                $total = 0;
-            @endphp
-            @foreach ($sales as $sale)
+        
+        @php
+            $total = 0;
+            $ssale = '';
+        @endphp
+        @foreach ($sales as $k => $sale)
+            @if($ssale != $sale->id)
+            <table style="width: 100%;border: 1px solid #000;border-collapse: collapse;background:#D5D6D1">
+                <tr>
+                    <td style="text-align: left;
+                    vertical-align: top;
+                    border: 1px solid #000;
+                    border-collapse: collapse;
+                    padding: 0.3em;
+                    caption-side: bottom;">Documento</td>
+                    <td style="text-align: left;
+                    vertical-align: top;
+                    border: 1px solid #000;
+                    border-collapse: collapse;
+                    padding: 0.3em;
+                    caption-side: bottom;">Cliente</td>
+                    <td style="text-align: left;
+                    vertical-align: top;
+                    border: 1px solid #000;
+                    border-collapse: collapse;
+                    padding: 0.3em;
+                    caption-side: bottom;">Total</td>
+                </tr>
                 <tr>
                     <td style="vertical-align: top;
                     border: 1px solid #000;
@@ -215,22 +164,53 @@
                     padding: 0.3em;
                     caption-side: bottom;">{{ $sale->total  }}</td>
                 </tr>
-                @php
-                    $total = $total + $sale->total;
-                @endphp
-            @endforeach
+                <tr>
+                    <th colspan="3" style="padding: 0.3em;text-align: center">Detalles De Venta</th>
+                </tr>
+                @foreach($sales as $products)
+                    @if($sale->id == $products->id)
+                    <tr>
+                        <td style="padding: 0.3em;text-align: left">Producto: </td>
+                        <td style="padding: 0.3em;text-align: center">{{ $products->interne }} {{ $products->product_description }} / {{ json_decode($products->product,true)['size'] }}</td>
+                        <td style="padding: 0.3em;text-align: right">{{ $products->product_total }}</td>
+                    </tr>
+                    @endif
+                @endforeach
+                <tr>
+                    <th colspan="3" style="padding: 0.3em;text-align: center">Pagos</th>
+                </tr>
+                @foreach(json_decode($sale->payments) as $payment)
+                    <tr>
+                        <td style="padding: 0.3em;text-align: left">
+                            @foreach($payments as $rr)
+                                @if($payment->type == $rr->id)
+                                    <b>{{ $rr->description }}</b>
+                                @endif
+                            @endforeach
+                        </td>
+                        <td style="padding: 0.3em;text-align: left">{{ $payment->reference }}</td>
+                        <td style="padding: 0.3em;text-align: right">{{ number_format($payment->amount, 2, '.', ',') }}</td>
+                    </tr>
+                @endforeach
+            @endif
+            @php
+                $total = $total + $sale->total;
+            @endphp
+            </table>
+            <br>
+        @endforeach
+        <table style="width: 100%;border: 1px solid #000;border-collapse: collapse;">
             <tr>
-                <td colspan="2" style="text-align: right;vertical-align: top;
+                <td style="text-align: right;vertical-align: top;
                 border: 1px solid #000;
                 border-collapse: collapse;
                 padding: 0.3em;
-                caption-side: bottom;">Total Vendido</td> 
+                caption-side: bottom;">Total venta del dia</td> 
                 <td style="text-align: right;vertical-align: top;
                 border: 1px solid #000;
                 border-collapse: collapse;
                 padding: 0.3em;
                 caption-side: bottom;">{{ number_format($total, 2, '.', ',') }}</td>
-
             </tr>
         </table>
     </div>

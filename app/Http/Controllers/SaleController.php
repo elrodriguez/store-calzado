@@ -373,24 +373,32 @@ class SaleController extends Controller
 
         $payments = PaymentMethod::all();
 
-        $sales = Sale::join('sale_documents', 'sale_id', 'sales.id')
+        $sales = SaleProduct::join('sales', 'sale_products.sale_id', 'sales.id')
+            ->join('products', 'product_id', 'products.id')
+            ->join('sale_documents', 'sale_documents.sale_id', 'sales.id')
             ->join('people', 'client_id', 'people.id')
             ->join('series', 'serie_id', 'series.id')
             ->select(
+                'sales.id',
+                'products.description AS product_description',
+                'products.interne',
                 'series.description',
                 'sale_documents.number',
+                'sale_products.product',
+                'sale_products.total AS product_total',
                 'sales.total',
                 'people.full_name',
                 'sales.payments'
             )
             ->where('sales.user_id', Auth::id())
             ->whereDate('sales.created_at', $date)
+            ->where('sales.status', true)
+            ->where('sales.local_id', Auth::user()->local_id)
+            ->orderBy('sales.id')
             ->get();
 
         $products = SaleProduct::join('sales', 'sale_id', 'sales.id')
             ->join('products', 'product_id', 'products.id')
-            ->whereDate('sale_products.created_at', $date)
-            ->where('sales.user_id', Auth::id())
             ->select(
                 'products.interne',
                 'products.image',
@@ -401,36 +409,14 @@ class SaleController extends Controller
                 'sale_products.quantity',
                 'sale_products.total'
             )
+            ->whereDate('sales.created_at', $date)
+            ->where('sales.user_id', Auth::id())
+            ->where('sales.status', true)
+            ->where('sales.local_id', Auth::user()->local_id)
             ->get();
 
-        $pays = [];
-        $arrays = [];
-
-        foreach ($sales as $k => $sale) {
-            $arrays[$k] = json_decode($sale->payments, true);
-        }
-        $merged = [];
-        foreach ($arrays as $array) {
-            $merged = array_merge($merged, $array);
-        }
-
-        $sums = [];
-        foreach ($merged as $item) {
-            $type = $item['type'];
-            $amount = $item['amount'];
-            if (isset($sums[$type])) {
-                $sums[$type] += $amount;
-            } else {
-                $sums[$type] = $amount;
-            }
-        }
-
-        $new_array = [];
-        foreach ($sums as $type => $amount) {
-            $new_array[] = ['type' => $type, 'amount' => $amount];
-        }
-
         $status = false;
+
         if (count($sales) > 0) {
             $status = true;
 
@@ -440,8 +426,7 @@ class SaleController extends Controller
                 'header' => $header,
                 'sales' => $sales,
                 'payments' => $payments,
-                'products' => $products,
-                'pays' => $new_array
+                'products' => $products
             ]);
 
             $pdf->setPaper('A4', 'portrait');
