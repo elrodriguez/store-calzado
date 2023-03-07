@@ -55,7 +55,7 @@ if(state == 0){
 </script>
 
 <template>
-    <AppLayout title="Create Team">
+    <AppLayout title="Cajas Chicas">
         <template #header>
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
                 Caja Chica
