@@ -99,7 +99,7 @@ worksheet['!cols'] = [
 ];
 
 XLSX.utils.book_append_sheet(workbook, worksheet, form.start+'-'+form.end);
-XLSX.writeFile(workbook, 'Ventas'+form.start+'-'+form.end+'.xlsx');
+XLSX.writeFile(workbook, 'RpteCaja_'+form.local_name+"-"+form.start+'.xlsx');
 }
 
 
@@ -122,7 +122,7 @@ pdf.text(titulo, 200, 40);
     });
 
     // Guarda el archivo PDF
-    pdf.save('miArchivo.pdf');
+    pdf.save('RpteCaja_'+form.local_name+"-"+props.petty_cash.date_opening+".pdf");
 }
 </script>
 

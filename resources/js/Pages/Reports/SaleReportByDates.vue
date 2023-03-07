@@ -108,7 +108,7 @@ worksheet['!cols'] = [
 ];
 
 XLSX.utils.book_append_sheet(workbook, worksheet, form.start+'-'+form.end);
-XLSX.writeFile(workbook, 'Ventas'+form.start+'-'+form.end+'.xlsx');
+XLSX.writeFile(workbook, 'RpteVentas'+form.start+'-'+form.end+'.xlsx');
 }
 
 
@@ -134,7 +134,7 @@ pdf.text(titulo, 400, 40);
 
 
     // Guarda el archivo PDF
-    pdf.save('miArchivo.pdf');
+    pdf.save('RpteVentas_'+form.local_name+'_'+form.start+'-'+form.end+'.pdf');
 }
 </script>
 
