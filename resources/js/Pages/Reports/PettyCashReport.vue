@@ -22,13 +22,17 @@ const props = defineProps({
     end: {
         type: Object,
         default: () => ({}),
+    },
+    petty_cash: {
+        type: Object,
+        default: () => ({}),
     }
 });
 
 const form = useForm({
     start:props.start,
     end:props.end,
-    local_id:0,
+    local_id:props.petty_cash.local_sale_id,
     sales:props.sales,
     local_name:"TODOS LOS LOCALES"
 });
@@ -54,25 +58,12 @@ function getTotalPrices(){
     });
     return prices;
 }
-
+getReport();
 function getReport(){
-    let url = route('sales_report_dates', {
-  start: form.start,
-  end: form.end,
-  local_id: form.local_id,
-  consulta:true
-});
-axios.get(url)
-  .then(response => {
-    console.log(response.data);
-    form.sales=null;
-    form.sales = response.data;
+
     getTotalPrices();
     getTotalQuantities();
-  })
-  .catch(err => {
-    console.log("ERROR ENCONTRADO", err);
-  });
+
 
   props.locals.forEach(local => {
     if(form.local_id == local.id){
@@ -120,18 +111,15 @@ function downloadPdf(){
   unit: 'pt',
   format: 'a4'
 });
-let titulo = "Reporte de Ventas de: "+form.local_name;
+let titulo = "Reporte de Caja de: "+form.local_name;
 pdf.text(titulo, 200, 20); //X e Y
-titulo="Día: "+form.start;
+titulo="Día: "+props.petty_cash.date_opening;
 pdf.text(titulo, 200, 40);
-titulo="al: "+form.end;
-pdf.text(titulo, 400, 40);
     // Genera la tabla PDF utilizando jsPDF
     pdf.autoTable({
       html: table,
       startY: 70  // altura desde top para inicar dibujar la tabla
     });
-
 
     // Guarda el archivo PDF
     pdf.save('miArchivo.pdf');
@@ -154,6 +142,7 @@ pdf.text(titulo, 400, 40);
                             <InputLabel for="stablishment" value="Establecimiento" />
                             <select v-model="form.local_id" v-on:change="getReport()"
                                 id="stablishment"
+                                disabled
                                 class="w-5 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                                 <option value="0">Todos los Locales</option>
                                 <template v-for="(local, index) in props.locals" :key="index">
@@ -163,16 +152,6 @@ pdf.text(titulo, 400, 40);
                         </div>
 
                         <div class="grid grid-cols-4 gap-3 py-2" id="form-dates">
-                            <div>
-                                <input type="date" v-model="form.start" v-on:change="getReport()"
-                                    class="form-control block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
-                                    id="f1" />
-                            </div>
-                            <div>
-                                <input type="date" v-model="form.end" v-on:change="getReport()"
-                                    class="form-control block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
-                                    id="f2" />
-                            </div>
 
                             <div>
                                 <button v-on:click="downloadExcel()"
@@ -200,8 +179,7 @@ pdf.text(titulo, 400, 40);
             <table id="table_export" class="table border mb-4 table-fixed" style="width: 100%;">
                         <thead class="border-b">
 
-                            <tr v-if="form.start==form.end"><th colspan="10" class="text-center fs-1" style="text-align: center">Ventas del día: {{ form.start }} </th></tr>
-                            <tr v-else><th colspan="10" class="text-center fs-1" style="text-align: center">Matos Store - Ventas del: {{ form.start }} al {{ form.end }}</th></tr>
+                            <tr><th colspan="10" class="text-center fs-1" style="text-align: center">Matos Store - Ventas Caja desde: {{ props.petty_cash.date_opening+" hora: "+props.petty_cash.time_opening.slice(0, -3) }} cerrado  el: {{ props.petty_cash.date_closed+" hora: "+props.petty_cash.time_closed.slice(0, -3) }}</th></tr>
                             <tr><th colspan="10" class="text-center fs-1" style="text-align: center">De: {{ form.local_name }}</th></tr>
 
                             <tr>

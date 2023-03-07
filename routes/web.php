@@ -124,6 +124,11 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified',
     )->name('sale_report');
 
     Route::get(
+        'reports/pettycash/{petty_cash_id}/report',
+        [ReportController::class, 'PettyCashReport']
+    )->name('PettyCashReport');
+
+    Route::get(
         'reports/inventoryindate',
         [ReportController::class, 'inventory_report_export']
     )->name('inventory_report');

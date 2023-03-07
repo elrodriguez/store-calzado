@@ -49,9 +49,18 @@ if(state == 0){
     }
 
     function reportPettyCash(id){
-        alert("esta en proceso el reporte "+id);
+        window.open(route('PettyCashReport', id), '_blank');
     }
 
+function getLocal(id){
+    let local_name;
+    props.locals.forEach(local => {
+    if(local.id == id){
+        local_name = local.description;
+    }
+  });
+  return local_name;
+}
 </script>
 
 <template>
@@ -109,6 +118,9 @@ if(state == 0){
                                     Usuario
                                 </th>
                                 <th scope="col" class="w-4 text-sm font-medium text-gray-900 px-6 py-4 border-r">
+                                    Tienda
+                                </th>
+                                <th scope="col" class="w-4 text-sm font-medium text-gray-900 px-6 py-4 border-r">
                                     Fecha Apertura
                                 </th>
                                 <th scope="col" class="w-4 text-sm font-medium text-gray-900 px-6 py-4 border-r">
@@ -128,13 +140,25 @@ if(state == 0){
                                     {{ index + 1 }}
                                 </td>
                                 <td class="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap border-r">
-                                    <div class="flex space-x-2 justify-center">
-                                        <div>
+                                    <div class="flex space-x-2">
+                                        <div v-if="pettycash.income==0">
                                             <!-- <a :href="route('products.edit',pettycash.id)" class="mr-1 inline-block px-6 py-2.5 bg-green-500 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-green-600 hover:shadow-lg focus:bg-green-600 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-green-700 active:shadow-lg transition duration-150 ease-in-out">
                                                 <font-awesome-icon :icon="faPencilAlt" />
                                             </a> -->
                                             <button type="button" class="inline-block px-6 py-2.5 bg-red-600 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-red-700 hover:shadow-lg focus:bg-red-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-red-800 active:shadow-lg transition duration-150 ease-in-out"
                                             @click="destroy(pettycash.id)"
+                                            title="Eliminar"
+                                            >
+                                            <font-awesome-icon :icon="faTrashAlt" />
+                                        </button>
+                                        </div>
+
+                                        <div v-else>
+                                            <!-- <a :href="route('products.edit',pettycash.id)" class="mr-1 inline-block px-6 py-2.5 bg-green-500 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-green-600 hover:shadow-lg focus:bg-green-600 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-green-700 active:shadow-lg transition duration-150 ease-in-out">
+                                                <font-awesome-icon :icon="faPencilAlt" />
+                                            </a> -->
+                                            <button disabled type="button" title="No puede eliminarse" class="inline-block px-6 py-2.5 bg-gray-400 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-gray-500 hover:shadow-lg focus:bg-red-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-red-800 active:shadow-lg transition duration-150 ease-in-out"
+
                                             >
                                             <font-awesome-icon :icon="faTrashAlt" />
                                         </button>
@@ -144,9 +168,16 @@ if(state == 0){
                                             <!-- <a :href="route('products.edit',pettycash.id)" class="mr-1 inline-block px-6 py-2.5 bg-green-500 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-green-600 hover:shadow-lg focus:bg-green-600 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-green-700 active:shadow-lg transition duration-150 ease-in-out">
                                                 <font-awesome-icon :icon="faPencilAlt" />
                                             </a> -->
-                                            <button type="button" class="inline-block px-6 py-2.5 bg-blue-600 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg transition duration-150 ease-in-out"
+                                            <button  v-if="pettycash.state==1" type="button" class="inline-block px-6 py-2.5 bg-blue-600 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg transition duration-150 ease-in-out"
                                             @click="closePettyCash(pettycash.id, pettycash.state)"
                                             title="Cerrar Caja"
+                                            >
+                                            <font-awesome-icon :icon="faCashRegister" />
+                                        </button>
+
+                                        <button  v-else type="button" class="inline-block px-6 py-2.5 bg-gray-500 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-gray-600 hover:shadow-lg focus:bg-gray-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg transition duration-150 ease-in-out"
+                                            title="Ya Cerrada Caja"
+                                            @click="closePettyCash(pettycash.id, pettycash.state)"
                                             >
                                             <font-awesome-icon :icon="faCashRegister" />
                                         </button>
@@ -156,9 +187,15 @@ if(state == 0){
                                             <!-- <a :href="route('products.edit',pettycash.id)" class="mr-1 inline-block px-6 py-2.5 bg-green-500 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-green-600 hover:shadow-lg focus:bg-green-600 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-green-700 active:shadow-lg transition duration-150 ease-in-out">
                                                 <font-awesome-icon :icon="faPencilAlt" />
                                             </a> -->
-                                            <button type="button" class="inline-block px-6 py-2.5 bg-green-600 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-green-700 hover:shadow-lg focus:bg-green-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-green-800 active:shadow-lg transition duration-150 ease-in-out"
+                                            <button v-if="pettycash.state==0" type="button" class="inline-block px-6 py-2.5 bg-green-600 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-green-700 hover:shadow-lg focus:bg-green-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-green-800 active:shadow-lg transition duration-150 ease-in-out"
                                             @click="reportPettyCash(pettycash.id)"
                                             title="Reporte"
+                                            >
+                                            <font-awesome-icon :icon="faFileExcel" />
+                                        </button>
+
+                                        <button v-else type="button" class="inline-block px-6 py-2.5 bg-gray-500 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-gray-600 hover:shadow-lg focus:bg-gray-600 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-gray-600 active:shadow-lg transition duration-150 ease-in-out"
+                                           title="Reporte"
                                             >
                                             <font-awesome-icon :icon="faFileExcel" />
                                         </button>
@@ -167,6 +204,9 @@ if(state == 0){
                                 </td>
                                 <td class="text-center text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap border-r">
                                     {{ pettycash.name_user }}
+                                </td>
+                                <td class="text-center text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap border-r">
+                                    {{ getLocal(pettycash.local_sale_id) }}
                                 </td>
                                 <td class="text-center text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap border-r">
                                     {{ pettycash.date_opening }} | {{ pettycash.time_opening.slice(0, -3) }} hrs

@@ -83,11 +83,15 @@ class PettyCashController extends Controller
             ->with('message', __('Caja Chica creado con éxito'));
     }
 
-    public function destroy(PettyCash $product)
+    public function destroy($id)
     {
-        $product->delete();
-        return redirect()->route('pettycash.index')
-            ->with('message', __('Caja Chica eliminado con éxito'));
+        $pettycash = PettyCash::find($id);
+        if($pettycash->income==0){
+            $pettycash->delete();
+            return redirect()->route('pettycash.index')
+                ->with('message', __('Caja Chica eliminado con éxito'));
+        }
+
     }
 
     public function close_petty($petty_id)

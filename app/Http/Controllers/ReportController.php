@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\LocalSale;
+use App\Models\PettyCash;
 use App\Models\Product;
 use App\Models\Sale;
 use Illuminate\Http\Request;
@@ -125,11 +126,34 @@ class ReportController extends Controller
                 ->select('sales.*', 'products.interne', 'products.description as product_description', 'products.image', 'sale_products.product as product')
                 ->whereDate('sales.created_at', '>=', $start)
                 ->whereDate('sales.created_at', '<=', $end)
+                ->where('sales.status', '=', 1)
                 ->where('sales.local_id', '=', $local_id)
                 ->orderBy('id', 'desc')->orderBy('sale_products.id', 'desc')
                 ->get();
         }
     }
+
+    public function PettyCashReport($petty_cash_id){
+        $petty_cash = PettyCash::find($petty_cash_id);
+        $sales = Sale::join('local_sales', 'sales.local_id', 'local_sales.id')
+        ->join('sale_products', 'sale_products.sale_id', 'sales.id')
+        ->join('products', 'products.id', 'sale_products.product_id')
+        ->select('sales.*', 'products.interne', 'products.description as product_description', 'products.image', 'sale_products.product as product')
+        ->where('sales.petty_cash_id', '=', $petty_cash_id)
+        ->where('sales.status', '=', 1)
+        ->orderBy('id', 'desc')->orderBy('sale_products.id', 'desc')
+        ->get();
+
+        return Inertia::render('Reports/PettyCashReport', [
+            'locals' => LocalSale::all(),
+            'sales' => $sales,
+            'petty_cash' => $petty_cash,
+            'date' => $petty_cash->date_opening.$petty_cash->time_opening,
+            'start' => $petty_cash->date_closed,
+            'end' => $petty_cash->date_opening,
+        ]);
+    }
+
     public function getImage($product_id)
     {
         return Product::where('id', $product_id)->select('image')->get()->first()->image;
