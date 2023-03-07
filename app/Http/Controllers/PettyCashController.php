@@ -95,7 +95,7 @@ class PettyCashController extends Controller
         $v = PettyCash::find($petty_id)->state;
         if($v){
         try {
-            $amount = Sale::where('petty_cash_id', $petty_id)->sum('total');
+            $amount = Sale::where('petty_cash_id', $petty_id)->where('status', "=", 1)->sum('total');
             PettyCash::where('id', $petty_id)->update([
                 'state' => false,
                 'date_closed' => Carbon::now()->format('Y-m-d'),

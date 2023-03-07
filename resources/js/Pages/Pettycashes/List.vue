@@ -35,7 +35,7 @@
     }
 
     function closePettyCash(id, state){
-if(state){
+if(state == 0){
     alert("Esta caja ya se encuentra Cerrada");
 }else{
     if (confirm("¿Estás seguro de que quieres Cerrar la Caja?")) {
@@ -172,7 +172,7 @@ if(state){
                                     {{ pettycash.date_opening }} | {{ pettycash.time_opening.slice(0, -3) }} hrs
                                 </td>
                                 <td class="text-center text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap border-r">
-                                    {{ pettycash.date_closed==null? "Abierto" : pettycash.date_closed+" | "+pettycash.time_closed.slice(0, -3)+" hrs"}}
+                                    {{ pettycash.state==1? "Abierto" : pettycash.date_closed+" | "+pettycash.time_closed.slice(0, -3)+" hrs"}}
                                 </td>
                                 <td class="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap border-r">
                                     {{ pettycash.final_balance }}

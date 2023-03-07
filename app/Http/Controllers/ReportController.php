@@ -115,6 +115,7 @@ class ReportController extends Controller
                 ->select('sales.*', 'products.interne', 'products.description as product_description', 'products.image', 'sale_products.product as product')
                 ->whereDate('sales.created_at', '>=', $start)
                 ->whereDate('sales.created_at', '<=', $end)
+                ->where('sales.status', '=', 1)
                 ->orderBy('id', 'desc')->orderBy('sale_products.id', 'desc')
                 ->get();
         } else {
