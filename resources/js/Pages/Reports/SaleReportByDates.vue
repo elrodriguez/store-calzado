@@ -3,8 +3,8 @@
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { useForm } from '@inertiajs/vue3';
 import * as XLSX from 'xlsx/dist/xlsx.full.min';
-import { faTrashAlt, faPencilAlt, faPrint } from "@fortawesome/free-solid-svg-icons";
-import { propsToAttrMap } from '@vue/shared';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable'
 
 const props = defineProps({
     locals: {
@@ -88,18 +88,6 @@ axios.get(url)
 // });
 
 function downloadExcel(){
-    /* Create worksheet from HTML DOM TABLE */
-    const table = document.getElementById("table_export");
-    const wb = XLSX.utils.table_to_book(table);
-    wb['!autofit'] = true;
-
-    /* Export to file (start a download) */
-    let filename="ventas-"+form.start+"-"+form.end+".xlsx";
-    XLSX.writeFile(wb, filename);
-    test();
-}
-
-function test(){
     const workbook = XLSX.utils.book_new();
 
 // Obtén la tabla HTML que deseas convertir
@@ -123,6 +111,25 @@ XLSX.utils.book_append_sheet(workbook, worksheet, form.start+'-'+form.end);
 XLSX.writeFile(workbook, 'Ventas'+form.start+'-'+form.end+'.xlsx');
 }
 
+
+function downloadPdf(){
+    const table = document.getElementById('table_export');
+
+    const pdf = new jsPDF({
+  orientation: 'landscape',
+  unit: 'pt',
+  format: 'a4'
+});
+
+    // Genera la tabla PDF utilizando jsPDF
+    pdf.autoTable({
+      html: table,
+      startY: 10
+    });
+
+    // Guarda el archivo PDF
+    pdf.save('miArchivo.pdf');
+}
 </script>
 
 <template>
@@ -164,7 +171,13 @@ XLSX.writeFile(workbook, 'Ventas'+form.start+'-'+form.end+'.xlsx');
                             <div>
                                 <button v-on:click="downloadExcel()"
                                     class="form-control block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
-                                     >Exportar a Excel</button>
+                                     >Exportar en Excel</button>
+                            </div>
+
+                            <div>
+                            <button v-on:click="downloadPdf()"
+                                    class="form-control block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
+                                     >Exportar en PDF</button>
                             </div>
 
 
@@ -181,9 +194,9 @@ XLSX.writeFile(workbook, 'Ventas'+form.start+'-'+form.end+'.xlsx');
             <table id="table_export" class="table border mb-4 table-fixed" style="width: 100%;">
                         <thead class="border-b">
 
-                            <tr v-if="form.start==form.end"><th colspan="7" class="text-center fs-1" style="text-align: center">Ventas del día: {{ form.start }} </th></tr>
-                            <tr v-else><th colspan="7" class="text-center fs-1" style="text-align: center">Matos Store - Ventas del: {{ form.start }} al {{ form.end }}</th></tr>
-                            <tr><th colspan="7" class="text-center fs-1" style="text-align: center">De: {{ form.local_name }}</th></tr>
+                            <tr v-if="form.start==form.end"><th colspan="10" class="text-center fs-1" style="text-align: center">Ventas del día: {{ form.start }} </th></tr>
+                            <tr v-else><th colspan="10" class="text-center fs-1" style="text-align: center">Matos Store - Ventas del: {{ form.start }} al {{ form.end }}</th></tr>
+                            <tr><th colspan="10" class="text-center fs-1" style="text-align: center">De: {{ form.local_name }}</th></tr>
 
                             <tr>
                                 <th scope="col" class="w-2.5 text-sm font-medium text-gray-900 px-6 py-4 border-r">

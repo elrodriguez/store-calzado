@@ -23,6 +23,8 @@
         "@fortawesome/free-solid-svg-icons": "^6.2.1",
         "@fortawesome/vue-fontawesome": "^3.0.0-5",
         "@websitebeaver/vue-magnifier": "^1.1.0",
+        "jspdf": "^2.5.1",
+        "jspdf-autotable": "^3.5.28",
         "sweetalert": "^2.1.2",
         "sweetalert2": "^11.7.2",
         "table2excel": "^1.0.4",
