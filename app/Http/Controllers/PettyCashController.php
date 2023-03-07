@@ -92,6 +92,8 @@ class PettyCashController extends Controller
 
     public function close_petty($petty_id)
     {
+        $v = PettyCash::find($petty_id)->state;
+        if($v){
         try {
             $amount = Sale::where('petty_cash_id', $petty_id)->sum('total');
             PettyCash::where('id', $petty_id)->update([
@@ -105,5 +107,6 @@ class PettyCashController extends Controller
         } catch (Exception $e) {
             return "<script>console.log(" . $e->getMessage() . ");</script>";
         }
+    }
     }
 }
