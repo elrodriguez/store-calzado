@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\LocalSale;
 use App\Models\PettyCash;
 use App\Models\Sale;
+use App\Models\User;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
@@ -36,8 +37,10 @@ class PettyCashController extends Controller
         // } else {
         //     $pettycashes->latest();
         // }
+        $user = User::find(Auth::user()->id);
 
-        $pettycashes = $pettycashes->join('users', 'petty_cashes.user_id', 'users.id')
+        if($user->hasRole('admin')){
+            $pettycashes = $pettycashes->join('users', 'petty_cashes.user_id', 'users.id')
             ->select(
                 'petty_cashes.id',
                 'petty_cashes.date_opening',
@@ -55,6 +58,28 @@ class PettyCashController extends Controller
             ->orderBy('petty_cashes.created_at', 'DESC')
             ->paginate(10)
             ->onEachSide(2);
+        }else{
+            $pettycashes = $pettycashes->join('users', 'petty_cashes.user_id', 'users.id')
+            ->select(
+                'petty_cashes.id',
+                'petty_cashes.date_opening',
+                'petty_cashes.time_opening',
+                'petty_cashes.date_closed',
+                'petty_cashes.time_closed',
+                'petty_cashes.beginning_balance',
+                'petty_cashes.final_balance',
+                'petty_cashes.income',
+                'petty_cashes.state',
+                'petty_cashes.reference_number',
+                'petty_cashes.local_sale_id',
+                'users.name AS name_user'
+            )
+            ->orderBy('petty_cashes.created_at', 'DESC')
+            ->where('user_id', Auth::user()->id)
+            ->paginate(10)
+            ->onEachSide(2);
+        }
+
 
         return Inertia::render('Pettycashes/List', [
             'pettycashes' => $pettycashes,

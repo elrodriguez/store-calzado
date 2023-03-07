@@ -118,7 +118,7 @@ pdf.text(titulo, 200, 40);
     // Genera la tabla PDF utilizando jsPDF
     pdf.autoTable({
       html: table,
-      startY: 70  // altura desde top para inicar dibujar la tabla
+      startY: 70  // altura(Y) desde top para iniciar dibujar la tabla
     });
 
     // Guarda el archivo PDF
