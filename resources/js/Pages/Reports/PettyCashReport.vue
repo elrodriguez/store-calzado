@@ -26,6 +26,10 @@ const props = defineProps({
     petty_cash: {
         type: Object,
         default: () => ({}),
+    },
+    expenses: {
+        type: Object,
+        default: () => ({}),
     }
 });
 
@@ -34,6 +38,7 @@ const form = useForm({
     end:props.end,
     local_id:props.petty_cash.local_sale_id,
     sales:props.sales,
+    expenses:props.expenses,
     local_name:"TODOS LOS LOCALES"
 });
 
@@ -57,6 +62,13 @@ function getTotalPrices(){
         prices+=JSON.parse(sale.product).quantity*JSON.parse(sale.product).price;
     });
     return prices;
+}
+function getTotalExpenses(){
+    let expenses=0.0;
+    form.expenses.forEach(expense=> {
+        expenses+=parseFloat(expense.amount);
+    });
+    return expenses;
 }
 getReport();
 function getReport(){
@@ -181,6 +193,7 @@ pdf.text(titulo, 200, 40);
 
                             <tr><th colspan="10" class="text-center fs-1" style="text-align: center">Matos Store - Ventas Caja desde: {{ props.petty_cash.date_opening+" hora: "+props.petty_cash.time_opening.slice(0, -3) }} cerrado  el: {{ props.petty_cash.date_closed+" hora: "+props.petty_cash.time_closed.slice(0, -3) }}</th></tr>
                             <tr><th colspan="10" class="text-center fs-1" style="text-align: center">De: {{ form.local_name }}</th></tr>
+                            <tr><th colspan="4"></th><th>Monto final en Caja: </th><th>{{ props.petty_cash.final_balance }}</th><th colspan="4"></th></tr>
 
                             <tr>
                                 <th scope="col" class="w-2.5 text-sm font-medium text-gray-900 px-6 py-4 border-r">
@@ -247,7 +260,7 @@ pdf.text(titulo, 200, 40);
                         </tbody>
 
                         <tfoot>
-                            <tr class="table-dark">
+                            <tr class="bg-blue-400 border-b">
                                         <th class="fs-4" style="text-align: center">#</th>
                                         <th class="fs-4" style="text-align: center" colspan="3">Totales</th>
                                         <th class="fs-4" style="text-align: left"></th>
@@ -256,6 +269,45 @@ pdf.text(titulo, 200, 40);
                                         <th class="fs-4" style="text-align: center"></th>
                                         <th class="fs-4" style="text-align: center">S/ {{ getTotalPrices()}}</th>
                             </tr>
+                            <template v-if="expenses.length > 0">
+                            <tr class="bg-gray-900 border-b">
+                                <th class="fs-4 text-white font-light" style="text-align: center" colspan="9">GASTOS</th>
+                            </tr>
+                            <tr class="bg-gray-900 border-b">
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th class="fs-4 text-white font-light border-r" style="text-align: center">#</th>
+                                <th colspan="2" class="fs-4 text-white font-light border-r" style="text-align: center">Motivo o Descripción</th>
+                                <th class="fs-4 text-white font-light border-r" style="text-align: center">Monto</th>
+                                <th colspan="2" class="fs-4 text-white font-light" style="text-align: center">N° Documento</th>
+                            </tr>
+                            <tr  v-for="(expense, index) in form.expenses" :key="expense.id" class="border-b">  
+                                <td></td>
+                                <td></td>
+                                <td class="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap border-r"></td>
+                                <td class="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap border-r" style="text-align: center">{{ index + 1 }}</td>
+                                <td colspan="2" class="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap border-r">
+                                    {{ expense.description }}
+                                </td>
+                                <td class="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap border-r">
+                                    {{ expense.amount }}
+                                </td>      
+                                <td colspan="2" class="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
+                                    {{ expense.document }}
+                                </td>                          
+                            </tr>
+                            <tr class="bg-gray-900 border-b">
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th class="fs-4 text-white font-light border-r" style="text-align: center">Total en Gastos:</th>
+                                <th class="fs-4 text-white font-light border-r" style="text-align: center">{{ getTotalExpenses() }}</th>
+                                <th colspan="2"></th>
+                            </tr>
+                        </template>
                         </tfoot>
 
                     </table>

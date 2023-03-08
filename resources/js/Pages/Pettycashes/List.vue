@@ -1,9 +1,10 @@
 <script setup>
     import AppLayout from '@/Layouts/AppLayout.vue';
     import { useForm } from '@inertiajs/vue3';
-    import { faTrashAlt, faPencilAlt, faPrint, faCashRegister, faFileExcel} from "@fortawesome/free-solid-svg-icons";
+    import { faTrashAlt, faPencilAlt, faPrint, faCashRegister, faFileExcel, faMoneyBill1Wave} from "@fortawesome/free-solid-svg-icons";
     import Pagination from '@/Components/Pagination.vue'
     import ModalCashCreate from './ModalCashCreate.vue';
+    import ModalExpenseCreate from './ModalExpenseCreate.vue';
 
     const props = defineProps({
         pettycashes: {
@@ -28,9 +29,9 @@
 
     const formDelete = useForm({});
 
-    function destroy(id) {
+    function destroy(pettycash) {
         if (confirm("¿Estás seguro de que quieres eliminar?")) {
-            formDelete.delete(route('pettycash.destroy', id));
+            formDelete.delete(route('pettycash.destroy', pettycash.id));
         }
     }
 
@@ -61,6 +62,10 @@ function getLocal(id){
   });
   return local_name;
 }
+
+function openModalExpenses(id){
+
+}
 </script>
 
 <template>
@@ -72,7 +77,7 @@ function getLocal(id){
         </template>
 
         <div>
-            <div class="max-w-7xl mx-auto py-10 sm:px-6 lg:px-8">
+            <div class="max-w-8xl mx-auto py-10 sm:px-6 lg:px-8">
                 <div class="col-span-6 p-4 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
                     <form @submit.prevent="form.get(route('pettycash.index'))">
                         <div class="grid grid-cols-4 gap-3 py-2">
@@ -105,7 +110,7 @@ function getLocal(id){
                         </div>
                     </form>
 
-                    <table class="border mb-4" style="width: 100%;">
+                    <table class="border mb-3" style="width: 100%;">
                         <thead class="border-b">
                             <tr>
                                 <th scope="col" class="w-2.5 text-sm font-medium text-gray-900 px-6 py-4 border-r">
@@ -126,11 +131,14 @@ function getLocal(id){
                                 <th scope="col" class="w-4 text-sm font-medium text-gray-900 px-6 py-4 border-r">
                                     Fecha Cerrado
                                 </th>
-                                <th scope="col" class="text-left text-sm font-medium text-gray-900 px-6 py-4 border-r">
+                                <th scope="col" class="w-4 text-left text-sm font-medium text-gray-900 px-6 py-4 border-r">
+                                    Ingreso por ventas
+                                </th>
+                                <th scope="col" class="w-4 text-left text-sm font-medium text-gray-900 px-6 py-4 border-r">
                                     Monto en Caja
                                 </th>
-                                <th scope="col" class="text-left text-sm font-medium text-gray-900 px-6 py-4">
-                                    Ingreso por ventas
+                                <th scope="col" class="w-4 text-left text-sm font-medium text-gray-900 px-6 py-4">
+                                    Gastos
                                 </th>
                             </tr>
                         </thead>
@@ -141,12 +149,28 @@ function getLocal(id){
                                 </td>
                                 <td class="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap border-r">
                                     <div class="flex space-x-2">
-                                        <div v-if="pettycash.income==0">
+                                        <div v-if="pettycash.state==1">
+                                            <div>
+                                            <ModalExpenseCreate :petty_cash_id="pettycash.id" />
+                                             </div>
+
+                                        </div>
+
+                                        <div v-else>
                                             <!-- <a :href="route('products.edit',pettycash.id)" class="mr-1 inline-block px-6 py-2.5 bg-green-500 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-green-600 hover:shadow-lg focus:bg-green-600 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-green-700 active:shadow-lg transition duration-150 ease-in-out">
                                                 <font-awesome-icon :icon="faPencilAlt" />
                                             </a> -->
+                                            <button disabled type="button" title="Registrar Gasto" class="inline-block px-6 py-2.5 bg-gray-400 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-gray-500 hover:shadow-lg focus:bg-red-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-red-800 active:shadow-lg transition duration-150 ease-in-out"
+
+                                            >
+                                            <font-awesome-icon :icon="faMoneyBill1Wave" />
+                                        </button>
+                                        </div>
+
+
+                                        <div v-if="pettycash.income==0">
                                             <button type="button" class="inline-block px-6 py-2.5 bg-red-600 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-red-700 hover:shadow-lg focus:bg-red-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-red-800 active:shadow-lg transition duration-150 ease-in-out"
-                                            @click="destroy(pettycash.id)"
+                                            @click="destroy(pettycash)"
                                             title="Eliminar"
                                             >
                                             <font-awesome-icon :icon="faTrashAlt" />
@@ -215,10 +239,13 @@ function getLocal(id){
                                     {{ pettycash.state==1? "Abierto" : pettycash.date_closed+" | "+pettycash.time_closed.slice(0, -3)+" hrs"}}
                                 </td>
                                 <td class="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap border-r">
+                                    {{ pettycash.income }}
+                                </td>
+                                <td class="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap border-r">
                                     {{ pettycash.final_balance }}
                                 </td>
                                 <td class="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
-                                    {{ pettycash.income }}
+                                    {{ pettycash.expenses }}
                                 </td>
                             </tr>
 

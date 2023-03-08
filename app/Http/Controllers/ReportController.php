@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Expense;
 use App\Models\LocalSale;
 use App\Models\PettyCash;
 use App\Models\Product;
@@ -143,6 +144,7 @@ class ReportController extends Controller
         ->where('sales.status', '=', 1)
         ->orderBy('id', 'desc')->orderBy('sale_products.id', 'desc')
         ->get();
+        $expenses = Expense::where('petty_cash_id', $petty_cash_id)->get();
 
         return Inertia::render('Reports/PettyCashReport', [
             'locals' => LocalSale::all(),
@@ -151,6 +153,7 @@ class ReportController extends Controller
             'date' => $petty_cash->date_opening.$petty_cash->time_opening,
             'start' => $petty_cash->date_closed,
             'end' => $petty_cash->date_opening,
+            'expenses' => $expenses
         ]);
     }
 

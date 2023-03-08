@@ -25,7 +25,7 @@
     const props = defineProps({
         locals: {
             type: Object,
-            default: () => ({}), 
+            default: () => ({}),
         }
     });
 
@@ -84,7 +84,7 @@
                         <InputError :message="form.errors.starting_amount" class="mt-2" />
                     </div>
                 </div>
-           </form> 
+           </form>
         </template>
 
         <template #footer>

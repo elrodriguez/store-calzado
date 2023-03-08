@@ -52,6 +52,11 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified',
         [PettyCashController::class, 'close_petty']
     )->name('close_petty_cash');
 
+    Route::post(
+        'petty/cash/expense/store',
+        [PettyCashController::class, 'store_expense']
+    )->name('store_expense');
+
     Route::resource('sales', SaleController::class);
 
     Route::get(

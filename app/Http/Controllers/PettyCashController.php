@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Expense;
 use App\Models\LocalSale;
 use App\Models\PettyCash;
 use App\Models\Sale;
@@ -10,6 +11,7 @@ use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
 class PettyCashController extends Controller
@@ -41,6 +43,7 @@ class PettyCashController extends Controller
 
         if($user->hasRole('admin')){
             $pettycashes = $pettycashes->join('users', 'petty_cashes.user_id', 'users.id')
+                                        ->leftJoin('expenses', 'petty_cashes.id', 'expenses.petty_cash_id')
             ->select(
                 'petty_cashes.id',
                 'petty_cashes.date_opening',
@@ -53,13 +56,29 @@ class PettyCashController extends Controller
                 'petty_cashes.state',
                 'petty_cashes.reference_number',
                 'petty_cashes.local_sale_id',
-                'users.name AS name_user'
+                'users.name AS name_user',
+                DB::raw('sum(expenses.amount) AS expenses')
+            )
+            ->groupBy(
+                'petty_cashes.id',
+                'petty_cashes.date_opening',
+                'petty_cashes.time_opening',
+                'petty_cashes.date_closed',
+                'petty_cashes.time_closed',
+                'petty_cashes.beginning_balance',
+                'petty_cashes.final_balance',
+                'petty_cashes.income',
+                'petty_cashes.state',
+                'petty_cashes.reference_number',
+                'petty_cashes.local_sale_id',
+                'users.name'
             )
             ->orderBy('petty_cashes.created_at', 'DESC')
             ->paginate(10)
             ->onEachSide(2);
         }else{
             $pettycashes = $pettycashes->join('users', 'petty_cashes.user_id', 'users.id')
+                                        ->leftJoin('expenses', 'petty_cashes.id', 'expenses.petty_cash_id')
             ->select(
                 'petty_cashes.id',
                 'petty_cashes.date_opening',
@@ -72,7 +91,22 @@ class PettyCashController extends Controller
                 'petty_cashes.state',
                 'petty_cashes.reference_number',
                 'petty_cashes.local_sale_id',
-                'users.name AS name_user'
+                'users.name AS name_user',
+                DB::raw('sum(expenses.amount) AS expenses')
+            )
+            ->groupBy(
+                'petty_cashes.id',
+                'petty_cashes.date_opening',
+                'petty_cashes.time_opening',
+                'petty_cashes.date_closed',
+                'petty_cashes.time_closed',
+                'petty_cashes.beginning_balance',
+                'petty_cashes.final_balance',
+                'petty_cashes.income',
+                'petty_cashes.state',
+                'petty_cashes.reference_number',
+                'petty_cashes.local_sale_id',
+                'users.name'
             )
             ->orderBy('petty_cashes.created_at', 'DESC')
             ->where('user_id', Auth::user()->id)
@@ -108,6 +142,31 @@ class PettyCashController extends Controller
             ->with('message', __('Caja Chica creado con éxito'));
     }
 
+    public function store_expense(Request $request){
+            $this->validate($request, [
+                'amount' => 'numeric|required',
+                'description' => 'required',
+            ], [
+                'amount.numeric' => 'Ingrese un monto valido ejem. "2.50"',
+                'amount.required', 'description.required' => 'Este Campos es Obligatorio',
+            ]);
+            $petty_cash_id = $request->get('petty_cash_id');
+            $amount = $request->get('amount');
+            $description = $request->get('description');
+            $document = $request->get('document');
+            try {
+                Expense::create([
+                    'amount' => $amount,
+                    'description' => $description,
+                    'document' => $document,
+                    'petty_cash_id' => $petty_cash_id,
+                ]);
+
+            } catch (Exception $e) {
+                return redirect()->route('pettycash.index');
+            }
+
+    }
     public function destroy($id)
     {
         $pettycash = PettyCash::find($id);
@@ -125,11 +184,12 @@ class PettyCashController extends Controller
         if($v){
         try {
             $amount = Sale::where('petty_cash_id', $petty_id)->where('status', "=", 1)->sum('total');
+            $expenses = Expense::where('petty_cash_id', $petty_id)->selectRaw('sum(amount) as expenses')->first()->expenses;
             PettyCash::where('id', $petty_id)->update([
                 'state' => false,
                 'date_closed' => Carbon::now()->format('Y-m-d'),
                 'time_closed' => date('H:i:s'),
-                'final_balance' => PettyCash::where('id', $petty_id)->select('beginning_balance')->first()->beginning_balance + $amount,
+                'final_balance' => PettyCash::where('id', $petty_id)->select('beginning_balance')->first()->beginning_balance + $amount-$expenses,
                 'income' => $amount
             ]);
             return true;
