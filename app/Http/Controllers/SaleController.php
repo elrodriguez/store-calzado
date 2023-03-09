@@ -45,7 +45,7 @@ class SaleController extends Controller
         } else {
             $sales->latest();
         }
-
+        $isAdmin = Auth::user()->hasRole('admin');
         $sales = $sales->join('people', 'client_id', 'people.id')
             ->join('sale_documents', 'sale_documents.sale_id', 'sales.id')
             ->join('series', 'sale_documents.serie_id', 'series.id')
@@ -62,7 +62,9 @@ class SaleController extends Controller
                 'series.description AS serie',
                 'sale_documents.number'
             )
-            ->where('sales.user_id', Auth::id())
+            ->when(!$isAdmin, function ($q) use ($search) {
+                return $q->where('sales.user_id', Auth::id());
+            })
             ->when($search, function ($q) use ($search) {
                 return $q->whereRaw('CONCAT("series.description","-",sale_documents.number) = ?', [$search])
                     ->orWhere('people.full_name', 'like', '%' . $search . '%');
