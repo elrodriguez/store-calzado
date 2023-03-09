@@ -117,10 +117,10 @@
         </div>
     </div>
     <script>
-const botonImprimir = document.getElementById('boton-imprimir');
-botonImprimir.addEventListener('click', () => {
-  window.print();
-});
+        const botonImprimir = document.getElementById('boton-imprimir');
+            botonImprimir.addEventListener('click', () => {
+            window.print();
+        });
      </script>
 
 </div>
