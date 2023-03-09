@@ -191,11 +191,11 @@ pdf.text(titulo, 200, 40);
             <table id="table_export" class="table border mb-4 table-fixed" style="width: 100%;">
                         <thead class="border-b">
 
-                            <tr><th colspan="10" class="text-center fs-1" style="text-align: center">Matos Store - Ventas Caja desde: {{ props.petty_cash.date_opening+" hora: "+props.petty_cash.time_opening.slice(0, -3) }} cerrado  el: {{ props.petty_cash.date_closed+" hora: "+props.petty_cash.time_closed.slice(0, -3) }}</th></tr>
-                            <tr><th colspan="10" class="text-center fs-1" style="text-align: center">De: {{ form.local_name }}</th></tr>
-                            <tr><th colspan="4"></th><th>Monto final en Caja: </th><th>{{ props.petty_cash.final_balance }}</th><th colspan="4"></th></tr>
+                            <tr><th colspan="9" class="text-center fs-1" style="text-align: center">Matos Store - Ventas Caja desde: {{ props.petty_cash.date_opening+" hora: "+props.petty_cash.time_opening.slice(0, -3) }} cerrado  el: {{ props.petty_cash.date_closed+" hora: "+props.petty_cash.time_closed.slice(0, -3) }}</th></tr>
+                            <tr><th colspan="9" class="text-center fs-1" style="text-align: center">De: {{ form.local_name }}</th></tr>
+                            <tr><th colspan="3"></th><th>Monto final en Caja: </th><th>{{ props.petty_cash.final_balance }}</th><th colspan="4"></th></tr>
 
-                            <tr>
+                            <tr class="bg-blue-400 border-b hover:bg-blue-600">
                                 <th scope="col" class="w-2.5 text-sm font-medium text-gray-900 px-6 py-4 border-r">
                                 #
                                 </th>
@@ -227,7 +227,7 @@ pdf.text(titulo, 200, 40);
                         </thead>
 
                         <tbody>
-                            <tr v-for="(sale, index) in form.sales" :key="sale.id" class="border-b">
+                            <tr v-for="(sale, index) in form.sales" :key="sale.id" :class="  index % 2 == 0 ? 'bg-gray-100 hover:bg-gray-300 border-b' : 'bg-gray-200 hover:bg-gray-300 border-b'">
                                 <td class="text-center px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 border-r">
                                     {{ index + 1 }}
                                 </td>
@@ -262,7 +262,8 @@ pdf.text(titulo, 200, 40);
                         <tfoot>
                             <tr class="bg-blue-400 border-b">
                                         <th class="fs-4" style="text-align: center">#</th>
-                                        <th class="fs-4" style="text-align: center" colspan="3">Totales</th>
+                                        <th></th>
+                                        <th class="fs-4" style="text-align: center" colspan="2">Totales</th>
                                         <th class="fs-4" style="text-align: left"></th>
                                         <th class="fs-4" style="text-align: center"></th>
                                         <th class="fs-4" style="text-align: center">{{ getTotalQuantities()}}</th>
@@ -282,7 +283,7 @@ pdf.text(titulo, 200, 40);
                                 <th class="fs-4 text-white font-light border-r" style="text-align: center">Monto</th>
                                 <th colspan="2" class="fs-4 text-white font-light" style="text-align: center">N° Documento</th>
                             </tr>
-                            <tr  v-for="(expense, index) in form.expenses" :key="expense.id" class="border-b">  
+                            <tr  v-for="(expense, index) in form.expenses" :key="expense.id" :class="  index % 2 == 0 ? 'bg-gray-100 hover:bg-gray-300 border-b' : 'bg-gray-200 hover:bg-gray-300 border-b'">  
                                 <td></td>
                                 <td></td>
                                 <td class="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap border-r"></td>
