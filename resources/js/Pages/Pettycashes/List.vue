@@ -36,17 +36,15 @@
     }
 
     function closePettyCash(id, state){
-if(state == 0){
-    alert("Esta caja ya se encuentra Cerrada");
-}else{
-    if (confirm("¿Estás seguro de que quieres Cerrar la Caja?")) {
-            axios.post(route('close_petty_cash', {id}))
-        .then(response => {
-            location.reload();
-        })
-        .catch(error => console.log(error));
+        if(state == 0){
+            alert("Esta caja ya se encuentra Cerrada");
+        }else{
+            if (confirm("¿Estás seguro de que quieres Cerrar la Caja?")) {
+                axios.post(route('close_petty_cash', {id})).then(response => {
+                    location.reload();
+                }).catch(error => console.log(error));
+            }
         }
-}
     }
 
     function reportPettyCash(id){
