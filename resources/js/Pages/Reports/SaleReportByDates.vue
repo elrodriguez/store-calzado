@@ -200,11 +200,11 @@ pdf.text(titulo, 400, 40);
             <table id="table_export" class="table border mb-4 table-fixed" style="width: 100%;">
                         <thead class="border-b">
 
-                            <tr v-if="form.start==form.end"><th colspan="10" class="text-center fs-1" style="text-align: center">Ventas del día: {{ form.start }} </th></tr>
-                            <tr v-else><th colspan="10" class="text-center fs-1" style="text-align: center">Matos Store - Ventas del: {{ form.start }} al {{ form.end }}</th></tr>
-                            <tr><th colspan="10" class="text-center fs-1" style="text-align: center">De: {{ form.local_name }}</th></tr>
+                            <tr v-if="form.start==form.end"><th colspan="9" class="text-center fs-1" style="text-align: center">Ventas del día: {{ form.start }} </th></tr>
+                            <tr v-else><th colspan="9" class="text-center fs-1" style="text-align: center">Matos Store - Ventas del: {{ form.start }} al {{ form.end }}</th></tr>
+                            <tr><th colspan="9" class="text-center fs-1" style="text-align: center">De: {{ form.local_name }}</th></tr>
 
-                            <tr>
+                            <tr class="bg-blue-300 hover:bg-blue-500">
                                 <th scope="col" class="w-2.5 text-sm font-medium text-gray-900 px-6 py-4 border-r">
                                 #
                                 </th>
@@ -236,7 +236,7 @@ pdf.text(titulo, 400, 40);
                         </thead>
 
                         <tbody>
-                            <tr v-for="(sale, index) in form.sales" :key="sale.id" class="border-b">
+                            <tr v-for="(sale, index) in form.sales" :key="sale.id" :class="  index % 2 == 0 ? 'bg-gray-100 hover:bg-gray-300 border-b' : 'bg-gray-200 hover:bg-gray-300 border-b'">
                                 <td class="text-center px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 border-r">
                                     {{ index + 1 }}
                                 </td>
@@ -269,7 +269,7 @@ pdf.text(titulo, 400, 40);
                         </tbody>
 
                         <tfoot>
-                            <tr class="table-dark">
+                            <tr class="bg-blue-400 hover:bg-blue-600">
                                         <th class="fs-4" style="text-align: center">#</th>
                                         <th class="fs-4" style="text-align: center" colspan="3">Totales</th>
                                         <th class="fs-4" style="text-align: left"></th>
