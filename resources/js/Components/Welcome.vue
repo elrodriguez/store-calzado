@@ -23,13 +23,13 @@ import ApplicationLogo from '@/Components/ApplicationLogo.vue';
                     </div>
                 </a>
             </div>
-            <div class="p-6">
-                <a v-role="'admin'" :href="route('pettycash.index')" type="button" class="w-full inline-block px-6 py-2 border-2 border-blue-600 text-blue-600 font-medium text-xs leading-tight uppercase rounded hover:bg-black hover:bg-opacity-5 focus:outline-none focus:ring-0 transition duration-150 ease-in-out">
+            <div  v-can="'caja_chica'" class="p-6">
+                <a :href="route('pettycash.index')" type="button" class="w-full inline-block px-6 py-2 border-2 border-blue-600 text-blue-600 font-medium text-xs leading-tight uppercase rounded hover:bg-black hover:bg-opacity-5 focus:outline-none focus:ring-0 transition duration-150 ease-in-out">
                     Caja Chica
                     <div class="flex flex-wrap justify-center">
                         <img
                             src="img/cartera.png"
-                            alt="Productos"
+                            alt="Caja Chica"
                             style="width: 70px;"
                         />
                     </div>
