@@ -139,7 +139,13 @@
                     border: 1px solid #000;
                     border-collapse: collapse;
                     padding: 0.3em;
-                    caption-side: bottom;">Cliente</td>
+                    caption-side: bottom;">Vendedor</td>
+                    <td style="text-align: left;
+                    vertical-align: top;
+                    border: 1px solid #000;
+                    border-collapse: collapse;
+                    padding: 0.3em;
+                    caption-side: bottom;">Vendedor</td>
                     <td style="text-align: left;
                     vertical-align: top;
                     border: 1px solid #000;
@@ -158,6 +164,17 @@
                     border-collapse: collapse;
                     padding: 0.3em;
                     caption-side: bottom;">{{ $sale->full_name }}</td>
+                    <td style="vertical-align: top;
+                    border: 1px solid #000;
+                    border-collapse: collapse;
+                    padding: 0.3em;
+                    caption-side: bottom;">
+                        @if($sale->seller_name)
+                            {{ $sale->seller_name }}
+                        @else
+                            {{ $sale->user_name }}
+                        @endif
+                    </td>
                     <td style="text-align: right;vertical-align: top;
                     border: 1px solid #000;
                     border-collapse: collapse;
@@ -165,23 +182,23 @@
                     caption-side: bottom;">{{ $sale->total  }}</td>
                 </tr>
                 <tr>
-                    <th colspan="3" style="padding: 0.3em;text-align: center">Detalles De Venta</th>
+                    <th colspan="4" style="padding: 0.3em;text-align: center">Detalles De Venta</th>
                 </tr>
                 @foreach($sales as $products)
                     @if($sale->id == $products->id)
                     <tr>
-                        <td style="padding: 0.3em;text-align: left">Producto: </td>
+                        <td colspan="2" style="padding: 0.3em;text-align: left">Producto: </td>
                         <td style="padding: 0.3em;text-align: center">{{ $products->interne }} {{ $products->product_description }} / {{ json_decode($products->product,true)['size'] }}</td>
                         <td style="padding: 0.3em;text-align: right">{{ $products->product_total }}</td>
                     </tr>
                     @endif
                 @endforeach
                 <tr>
-                    <th colspan="3" style="padding: 0.3em;text-align: center">Pagos</th>
+                    <th colspan="4" style="padding: 0.3em;text-align: center">Pagos</th>
                 </tr>
                 @foreach(json_decode($sale->payments) as $payment)
                     <tr>
-                        <td style="padding: 0.3em;text-align: left">
+                        <td colspan="2" style="padding: 0.3em;text-align: left">
                             @foreach($payments as $rr)
                                 @if($payment->type == $rr->id)
                                     <b>{{ $rr->description }}</b>

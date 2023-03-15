@@ -2,10 +2,12 @@
     import AppLayout from '@/Layouts/AppLayout.vue';
     import { useForm } from '@inertiajs/vue3';
     import { faTrashAlt, faPencilAlt, faPrint, faCashRegister, faFileExcel, faMoneyBill1Wave} from "@fortawesome/free-solid-svg-icons";
-    import Pagination from '@/Components/Pagination.vue'
+    import Pagination from '@/Components/Pagination.vue';
+    import ModalCashEdit from './ModalCashEdit.vue';
     import ModalCashCreate from './ModalCashCreate.vue';
     import ModalExpenseCreate from './ModalExpenseCreate.vue';
-
+    import Keypad from '@/Components/Keypad.vue';
+    
     const props = defineProps({
         pettycashes: {
             type: Object,
@@ -20,11 +22,19 @@
             default: () => ({}),
         }
     });
+    
     const form = useForm({
         search: {
             date_start: props.filters.date_start,
             date_end: props.filters.date_end
         },
+    });
+
+    const dataPettycash = useForm({
+        pettycash: {
+            type: Object,
+            default: () => ({}),
+        }
     });
 
     const formDelete = useForm({});
@@ -61,8 +71,8 @@ function getLocal(id){
   return local_name;
 }
 
-function openModalExpenses(id){
-
+function openModalPettycashEdit(pettycash){
+    dataPettycash.pettycash = pettycash;
 }
 </script>
 
@@ -103,7 +113,11 @@ function openModalExpenses(id){
                                 </button>
                             </div>
                             <div class="text-right">
-                                <ModalCashCreate :locals="locals" />
+                                <Keypad>
+                                    <template #botones>
+                                        <ModalCashCreate :locals="locals" />
+                                    </template>
+                                </Keypad>
                             </div>
                         </div>
                     </form>
@@ -150,19 +164,29 @@ function openModalExpenses(id){
                                     <div class="flex space-x-2">
                                         <div v-if="pettycash.state==1">
                                             <div>
-                                            <ModalExpenseCreate :petty_cash_id="pettycash.id" />
+                                                <ModalExpenseCreate :petty_cash_id="pettycash.id" />
                                              </div>
-
                                         </div>
 
                                         <div v-else>
                                             <button disabled type="button" title="Registrar Gasto" class="inline-block w-10 py-2 bg-gray-400 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-gray-500 hover:shadow-lg focus:bg-red-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-red-800 active:shadow-lg transition duration-150 ease-in-out"
-
                                             >
                                             <font-awesome-icon :icon="faMoneyBill1Wave" />
-                                        </button>
+                                            </button>
                                         </div>
 
+                                        <div v-if="pettycash.state==1">
+                                            <button @click="openModalPettycashEdit(pettycash)" type="button" title="Editar" class="inline-block w-10 py-2 bg-[#374151] text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-[#374151]/90 hover:shadow-lg dark:focus:ring-[#374151]/50 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-[#374151]/90 active:shadow-lg transition duration-150 ease-in-out"
+                                            >
+                                                <font-awesome-icon :icon="faPencilAlt" />
+                                            </button>
+                                        </div>
+                                        <div v-else>
+                                            <button disabled type="button" title="No puede Editar" class="inline-block w-10 py-2 bg-gray-400 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-gray-500 hover:shadow-lg focus:bg-red-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-red-800 active:shadow-lg transition duration-150 ease-in-out"
+                                            >
+                                                <font-awesome-icon :icon="faPencilAlt" />
+                                            </button>
+                                        </div>
 
                                         <div v-if="pettycash.income==0">
                                             <button type="button" class="inline-block w-10 py-2 bg-red-600 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-red-700 hover:shadow-lg focus:bg-red-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-red-800 active:shadow-lg transition duration-150 ease-in-out"
@@ -246,5 +270,6 @@ function openModalExpenses(id){
 
             </div>
         </div>
+        <ModalCashEdit :locals="locals" :pettycash="dataPettycash.pettycash" />
     </AppLayout>
 </template>

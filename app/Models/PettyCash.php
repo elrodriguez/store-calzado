@@ -21,7 +21,8 @@ class PettyCash extends Model
         'income',
         'state',
         'reference_number',
-        'local_sale_id'
+        'local_sale_id',
+        'seller_name'
     ];
 
     public function getDateOpeningAttribute($value)

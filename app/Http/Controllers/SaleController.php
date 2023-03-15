@@ -380,6 +380,7 @@ class SaleController extends Controller
             ->join('sale_documents', 'sale_documents.sale_id', 'sales.id')
             ->join('people', 'client_id', 'people.id')
             ->join('series', 'serie_id', 'series.id')
+            ->join('users', 'sales.user_id', 'users.id')
             ->select(
                 'sales.id',
                 'products.description AS product_description',
@@ -390,9 +391,15 @@ class SaleController extends Controller
                 'sale_products.total AS product_total',
                 'sales.total',
                 'people.full_name',
-                'sales.payments'
+                'sales.payments',
+                'users.name AS user_name',
+                DB::raw("(SELECT seller_name FROM petty_cashes WHERE petty_cashes.id=sales.petty_cash_id) AS seller_name")
             )
-            ->where('sales.user_id', Auth::id())
+            ->where(function ($query) {
+                if (!Auth::user()->hasRole('admin')) {
+                    $query->where('sales.user_id', Auth::id());
+                }
+            })
             ->whereDate('sales.created_at', $date)
             ->where('sales.status', true)
             ->where('sales.local_id', Auth::user()->local_id)
@@ -412,7 +419,11 @@ class SaleController extends Controller
                 'sale_products.total'
             )
             ->whereDate('sales.created_at', $date)
-            ->where('sales.user_id', Auth::id())
+            ->where(function ($query) {
+                if (!Auth::user()->hasRole('admin')) {
+                    $query->where('sales.user_id', Auth::id());
+                }
+            })
             ->where('sales.status', true)
             ->where('sales.local_id', Auth::user()->local_id)
             ->get();
@@ -438,7 +449,10 @@ class SaleController extends Controller
                 'Content-Type' => 'application/pdf',
             ]);
         } else {
-            return response()->json(['status' => $status]);
+            return response()->json([
+                'status' => $status,
+                'message' => 'No existen Datos'
+            ]);
         }
     }
 }

@@ -3,10 +3,9 @@
     import InputLabel from '@/Components/InputLabel.vue';
     import InputError from '@/Components/InputError.vue';
     import DangerButton from '@/Components/DangerButton.vue';
-    import PrimaryButton from '@/Components/PrimaryButton.vue';
     import SecondaryButton from '@/Components/SecondaryButton.vue';
     import TextInput from '@/Components/TextInput.vue';
-    import { ref } from 'vue';
+    import { ref, watch } from 'vue';
     import { useForm } from '@inertiajs/vue3';
 
     const form = useForm({
@@ -14,37 +13,48 @@
         starting_amount: '',
         seller_name: ''
     });
-    const displayModal = ref(false);
-    const openModalCashCreate = () => {
-        displayModal.value = true;
-    };
-    const closeModal = () => {
-        form.reset();
-        displayModal.value = false;
+
+    const displayModalEdit = ref(false);
+
+    const closeModalEdit = () => {
+        displayModalEdit.value = false;
     };
 
     const props = defineProps({
+        pettycash: {
+            type: Object,
+            default: () => ({})
+        },
         locals: {
             type: Object,
             default: () => ({}),
         }
     });
 
-    const createCash = () => {
-        form.post(route('pettycash.store'), {
-            forceFormData: true,
-            errorBag: 'createCash',
+    const editCash = () => {
+        form.put(route('pettycash.update',form.id), {
+            errorBag: 'editCash',
             preserveScroll: true,
-            onSuccess: () => closeModal(),
+            onSuccess: () => closeModalEdit(),
         });
     };
+
+    watch(() => props.pettycash, (newValues) => {
+        
+        form.id = newValues.id
+        form.local_id = newValues.local_sale_id
+        form.starting_amount = newValues.beginning_balance
+        form.seller_name = newValues.seller_name
+        displayModalEdit.value = true;
+    });
+
 </script>
 
 <template>
-    <button @click="openModalCashCreate" type="button" class="inline-block px-6 py-2.5 bg-blue-600 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg transition duration-150 ease-in-out">Nuevo</button>
-    <DialogModal :show="displayModal" @close="closeModal">
+    
+    <DialogModal :show="displayModalEdit" @close="closeModalEdit">
         <template #title>
-            Abrir Caja Chica
+            Editar Caja Chica
         </template>
         <template #content>
 
@@ -98,7 +108,7 @@
         </template>
 
         <template #footer>
-            <SecondaryButton @click="closeModal">
+            <SecondaryButton @click="closeModalEdit">
                 Cancel
             </SecondaryButton>
 
@@ -106,7 +116,7 @@
                 class="ml-3"
                 :class="{ 'opacity-25': form.processing }"
                 :disabled="form.processing"
-                @click="createCash"
+                @click="editCash"
             >
                 Guardar
             </DangerButton>

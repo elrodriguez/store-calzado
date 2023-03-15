@@ -207,4 +207,9 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified',
         'search/person/full_name/number',
         [PersonController::class, 'searchByNameOrNumber']
     )->name('search_person_fullname_number');
+
+    Route::get(
+        'general/stock',
+        [KardexController::class, 'generalStock']
+    )->name('generalstock');
 });

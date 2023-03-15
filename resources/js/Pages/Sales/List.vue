@@ -42,7 +42,7 @@
         var ano = fecha.getFullYear(); //obteniendo año
         if(dia<10)dia='0'+dia; //agrega cero si el menor de 10
         if(mes<10)mes='0'+mes //agrega cero si el menor de 10
-        fecha=ano+"-"+mes+"-"+dia;
+        fecha = ano + "-" + mes + "-" + dia;
 
         formPrint.date = fecha;
         displayModalPrint.value = true;
