@@ -4,7 +4,7 @@ import AppLayout from '@/Layouts/AppLayout.vue';
 import { useForm } from '@inertiajs/vue3';
 import * as XLSX from 'xlsx/dist/xlsx.full.min';
 import jsPDF from 'jspdf';
-import autoTable from 'jspdf-autotable';
+import autoTable from 'jspdf-autotable';  //No lo borres si se usa aunque pareciera que no.
 
 const props = defineProps({
     locals: {
