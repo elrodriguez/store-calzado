@@ -28,7 +28,7 @@
         "sweetalert": "^2.1.2",
         "sweetalert2": "^11.7.2",
         "table2excel": "^1.0.4",
-        "vue-cropperjs": "^5.0.0",
+        "vue-cropperjs": "^2.3.5",
         "vue-gates": "^2.1.2",
         "vue-the-mask": "^0.11.1",
         "xlsx": "^0.18.5"
