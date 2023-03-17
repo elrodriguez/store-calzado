@@ -165,7 +165,7 @@ pdf.text(titulo, 200, 40);
 
                         <div class="grid grid-cols-4 gap-3 py-2" id="form-dates">
 
-                            <div>
+                            <div v-if="false">
                                 <button v-on:click="downloadExcel()"
                                     class="form-control block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
                                      >Exportar en Excel</button>
