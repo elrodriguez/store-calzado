@@ -4,6 +4,7 @@ import AppLayout from '@/Layouts/AppLayout.vue';
 import { useForm } from '@inertiajs/vue3';
 import * as XLSX from 'xlsx/dist/xlsx.full.min';
 import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';  //No lo borres si se usa aunque pareciera que no.
 
 const props = defineProps({
     locals: {
@@ -94,11 +95,11 @@ function downloadExcel(){
     // Convierte la tabla HTML en una hoja de cálculo
     const worksheet = XLSX.utils.table_to_sheet(table);
     worksheet['!cols'] = [
-        {width:4}, // Columna "A" #
-        {width:12}, // Columna "B" Fecha
-        { width: 30 }, // Columna "C" Tienda
-        {width:9}, // Columna "D" Cod. Prod.
-        { width: 35 }, // Columna "E" Producto
+        {width:12}, // Columna "A" Fecha
+        { width: 25 }, // Columna "B" Tienda
+        {width:9}, // Columna "C" Cod. Prod.
+        { width: 30 }, // Columna "D" Producto
+        {width: 35}, //metodos de pago
         {width:12}, // Columna "F" Precio Vendido
         {width:9}, // Columna "G" Cantidad
         {width:9}, // Columna "H" Talla
