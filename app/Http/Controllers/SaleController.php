@@ -45,6 +45,9 @@ class SaleController extends Controller
         } else {
             $sales->latest();
         }
+
+        $current_date = Carbon::now()->format('Y-m-d');
+
         $isAdmin = Auth::user()->hasRole('admin');
         $sales = $sales->join('people', 'client_id', 'people.id')
             ->join('sale_documents', 'sale_documents.sale_id', 'sales.id')
@@ -62,6 +65,7 @@ class SaleController extends Controller
                 'series.description AS serie',
                 'sale_documents.number'
             )
+            ->whereDate('sales.created_at', '=', $current_date)
             ->when(!$isAdmin, function ($q) use ($search) {
                 return $q->where('sales.user_id', Auth::id());
             })
