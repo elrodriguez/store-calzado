@@ -6,6 +6,7 @@
     import DangerButton from '@/Components/DangerButton.vue';
     import SecondaryButton from '@/Components/SecondaryButton.vue';
     import swal from 'sweetalert';
+    import CropperImage from '@/Components/CropperImage.vue';
 
     const props = defineProps({
         product: {
@@ -18,76 +19,22 @@
         image: null,
         product_id: props.product.id
     });
-    const cropperImage = ref(null);
-    const showCropper = ref(false);
-    const cropperRef = ref(null)
-    let cropper = null;
 
-    const onFileChange = (event) => {
-        const file = event.target.files[0];
-        if (file && file.type.match('image.*')) {
-            const reader = new FileReader();
-            reader.readAsDataURL(file);
-            reader.onload = () => {
-                cropperImage.value = reader.result;
-                showCropper.value = true;
-            };
-        }
-    }
-
-    const emit = defineEmits(['eventdataproduct']);
-
-    const cropImage = () => {
-        const croppedImage = cropper.getCroppedCanvas().toDataURL()
-        form.image = croppedImage;
-        axios.post(route('product_upload_image'), form ).then((res) => {
-            emit('eventdataproduct',res.data);
-            swal('Imagen Modificada con exito');
-            closeModal();
-        });
-        cropperImage.value = null;
-        showCropper.value = false;
-    }
-
-
-    const initializeCropper = async () => {
-        //await nextTick() // Esperar a que se completen las actualizaciones de Vue
-        cropper = cropperRef.value // Asignar la referencia a la variable cropper
-    }
-  
-    initializeCropper() // Llamar a la función initializeCropper inmediatamente
 
     const isModalOpen = ref(false)
 
     const openModal = () => {
         isModalOpen.value = true
-        //enableBodyScroll()
+
     }
 
     const closeModal = () => {
         isModalOpen.value = false
-        //disableBodyScroll()
+
     }
 
-    // Función para permitir el desplazamiento vertical
-    const enableBodyScroll = () => {
-        document.body.classList.add('overflow-y-scroll')
-    }
+</script>
 
-    // Función para deshabilitar el desplazamiento vertical
-    const disableBodyScroll = () => {
-        document.body.classList.remove('overflow-y-scroll')
-    }
-</script>
-  
-<script>
-    export default {
-        components: { VueCropper },
-        setup() {
-            return { image, cropperOptions, selectImage, cropImage, cropperRef,isModalOpen, openModal, closeModal }
-        }
-    }
-</script>
 <template>
     <div class="flex justify-center space-x-2">
         <button
@@ -111,13 +58,9 @@
                         Imagen
                     </div>
                     <div class="px-4 py-3 sm:px-6" style="max-height: 450px; overflow-y: auto;overflow-x: hidden;">
-                        <input type="file" @change="onFileChange">
-                        <vue-cropper 
-                        ref="cropper" 
-                            v-if="showCropper" 
-                            :src="cropperImage"
-                            :aspect-ratio="1"
-                        ></vue-cropper>
+                        <CropperImage
+
+                        ></CropperImage>
                     </div>
                     <div class="flex flex-row justify-end px-6 py-4 bg-gray-100 text-right">
 

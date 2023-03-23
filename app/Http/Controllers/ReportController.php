@@ -187,7 +187,7 @@ class ReportController extends Controller
             ->orderBy('size', 'asc')
             ->get();
         $local = LocalSale::where('id', $local_id)->get()->first();
-        //dd($local);
+        //dd($products);
         date_default_timezone_set('America/Lima');
         $date = date('Y-m-d H:i:s');
         $year = date('Y'); //obtiene el año actual en formato de 4 dígitos

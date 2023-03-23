@@ -38,95 +38,120 @@
 <button id="boton-imprimir" class="btn btn-primary">Imprimir</button>-<button id="boton-imprimir" class="btn btn-success" onclick="export_excel({{ '"'.(string)$date.'"' }})">Exportar en Excel</button>
 @endif
 
-<br><hr>
-    <div class="limiter">
-        <div class="container-table100">
-            <div class="wrap-table100">
-                <div>
-                    <table class="table table-hover table-striped">
-                        <thead>
-                            <tr><th colspan="13" class="text-center fs-1" style="text-align: center"> {{ $local->description }} - Inventario - {{ $date }} horas</th></tr>
-                            <tr class="table-primary">
-                                <th class="text-center fs-5">#</th>
-                                <th class="text-center fs-5">Código</th>
-                                <th class="text-center fs-5">Producto</th>
-                                <th class="text-center fs-5">Tallas</th>
-                                <th class="text-center fs-5">Cantidades</th>
-                                <th class="text-center fs-5">Precio Costo</th>
-                                <th class="text-center fs-5">Precio Costo total</th>
-                                <th class="text-center fs-5">P. Venta Min</th>
-                                <th class="text-center fs-5">P. Venta Medio</th>
-                                <th class="text-center fs-5">P. Venta Normal</th>
-                                <th class="text-center fs-5">Ganancia Min.</th>
-                                <th class="text-center fs-5">Ganancia Max.</th>
-                                <th class="text-center fs-5">Ganancia Max. Total</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-@php
-    $x=1;
-    $quantities_parcial_total=0;
-    $total_shoes = 0;
-    $costo_total=0;
-    $ganancia_min_total=0;
-    $ganancia_max_total=0;
-    $comparador=$products[0]->id;
-    $primi=true;
-@endphp
+<br>
+<hr>
+<div class="limiter">
+    <div class="container-table100">
+        <div class="wrap-table100">
+            <div>
+                <table class="table table-hover table-striped">
+                    <thead>
+                        <tr><th colspan="13" class="text-center fs-1" style="text-align: center"> {{ $local->description }} - Inventario - {{ $date }} horas</th></tr>
+                        <tr class="table-primary">
+                            <th class="text-center fs-5">#</th>
+                            <th class="text-center fs-5">Código</th>
+                            <th class="text-center fs-5">Producto</th>
+                            <th class="text-center fs-5">Tallas</th>
+                            <th class="text-center fs-5">Cantidades</th>
+                            <th class="text-center fs-5">Precio Costo</th>
+                            <th class="text-center fs-5">Precio Costo total</th>
+                            <th class="text-center fs-5">P. Venta Min</th>
+                            <th class="text-center fs-5">P. Venta Medio</th>
+                            <th class="text-center fs-5">P. Venta Normal</th>
+                            <th class="text-center fs-5">Ganancia Min.</th>
+                            <th class="text-center fs-5">Ganancia Max.</th>
+                            <th class="text-center fs-5">Ganancia Max. Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    @php
+                        $x=1;
+                        $quantities_parcial_total=0;
+                        $total_shoes = 0;
+                        $costo_total=0;
+                        $ganancia_min_total=0;
+                        $ganancia_max_total=0;
+                        $comparador=$products[0]->id;
+                        $primi=true;
+                    @endphp
 
-                            @foreach ($products as $key => $product)
-                            @php
-                                $prices = json_decode($product->sale_prices);
-                                $quantities_parcial_total+=$product->quantity;
-                                if ($comparador!=$product->id) {
-                                    $comparador=$product->id;
-                                    $primi=true;
-                                }
-                            @endphp
-                                    <tr class="">
-                                        <td class="fs-5" style="text-align: center">{{ $primi? $x++ : ""}}</td>
-                                        <td class="fs-5" style="text-align: center">{{ $primi? $product->interne : ""}}</td>
-                                        @if ($primi)
-                                        <td class="fs-5" style="text-align: left"><img src="{{ app('App\Http\Controllers\ReportController')->getImage($product->id) }}" height="42px"> - {{ $product->description}}</td>
-                                        @else
-                                        <td class="fs-5" style="text-align: left"></td>
-                                        @endif
-                                        <td class="text-center fs-5">{{ $product->size }}</td>
-                                        <td class="text-center fs-5">{{ (integer)$product->quantity }}</td>
+                    @foreach ($products as $key => $product)
+                        @php
+                            $prices = json_decode($product->sale_prices);
+                            $quantities_parcial_total+=$product->quantity;
+                            if ($comparador!=$product->id) {
+                                $comparador=$product->id;
+                                $primi=true;
+                            }
+                        @endphp
+                        <tr class="">
+                            <td class="fs-5" style="text-align: center">{{ $primi? $x++ : ""}}</td>
+                            <td class="fs-5" style="text-align: center">{{ $primi? $product->interne : ""}}</td>
+                            @if ($primi)
+                            <td class="fs-5" style="text-align: left"><img src="{{ app('App\Http\Controllers\ReportController')->getImage($product->id) }}" height="42px"> - {{ $product->description}}</td>
+                            @else
+                            <td class="fs-5" style="text-align: left"></td>
+                            @endif
+                            <td class="text-center fs-5">{{ $product->size }}</td>
+                            <td class="text-center fs-5">{{ (integer)$product->quantity }}</td>
 
-                                        <td class="text-center fs-5">{{ $product->purchase_prices }}</td>
-                                        <td class="text-center fs-5">{{ $product->purchase_prices*$product->quantity }}</td>
-                                        <td class="text-center fs-5" style="text-align: center">S/ {{ $prices->under }}</td>
-                                        <td class="text-center fs-5" style="text-align: center">S/ {{ $prices->medium }}</td>
-                                        <td class="text-center fs-5" style="text-align: center">S/ {{ $prices->high }}</td>
-                                        <td class="text-center fs-5" style="text-align: center">S/ {{ $prices->under - $product->purchase_prices }}</td>
-                                        <td class="text-center fs-5" style="text-align: center">S/ {{ $prices->high - $product->purchase_prices }}</td>
-                                        <td class="text-center fs-5" style="text-align: center"><b>S/ {{ ($prices->high - $product->purchase_prices)*$product->quantity }}</b></td>
-                                    </tr>
+                            <td class="text-center fs-5">{{ $product->purchase_prices }}</td>
+                            <td class="text-center fs-5">{{ $product->purchase_prices*$product->quantity }}</td>
+                            <td class="text-center fs-5" style="text-align: center">S/ {{ $prices->under }}</td>
+                            <td class="text-center fs-5" style="text-align: center">S/ {{ $prices->medium }}</td>
+                            <td class="text-center fs-5" style="text-align: center">S/ {{ $prices->high }}</td>
+                            <td class="text-center fs-5" style="text-align: center"> 
+                                @if (is_numeric($prices->under) && is_numeric($product->purchase_prices))
+                                S/ {{ $prices->under - $product->purchase_prices }}
+                                @endif
+                            </td>
+                            <td class="text-center fs-5" style="text-align: center">
+                                @if (is_numeric($prices->high) && is_numeric($product->purchase_prices))
+                                    S/ {{ $prices->high - $product->purchase_prices }}
+                                @endif
+                            </td>
+                            <td class="text-center fs-5" style="text-align: center">
+                                <b>
+                                @if (is_numeric($prices->high) && is_numeric($product->purchase_prices))
+                                    S/ {{ ($prices->high - $product->purchase_prices)*$product->quantity }}
+                                @endif
+                               </b>
+                            </td>
+                        </tr>
 
 <!--    ---------------------         Parciales totales       ---------------------          -->
-                                    <tr class="table-info">
-                                    @if ($key < count($products)-1)
-                                            @if ($products[$key]->id != $products[$key+1]->id)
-                                                <td></td>
-                                                <td></td>
-                                                <th style="text-align:left">Totales parciales</th>
-                                                <td>Disponibles</td>
-                                                <th style="text-align: center"><b>{{ $quantities_parcial_total }}</b></th>
-                                                <td>Costo en productos</td>
-                                                <th class="table-warning" style="text-align: center"><b>S/ {{ $quantities_parcial_total * $product->purchase_prices }}</b></th>
-                                                <td></td>
-                                                <td colspan="3" style="text-align: right">Ganancias esperadas para este producto entre: </td>
-                                                <th colspan="2" class="table-warning" style="text-align: center"><b>S/ {{ ($quantities_parcial_total*$prices->under)-($quantities_parcial_total * $product->purchase_prices)}} y S/ {{ ($quantities_parcial_total*$prices->high)-($quantities_parcial_total * $product->purchase_prices) }}</b></th>
-                                                @php
-                                                    $ganancia_max_total+=($quantities_parcial_total*$prices->high)-($quantities_parcial_total * $product->purchase_prices);
-                                                    $ganancia_min_total+=($quantities_parcial_total*$prices->high)-($quantities_parcial_total * $product->purchase_prices);
-                                                    $total_shoes+=$quantities_parcial_total;
-                                                    $costo_total+=$quantities_parcial_total * $product->purchase_prices;
-                                                    $quantities_parcial_total=0;
-                                                @endphp
-                                             @endif
-                                    @else
+                        <tr class="table-info">
+                            @if ($key < count($products)-1)
+                                @if ($products[$key]->id != $products[$key+1]->id)
+                                    <td></td>
+                                    <td></td>
+                                    <th style="text-align:left">Totales parciales</th>
+                                    <td>Disponibles</td>
+                                    <th style="text-align: center"><b>{{ $quantities_parcial_total }}</b></th>
+                                    <td>Costo en productos</td>
+                                    <th class="table-warning" style="text-align: center"><b>S/ {{ $quantities_parcial_total * $product->purchase_prices }}</b></th>
+                                    <td></td>
+                                    <td colspan="3" style="text-align: right">Ganancias esperadas para este producto entre: </td>
+                                    <th colspan="2" class="table-warning" style="text-align: center">
+                                        <b>
+                                        @if (is_numeric($prices->under) && is_numeric($product->purchase_prices) && is_numeric($prices->high))
+                                        S/ {{ ($quantities_parcial_total*$prices->under)-($quantities_parcial_total * $product->purchase_prices)}} y S/ {{ ($quantities_parcial_total*$prices->high)-($quantities_parcial_total * $product->purchase_prices) }}
+                                        @endif
+                                            
+                                        </b>
+                                    </th>
+                                    @if (is_numeric($prices->high) && is_numeric($product->purchase_prices))
+                                        @php
+                                            $ganancia_max_total+=($quantities_parcial_total*$prices->high)-($quantities_parcial_total * $product->purchase_prices);
+                                            $ganancia_min_total+=($quantities_parcial_total*$prices->high)-($quantities_parcial_total * $product->purchase_prices);
+                                            $total_shoes+=$quantities_parcial_total;
+                                            $costo_total+=$quantities_parcial_total * $product->purchase_prices;
+                                            $quantities_parcial_total=0;
+                                        @endphp
+                                    @endif
+                                    
+                                @endif
+                            @else
                                             <td></td>
                                             <td></td>
                                             <th style="text-align:left">Totales parciales</th>
@@ -136,7 +161,13 @@
                                             <th class="table-warning" style="text-align: center"><b>S/ {{ $quantities_parcial_total * $product->purchase_prices }}</b></th>
                                             <td></td>
                                             <td colspan="3" style="text-align: right">Ganancias esperadas para este producto entre: </td>
-                                            <th colspan="2" class="table-warning" style="text-align: center"><b>S/ {{ ($quantities_parcial_total*$prices->under)-($quantities_parcial_total * $product->purchase_prices)}} y S/ {{ ($quantities_parcial_total*$prices->high)-($quantities_parcial_total * $product->purchase_prices) }}</b></th>
+                                            <th colspan="2" class="table-warning" style="text-align: center">
+                                                <b>
+                                                @if (is_numeric($prices->under) && is_numeric($prices->high) && is_numeric($product->purchase_prices))
+                                                S/ {{ ($quantities_parcial_total*$prices->under)-($quantities_parcial_total * $product->purchase_prices)}} y S/ {{ ($quantities_parcial_total*$prices->high)-($quantities_parcial_total * $product->purchase_prices) }}
+                                                @endif
+                                                </b>
+                                            </th>
                                             @php
                                                 $ganancia_max_total+=($quantities_parcial_total*$prices->high)-($quantities_parcial_total * $product->purchase_prices);
                                                 $ganancia_min_total+=($quantities_parcial_total*$prices->high)-($quantities_parcial_total * $product->purchase_prices);
@@ -152,51 +183,6 @@
 
                                         $primi=false;
                                     @endphp
-                                        {{-- @foreach ($sizes as $size)
-                                        @if ($size->quantity > 0)
-                                        <tr>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td style="text-align: center">{{ $size->size }}</td>
-                                            <td style="text-align: center">{{ $size->quantity }}</td>
-                                            @php
-                                                $q_prod += $size->quantity;
-                                            @endphp
-                                            <td style="text-align: center">S/ {{ $product->purchase_prices }}</td>
-                                            <td style="text-align: center"><b>S/ {{ $size->quantity*$product->purchase_prices }}</b></td>
-                                            <td style="text-align: center">S/ {{ $prices->under }}</td>
-                                            <td style="text-align: center">S/ {{ $prices->medium }}</td>
-                                            <td style="text-align: center">S/ {{ $prices->high }}</td>
-                                            <td style="text-align: center">S/ {{ $prices->under - $product->purchase_prices }}</td>
-                                            <td style="text-align: center">S/ {{ $prices->high - $product->purchase_prices }}</td>
-                                            <td style="text-align: center"><b>S/ {{ ($prices->high - $product->purchase_prices)*$size->quantity }}</b></td>
-                                            @php
-                                                $g_max += ($prices->high - $product->purchase_prices)*$size->quantity;
-                                                $g_min += ($prices->under - $product->purchase_prices)*$size->quantity
-                                            @endphp
-                                        </tr>
-                                        @endif
-                                        @endforeach --}}
-
-                                        {{-- <tr class="table-info">
-                                            <td></td>
-                                            <td></td>
-                                            <th style="text-align:left">Totales parciales</th>
-                                            <td>Disponibles</td>
-                                            <th style="text-align: center"><b>{{ $q_prod }}</b></th>
-                                            <td>Costo en producto</td>
-                                            <th class="table-warning" style="text-align: center"><b>S/ {{ $q_prod * $product->purchase_prices }}</b></th>
-                                            <td></td>
-                                            <td colspan="3" style="text-align: right">Ganancias esperadas para este producto entre: </td>
-                                            <th colspan="2" class="table-warning" style="text-align: center"><b>S/ {{ $g_min }} y S/ {{ $g_max }}</b></th>
-                                            @php
-                                                $quantities_parcial_total+=$q_prod;
-                                                $costo_total+=$q_prod * $product->purchase_prices;
-                                                $ganancia_max_total+=$g_max;
-                                                $ganancia_min_total+=$g_min;
-                                            @endphp
-                                        </tr> --}}
                             @endforeach
                         </tbody>
                         <tfoot>
