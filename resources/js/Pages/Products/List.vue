@@ -804,6 +804,5 @@
             </DangerButton>
           </template>
         </ModalLarge>
-      <CropperImage /> 
     </AppLayout>
 </template>

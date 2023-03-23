@@ -384,13 +384,17 @@ class ProductController extends Controller
 
         $destination = 'uploads/products';
         $base64Image = $request->get('image');
+
         $product_id = $request->get('product_id');
         $fileData = base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', $base64Image));
-        $tempFile = tempnam(sys_get_temp_dir(), 'img');
+        $tempFile = tempnam('/var/www/html/store-calzado/public', 'img');
+
         file_put_contents($tempFile, $fileData);
         $mime = mime_content_type($tempFile);
+
         $name = uniqid('', true) . '.' . str_replace('image/', '', $mime);
-        $file = new UploadedFile($tempFile, $name, $mime, null, true);
+        $file = new UploadedFile(realpath($tempFile), $name, $mime, null, true);
+
         $path = null;
         if ($file) {
             $original_name = strtolower(trim($file->getClientOriginalName()));

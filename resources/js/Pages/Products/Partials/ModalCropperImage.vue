@@ -1,6 +1,5 @@
 <script setup>
     import 'cropperjs/dist/cropper.css';
-    import VueCropper from 'vue-cropperjs';
     import { ref } from 'vue';
     import { useForm } from '@inertiajs/vue3';
     import DangerButton from '@/Components/DangerButton.vue';
@@ -30,9 +29,22 @@
 
     const closeModal = () => {
         isModalOpen.value = false
-
     }
 
+    const cropImageAndSave = (res) => {
+        form.image = res;
+    }
+
+    const emit = defineEmits(['eventdataproduct']);
+
+    const cropImage = () => {
+        axios.post(route('product_upload_image'), form ).then((res) => {
+            emit('eventdataproduct',res.data);
+            swal('Imagen Modificada con exito');
+            closeModal();
+        });
+        //this.$refs.cropper.resetCropper();
+    }
 </script>
 
 <template>
@@ -59,7 +71,8 @@
                     </div>
                     <div class="px-4 py-3 sm:px-6" style="max-height: 450px; overflow-y: auto;overflow-x: hidden;">
                         <CropperImage
-
+                            ref="cropper"
+                            @onCrop="cropImageAndSave"
                         ></CropperImage>
                     </div>
                     <div class="flex flex-row justify-end px-6 py-4 bg-gray-100 text-right">
