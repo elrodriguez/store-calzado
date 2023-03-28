@@ -387,8 +387,11 @@ class ProductController extends Controller
 
         $product_id = $request->get('product_id');
         $fileData = base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', $base64Image));
-        $tempFile = tempnam('/var/www/html/store-calzado/public', 'img');
-
+        if (PHP_OS == 'WINNT') {
+            $tempFile = tempnam(sys_get_temp_dir(), 'img');
+        } else {
+            $tempFile = tempnam('/var/www/html/store-calzado/public', 'img');
+        }
         file_put_contents($tempFile, $fileData);
         $mime = mime_content_type($tempFile);
 

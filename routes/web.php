@@ -1,9 +1,9 @@
 <?php
 
+
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\KardexController;
 use App\Http\Controllers\LocalSaleController;
-use App\Http\Controllers\PermissionsController;
 use App\Http\Controllers\PersonController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -15,7 +15,6 @@ use App\Http\Controllers\SaleController;
 use App\Http\Controllers\SerieController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ReportController;
-use App\Http\Controllers\RolesController;
 
 /*
 |--------------------------------------------------------------------------
@@ -37,12 +36,11 @@ Route::get('/', function () {
     ]);
 });
 
-Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified',])->group(function () {
+Route::get('/dashboard', function () {
+    return Inertia::render('Dashboard');
+})->middleware(['auth', 'verified'])->name('dashboard');
 
-    Route::get('/dashboard', function () {
-        return Inertia::render('Dashboard');
-    })->name('dashboard');
-
+Route::middleware('auth')->group(function () {
     Route::resource('products', ProductController::class);
     Route::resource('pettycash', PettyCashController::class);
     Route::resource('providers', ProviderController::class);
@@ -177,13 +175,7 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified',
         [KardexController::class, 'kardexDeailsSises']
     )->name('kardex_sizes');
 
-    Route::resource('roles', RolesController::class);
 
-    Route::get('/config', function () {
-        return Inertia::render('Config');
-    })->name('config');
-
-    Route::resource('permissions', PermissionsController::class);
 
     Route::get(
         'print/sales/user/{date}',
@@ -213,3 +205,5 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified',
         [KardexController::class, 'generalStock']
     )->name('generalstock');
 });
+
+require __DIR__ . '/auth.php';

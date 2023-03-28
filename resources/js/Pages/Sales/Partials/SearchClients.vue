@@ -145,7 +145,7 @@
                     Registrar nuevo o editar buscando por su numero de documento
                 </template>
                 <template #content>
-                    <Form class="grid grid-cols-6 gap-4">
+                    <div class="grid grid-cols-6 gap-4">
                         <div class="col-span-6 sm:col-span-2">
                             <InputLabel value="Tipo de Documento" class="mb-1" />
                             <select class="form-select appearance-none
@@ -189,7 +189,7 @@
                             <InputError :message="form.errors.telephone" class="mt-2" />
                         </div>
                         <div class="col-span-6 sm:col-span-4">
-                            <InputLabel v-if="document_type_id == 6" for="full_name" value="Razón Social" />
+                            <InputLabel v-if="form.document_type == 6" for="full_name" value="Razón Social" />
                             <InputLabel v-else for="full_name" value="Nombres" />
                             <TextInput id="full_name" v-model="form.full_name" type="text" class="block w-full mt-1"
                                 autofocus />
@@ -207,7 +207,7 @@
                             <InputError :message="form.errors.address" class="mt-2" />
                         </div>
 
-                    </Form>
+                    </div>
                 </template>
                 <template #buttons>
                     <PrimaryButton @click="saveNewSearchClient()" class="mr-2">

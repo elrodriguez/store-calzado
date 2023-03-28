@@ -5,8 +5,8 @@ export default {
     install: (app) => {
         app.mixin({
             mounted(){
-                //console.log( usePage().props.auth);
                 let authRoles = usePage().props.auth;
+                //console.log(usePage().props.auth.roles)
                 let authPermissions;
                 if(authRoles !== null){
                     authRoles = usePage().props.auth.roles;

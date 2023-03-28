@@ -7,17 +7,22 @@
         <title inertia>{{ config('app.name', 'Laravel') }}</title>
 
         <!-- Fonts -->
-        <link rel="stylesheet" href="https://fonts.bunny.net/css2?family=Nunito:wght@400;600;700&display=swap">
+        <link rel="preconnect" href="https://fonts.bunny.net">
+        <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
 
         <!-- Scripts -->
         @routes
-        @vite(['resources/js/app.js', "resources/js/Pages/{$page['component']}.vue"])
+        @php
+            $parts = explode('::',$page['component']);
+        @endphp
+        @if(count($parts)>1)
+            @vite(['resources/js/app.js', "Modules/{$parts[0]}/Resources/assets/js/Pages/{$parts[1]}.vue"])
+        @else
+            @vite(['resources/js/app.js', "resources/js/Pages/{$page['component']}.vue"])
+        @endif
         @inertiaHead
     </head>
     <body class="font-sans antialiased">
         @inertia
-        <script>
-            window._asset = '{{ asset('') }}';
-        </script>
     </body>
 </html>

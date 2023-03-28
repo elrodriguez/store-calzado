@@ -14,7 +14,14 @@ const appName = window.document.getElementsByTagName('title')[0]?.innerText || '
 
 createInertiaApp({
     title: (title) => `${title} - ${appName}`,
-    resolve: (name) => resolvePageComponent(`./Pages/${name}.vue`, import.meta.glob('./Pages/**/*.vue')),
+    resolve: (name) => {
+        let parts = name.split('::');
+        if(parts.length > 1){
+            return resolvePageComponent(`../../Modules/${parts[0]}/Resources/assets/js/Pages/${parts[1]}.vue`,import.meta.glob('../../Modules/*/Resources/assets/js/Pages/**/*.vue'));
+        }else{
+            return resolvePageComponent(`./Pages/${name}.vue`, import.meta.glob('./Pages/**/*.vue'))
+        }
+    },
     setup({ el, App, props, plugin }) {
         return createApp({ render: () => h(App, props) })
             .use(plugin)

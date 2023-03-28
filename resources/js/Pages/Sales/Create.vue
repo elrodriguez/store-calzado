@@ -5,7 +5,7 @@
     import { faTrashAlt } from "@fortawesome/free-solid-svg-icons";
     import { useForm } from '@inertiajs/vue3';
     import ModalPrintSale from './Partials/ModalPrintSale.vue';
-    
+    import InputError from '@/Components/InputError.vue';
     import Keypad from '@/Components/Keypad.vue';
     
 

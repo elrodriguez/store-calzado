@@ -16,9 +16,6 @@
     import VueMagnifier from '@websitebeaver/vue-magnifier'
     import '@websitebeaver/vue-magnifier/styles.css'
 
-
-    import CropperImage from '@/Components/CropperImage.vue';
-
     const props = defineProps({
         products: {
             type: Object,
