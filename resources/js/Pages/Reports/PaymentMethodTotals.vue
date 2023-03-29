@@ -84,7 +84,7 @@
                         </div>
                     </div>
                     <div class="flex flex-wrap">
-                        <div v-for="(method, index) in formData.payments" class="w-full md:w-1/2 xl:w-1/3 p-6">
+                        <div v-for="(method, index) in formData.payments" class="w-full sm:w-1/3 md:w-1/3 xl:w-1/4 p-6">
                             <!--Metric Card-->
                             <div 
                                 class="bg-gradient-to-b border-b-4 rounded-lg shadow-xl p-5"
