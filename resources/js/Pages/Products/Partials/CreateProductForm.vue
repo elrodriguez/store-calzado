@@ -8,7 +8,7 @@ import TextInput from '@/Components/TextInput.vue';
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { faTrashAlt } from "@fortawesome/free-solid-svg-icons";
 import Keypad from '@/Components/Keypad.vue';
-import ModalCropperImage from './ModalCropperImage.vue';
+import swal from 'sweetalert';
 
 const props = defineProps({
     establishments: {
@@ -43,7 +43,10 @@ const props = defineProps({
             forceFormData: true,
             errorBag: 'createProduct',
             preserveScroll: true,
-            onSuccess: () => form.reset(),
+            onSuccess: () =>{ 
+                form.reset()
+                swal('Producto registrado con exito.')
+            },
         });
     };
 
