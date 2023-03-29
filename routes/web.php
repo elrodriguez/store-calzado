@@ -204,6 +204,16 @@ Route::middleware('auth')->group(function () {
         'general/stock',
         [KardexController::class, 'generalStock']
     )->name('generalstock');
+
+    Route::get(
+        'reports/payment/method/motals',
+        [ReportController::class, 'reportPaymentMethodTotals']
+    )->name('report_payment_method_totals');
+
+    Route::post(
+        'data/payment/method/motals',
+        [ReportController::class, 'dataPaymentMethodTotals']
+    )->name('data_payment_method_totals');
 });
 
 require __DIR__ . '/auth.php';

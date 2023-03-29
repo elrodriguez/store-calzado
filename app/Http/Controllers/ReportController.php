@@ -8,6 +8,7 @@ use App\Models\PaymentMethod;
 use App\Models\PettyCash;
 use App\Models\Product;
 use App\Models\Sale;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Date;
@@ -197,5 +198,87 @@ class ReportController extends Controller
         $date = $day . "/" . $month . "/" . $year . " a las  " . $time;
 
         return view('reports.inventory_report_by_local', ['products' => $products, 'local' => $local, 'date' => $date, 'print' => true]);
+    }
+
+    public function reportPaymentMethodTotals()
+    {
+        return Inertia::render('Reports/PaymentMethodTotals', [
+            'locals' => LocalSale::all(),
+        ]);
+    }
+    public function dataPaymentMethodTotals(Request $request)
+    {
+
+        $payments = Sale::select('payments')->where('local_id', $request->input('local_id'))
+            ->whereDate('created_at', '>=', $request->input('start'))
+            ->whereDate('created_at', '<=', $request->input('end'))
+            ->get();
+
+        //$array = json_decode($payments, true);
+        $sumas = array();
+
+        // Recorrer los pagos
+        foreach ($payments as $pago) {
+            // Decodificar el pago como un array asociativo
+            $datos_pago = json_decode($pago['payments'], true);
+
+            // Obtener el tipo y el monto del pago
+            $tipo_pago = $datos_pago[0]['type'];
+            $monto_pago = $datos_pago[0]['amount'];
+
+            // Si el tipo de pago no está en el array de sumas, inicializarlo en 0
+            if (!isset($sumas[$tipo_pago])) {
+                $sumas[$tipo_pago] = 0;
+            }
+
+            // Sumar el monto del pago al tipo de pago correspondiente
+            $sumas[$tipo_pago] += $monto_pago;
+        }
+
+        // Imprimir las sumas de cada tipo de pago
+        $c = 0;
+
+        $payments_sum = [];
+        foreach ($sumas as $tipo_pago => $suma) {
+            $payments_sum[$c] = [
+                'type' => $tipo_pago,
+                'amount' => $suma
+            ];
+            $c++;
+        }
+
+        $method_payments = PaymentMethod::all();
+
+        $array_payments = [];
+
+        $total = 0;
+
+        foreach ($method_payments as $key => $method) {
+            $encontrado = false;
+            foreach ($payments_sum as $payment) {
+                if ($method->id == $payment['type']) {
+                    $array_payments[$key] = [
+                        'id'            => $method->id,
+                        'description'   => $method->description,
+                        'amount'        => $payment['amount']
+                    ];
+                    $total = $total + $payment['amount'];
+                    $encontrado = true;
+                    break;
+                }
+            }
+            if (!$encontrado) {
+                $array_payments[$key] = [
+                    'id'            => $method->id,
+                    'description'   => $method->description,
+                    'amount'        => 0
+                ];
+            }
+        }
+
+        return response()->json([
+            'payments'  => $array_payments,
+            'total'     => $total
+        ]);
     }
 }

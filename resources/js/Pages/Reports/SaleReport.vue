@@ -85,10 +85,6 @@ export default {
                             <div class="" hidden>
                                <input type="checkbox" class="form-check-input" v-model="download"><label class="form-check-label">Descargar reportes</label>
                             </div>
-
-                            <div class="text-right">
-                                <ModalCashCreate :locals="locals" />
-                            </div>
                         </div>
 
                     <div class="bg-gray-200 bg-opacity-25 grid grid-cols-1 md:grid-cols-4">

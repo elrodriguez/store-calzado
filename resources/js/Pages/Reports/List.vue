@@ -50,6 +50,9 @@ export default {
                             <li>
                                 <a :href="route('sale_report',)">Reporte de ventas ANTERIOR  fechas(todos los locales )</a>
                             </li>
+                            <li>
+                                <a :href="route('report_payment_method_totals')">Reporte Totales de método de pago(por locales)</a>
+                            </li>
                         </ul>
                     </div>
                 </div>

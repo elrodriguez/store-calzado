@@ -5,14 +5,20 @@ import Dropdown from '@/Components/Dropdown.vue';
 import DropdownLink from '@/Components/DropdownLink.vue';
 import NavLink from '@/Components/NavLink.vue';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
-import { Link } from '@inertiajs/vue3';
+import { Head, Link } from '@inertiajs/vue3';
+import Banner from '@/Components/Banner.vue';
 
 const showingNavigationDropdown = ref(false);
 
+defineProps({
+    title: String,
+});
 </script>
 
 <template>
     <div>
+        <Head :title="title" />
+        <Banner />
         <div class="min-h-screen bg-gray-100 dark:bg-gray-900">
             <nav class="bg-white dark:bg-gray-800 border-b border-gray-100 dark:border-gray-700">
                 <!-- Primary Navigation Menu -->
@@ -156,6 +162,11 @@ const showingNavigationDropdown = ref(false);
             <main>
                 <slot />
             </main>
+
+
         </div>
+    </div>
+    <div>
+        
     </div>
 </template>
