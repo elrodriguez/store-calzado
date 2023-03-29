@@ -7,7 +7,7 @@
     import PrimaryButton from '@/Components/PrimaryButton.vue';
     import { ref } from 'vue';
     import ModalSmall from '@/Components/ModalSmall.vue';
-    import Swal2 from 'sweetalert2';
+    import swal from "sweetalert";
 
     const props = defineProps({
         sales: {
@@ -58,24 +58,21 @@
     const formDelete= useForm({});
 
     const deleteSale = (id) => {
-        Swal2.fire({
-            title: 'Estas seguro',
+        swal({
+            title: "Estas seguro",
             text: "No podrás revertir esto!",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            cancelButtonText: 'Cancelar',
-            confirmButtonText: 'Si, anular'
-        }).then((result) => {
-            if (result.isConfirmed) {
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+        }).then((willDelete) => {
+            if (willDelete) {
                 formDelete.delete(route('sales.destroy',id),{
                     preserveScroll: true,
                     onSuccess: () => {
-                        Swal2.fire('Venta Anulada correctamente');
+                        swal('Venta Anulada correctamente');
                     }
                 });
-            }
+            } 
         });
     }
 </script>
