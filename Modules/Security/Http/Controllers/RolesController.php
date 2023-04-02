@@ -36,7 +36,7 @@ class RolesController extends Controller
 
         $roles = $roles->paginate(5)->onEachSide(2)->appends(request()->query());
 
-        return Inertia::render('Roles/List', [
+        return Inertia::render('Security::Roles/List', [
             'roles' => $roles,
             'filters' => request()->all('search')
         ]);
@@ -46,7 +46,7 @@ class RolesController extends Controller
     {
         $permissions = Permission::all();
         return Inertia::render(
-            'Roles/Create',
+            'Security::Roles/Create',
             [
                 'permissions' => $permissions,
             ]
@@ -77,7 +77,7 @@ class RolesController extends Controller
         $permissions = Permission::all();
         $roleHasPermissions = array_column(json_decode($role->permissions, true), 'name');
 
-        return Inertia::render('Roles/Edit', [
+        return Inertia::render('Security::Roles/Edit', [
             'role' => $role,
             'permissions' => $permissions,
             'roleHasPermissions' => $roleHasPermissions,

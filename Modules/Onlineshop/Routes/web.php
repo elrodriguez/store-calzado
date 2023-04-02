@@ -11,6 +11,6 @@
 |
 */
 
-Route::prefix('onlineshop')->group(function() {
-    Route::get('/', 'OnlineshopController@index');
+Route::middleware(['auth', 'module.layout'])->prefix('onlineshop')->group(function () {
+    Route::get('dashboard', 'OnlineshopController@index')->name('onlineshop_dashboard');
 });

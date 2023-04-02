@@ -25,4 +25,46 @@
     <body class="font-sans antialiased">
         @inertia
     </body>
+    <script>
+        function generalFunctionTo(data, route, to) {
+            
+            if (to === 'destroy') {
+                swal({
+                    title: '¿Estas seguro?',
+                    text: "¡No podrás revertir esto!",
+                    icon: "warning",
+                    buttons: true,
+                    dangerMode: true,
+                }).then((willDelete) => {
+                    if (willDelete) {
+                        swal({
+                            title: 'Cargando...',
+                            text: 'Por favor espera',
+                            buttons: false,
+                            closeOnEsc: false,
+                            closeOnClickOutside: false,
+                        });
+                        const xhr = new XMLHttpRequest();
+                        xhr.open('GET', route, true);
+                        xhr.setRequestHeader('X-CSRF-TOKEN', '{{ csrf_token() }}');
+
+                        xhr.onload = function() {
+                            if (xhr.status === 200) {
+                                swal('Se elimino correctamente.');
+                            } else {
+                                swal('Error.');
+                            }
+                            swal.close();
+                        };
+
+                        xhr.onerror = function() {
+                            swal('Error.');
+                        };
+
+                        xhr.send();
+                    }
+                });
+            }
+        }
+    </script>
 </html>

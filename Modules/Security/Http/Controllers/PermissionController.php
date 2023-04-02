@@ -1,13 +1,15 @@
 <?php
 
-namespace Modules\Onlineshop\Http\Controllers;
+namespace Modules\Security\Http\Controllers;
 
 use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Inertia\Inertia;
+use Spatie\Permission\Models\Permission;
+use DataTables;
 
-class OnlineshopController extends Controller
+class PermissionController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -15,7 +17,17 @@ class OnlineshopController extends Controller
      */
     public function index()
     {
-        return Inertia::render('Onlineshop::dashboard');
+
+        return Inertia::render('Security::Permissions/List');
+    }
+
+    public function getDataPermissions()
+    {
+        $model = Permission::query();
+
+        return DataTables::eloquent($model)
+            ->addColumn('edit', '<p>hola</p>')
+            ->toJson(false);
     }
 
     /**
@@ -24,7 +36,7 @@ class OnlineshopController extends Controller
      */
     public function create()
     {
-        return view('onlineshop::create');
+        return view('security::create');
     }
 
     /**
@@ -44,7 +56,7 @@ class OnlineshopController extends Controller
      */
     public function show($id)
     {
-        return view('onlineshop::show');
+        return view('security::show');
     }
 
     /**
@@ -54,7 +66,7 @@ class OnlineshopController extends Controller
      */
     public function edit($id)
     {
-        return view('onlineshop::edit');
+        return view('security::edit');
     }
 
     /**
@@ -75,6 +87,8 @@ class OnlineshopController extends Controller
      */
     public function destroy($id)
     {
-        //
+        Permission::find($id)->delete();
+
+        return response()->json(['success' => true]);
     }
 }

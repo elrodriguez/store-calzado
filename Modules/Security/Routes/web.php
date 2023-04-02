@@ -27,5 +27,8 @@ Route::middleware('auth')->prefix('security')->group(function () {
 
     Route::resource('roles', RolesController::class);
 
-    Route::resource('permissions', PermissionsController::class);
+    Route::resource('permissions', PermissionController::class);
+    Route::get('destroy/permissions/{id}', 'PermissionController@destroy')->name('permissions_destroy');
+
+    Route::get('table/permissions', 'PermissionController@getDataPermissions')->name('permissions_table');
 });
