@@ -209,9 +209,13 @@
                         <td style="padding: 0.3em;text-align: right">{{ number_format($payment->amount, 2, '.', ',') }}</td>
                     </tr>
                 @endforeach
-            @endif
             @php
                 $total = $total + $sale->total;
+            @endphp    
+            @endif
+            @php
+                $ssale = $sale->id;
+                
             @endphp
             </table>
             <br>
