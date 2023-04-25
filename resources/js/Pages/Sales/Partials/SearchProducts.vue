@@ -24,7 +24,8 @@
             price:'',
             size:'',
             quantity: 1,
-            discount: 0
+            discount: 0,
+            size_quantity: 0
         }
     });
     const searchProducts = async () => {
@@ -96,6 +97,7 @@
                 }
                 emit('eventdata',data);
                 displayModal.value = false;
+                form.data.size = null;
             }else{
                 swal('Seleccionar Precio')
             }

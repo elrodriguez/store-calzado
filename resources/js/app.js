@@ -1,8 +1,5 @@
 import './bootstrap';
 import '../css/app.css';
-import 'laravel-datatables-vite';
-import 'datatables.net-dt/css/jquery.dataTables.css';
-import 'datatables.net-select-dt/css/select.dataTables.css';
 
 import { createApp, h } from 'vue';
 import VueGates from 'vue-gates'

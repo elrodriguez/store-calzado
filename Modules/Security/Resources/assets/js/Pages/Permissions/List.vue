@@ -1,41 +1,45 @@
 <script setup>
-    
+    import { useForm } from "@inertiajs/vue3"
     import AppLayout from '../../layouts/master.vue';
-    import { faTrashAlt, faPencilAlt, faSort } from "@fortawesome/free-solid-svg-icons";
+    import Pagination from '@/Components/Pagination.vue';
+    import { faTrashAlt, faPencilAlt } from "@fortawesome/free-solid-svg-icons";
     import Keypad from '@/Components/Keypad.vue';
-    import swal from 'sweetalert';
-    import DataTable from 'datatables.net-vue3';
-    import DataTablesCore from 'datatables.net';
-    import 'datatables.net-select';
-    import 'datatables.net-responsive';
+    import swal from "sweetalert";
 
-    DataTable.use(DataTablesCore);
-
-    const columns = [
-        { 
-            data: 'id', 
-            title: 'Acciones',
-            render: function(id){ 
-                    const actions = `
-                        <a href="${route('permissions.edit',id)}" class="mr-1 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-full text-sm p-2.5 text-center inline-flex items-center mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
-                            <svg class="svg-inline--fa fa-pencil" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="pencil" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path class="" fill="currentColor" d="M410.3 231l11.3-11.3-33.9-33.9-62.1-62.1L291.7 89.8l-11.3 11.3-22.6 22.6L58.6 322.9c-10.4 10.4-18 23.3-22.2 37.4L1 480.7c-2.5 8.4-.2 17.5 6.1 23.7s15.3 8.5 23.7 6.1l120.3-35.4c14.1-4.2 27-11.8 37.4-22.2L387.7 253.7 410.3 231zM160 399.4l-9.1 22.7c-4 3.1-8.5 5.4-13.3 6.9L59.4 452l23-78.1c1.4-4.9 3.8-9.4 6.9-13.3l22.7-9.1v32c0 8.8 7.2 16 16 16h32zM362.7 18.7L348.3 33.2 325.7 55.8 314.3 67.1l33.9 33.9 62.1 62.1 33.9 33.9 11.3-11.3 22.6-22.6 14.5-14.5c25-25 25-65.5 0-90.5L453.3 18.7c-25-25-65.5-25-90.5 0zm-47.4 168l-144 144c-6.2 6.2-16.4 6.2-22.6 0s-6.2-16.4 0-22.6l144-144c6.2-6.2 16.4-6.2 22.6 0s6.2 16.4 0 22.6z"></path></svg>
-                        </a>
-                        <button onclick="generalFunctionTo(${id},'${route('permissions_destroy',id)}','destroy')" type="button" class="btnDelete mr-1 text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-full text-sm p-2.5 text-center inline-flex items-center mr-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800">
-                            <svg class="svg-inline--fa fa-trash-can" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="trash-can" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path class="" fill="currentColor" d="M135.2 17.7C140.6 6.8 151.7 0 163.8 0H284.2c12.1 0 23.2 6.8 28.6 17.7L320 32h96c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 96 0 81.7 0 64S14.3 32 32 32h96l7.2-14.3zM32 128H416V448c0 35.3-28.7 64-64 64H96c-35.3 0-64-28.7-64-64V128zm96 64c-8.8 0-16 7.2-16 16V432c0 8.8 7.2 16 16 16s16-7.2 16-16V208c0-8.8-7.2-16-16-16zm96 0c-8.8 0-16 7.2-16 16V432c0 8.8 7.2 16 16 16s16-7.2 16-16V208c0-8.8-7.2-16-16-16zm96 0c-8.8 0-16 7.2-16 16V432c0 8.8 7.2 16 16 16s16-7.2 16-16V208c0-8.8-7.2-16-16-16z"></path></svg>
-                        </button>
-                    `;
-                    return actions;
-            }
+    const props = defineProps({
+        permissions: {
+            type: Object,
+            default: () => ({})
         },
-        { data: 'name', title: 'Nombre' },
-    ];
+        filters: {
+            type: Object,
+            default: () => ({})
+        }
+    });
 
-    const options = {
-        responsive: true,
-        select: false,
-    };
+    const form = useForm({
+        search: props.filters.search,
+    });
 
-    
+    const formDelete = useForm({})
+
+    const destroyRol = (id) => {
+        swal({
+            title: '¿Estas seguro?',
+            text: "¡No podrás revertir esto!",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+        }).then((willDelete) => {
+            if (willDelete) {
+                formDelete.delete(route("roles.destroy", id),{
+                    onSuccess: () => {
+                        swal('Rol eliminada con éxito');
+                    }
+                });
+            }
+        });
+    }
 </script>
 
 <template>
@@ -44,23 +48,59 @@
             <div class="max-w-7xl mx-auto py-10 sm:px-6 lg:px-8">
                 <div class="col-span-6 p-4 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
                     <div class="flex items-center justify-between pb-4 bg-white dark:bg-gray-900">
-                        <button @click="destroyPermission()">aca</button>
+                        <form @submit.prevent="form.get(route('roles.index'))">
+                            <label for="table-search" class="sr-only">Search</label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                                    <svg class="w-5 h-5 text-gray-500 dark:text-gray-400" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"></path></svg>
+                                </div>
+                                <input v-model="form.search" type="text" id="table-search-users" class="block p-2 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Buscar rol">
+                            </div>
+                        </form>
                         <div class="text-right">
                             <Keypad>
                                 <template #botones>
-                                    <a :href="route('permissions.create')" class="inline-block px-6 py-2.5 bg-blue-900 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg transition duration-150 ease-in-out">Nuevo</a>
+                                    <a :href="route('roles.create')" class="inline-block px-6 py-2.5 bg-blue-900 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg transition duration-150 ease-in-out">Nuevo</a>
                                 </template>
                             </Keypad>
                         </div>
                     </div>
-                    
-                        <DataTable class="display"
-                            :columns="columns"
-                            :options="options"
-                            :ajax="route('permissions_table')"
-                        >
-                        </DataTable>
+                    <div class="relative overflow-x-auto">
+                        <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+                            <thead class="text-gray-700 uppercase bg-gray-100 dark:text-gray-400">
+                                <tr class="border">
+                                    <th scope="col" class="px-6 py-4 border">
+                                        Acciones
+                                    </th>
+                                    <th scope="col" class="px-6 py-4">
+                                        <div class="flex items-center">
+                                            Nombre
+                                            <a :href="route('permissions.index', {sort:'name',sort_order: filters.sort_order})">
+                                                <img style="max-width: 12px;height: auto;" class="svg-img" src="/icons-svg/clasificar.svg" alt="Descripción de la imagen">
+                                            </a>
+                                        </div>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="(permission, index) in permissions.data" :key="permission.id" class="bg-white border dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                                    <td class="border px-6 py-4">
+                                        <a :href="route('roles.edit',permission.id)" class="mr-1 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-full text-sm p-2.5 text-center inline-flex items-center mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                                            <font-awesome-icon :icon="faPencilAlt" />
+                                        </a>
+                                        <button @click="destroyRol(permission.id)" type="button" class="mr-1 text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-full text-sm p-2.5 text-center inline-flex items-center mr-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800">
+                                            <font-awesome-icon :icon="faTrashAlt" />
+                                        </button>
+                                    </td>
+                                    <td class="border px-6 py-4">
+                                        {{ permission.name }}
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
 
+                    <Pagination :data="permissions" />
                 </div>
 
             </div>
