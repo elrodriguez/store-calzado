@@ -7,9 +7,13 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Inertia\Inertia;
 use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
+use Illuminate\Foundation\Validation\ValidatesRequests;
 
 class PermissionController extends Controller
 {
+    use ValidatesRequests;
+
     /**
      * Display a listing of the resource.
      * @return Renderable
@@ -47,7 +51,11 @@ class PermissionController extends Controller
      */
     public function create()
     {
-        return view('security::create');
+        $roles = Role::all();
+        return Inertia::render(
+            'Security::Permissions/Create',
+            ['roles' => $roles]
+        );
     }
 
     /**
@@ -57,27 +65,41 @@ class PermissionController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $this->validate($request, [
+            'name' => 'required|max:255'
+        ]);
+
+        $permission = Permission::create([
+            'name'       => $request->get('name'),
+            'guard_name' => 'web'
+        ]);
+
+        if (!empty($request->get('roles'))) {
+            $permission->assignRole($request->get('roles'));
+        }
+
+        return redirect()->route('permissions.index')
+            ->with('message', 'Permiso creado con éxito.');
     }
 
-    /**
-     * Show the specified resource.
-     * @param int $id
-     * @return Renderable
-     */
-    public function show($id)
-    {
-        return view('security::show');
-    }
 
     /**
      * Show the form for editing the specified resource.
      * @param int $id
      * @return Renderable
      */
-    public function edit($id)
+    public function edit(Permission $permission)
     {
-        return view('security::edit');
+        $roles = Role::all();
+        $roleHasPermissions = array_column(json_decode($permission->roles, true), 'name');
+        return Inertia::render(
+            'Security::Permissions/Edit',
+            [
+                'roles' => $roles,
+                'permission' => $permission,
+                'roleHasPermissions' => $roleHasPermissions,
+            ]
+        );
     }
 
     /**
@@ -86,9 +108,20 @@ class PermissionController extends Controller
      * @param int $id
      * @return Renderable
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, Permission $permission)
     {
-        //
+        $this->validate($request, [
+            'name' => 'required|max:255'
+        ]);
+
+        $permission->update([
+            'name' => $request->get('name'),
+        ]);
+        $roles = $request->get('permissions') ?? [];
+        $permission->assignRole($request->get('roles'));
+
+        return redirect()->route('permissions.edit', $permission->id)
+            ->with('message', 'Role updated successfully.');
     }
 
     /**
@@ -96,10 +129,11 @@ class PermissionController extends Controller
      * @param int $id
      * @return Renderable
      */
-    public function destroy($id)
+    public function destroy(Permission $permission)
     {
-        Permission::find($id)->delete();
+        $permission->delete();
 
-        return response()->json(['success' => true]);
+        return redirect()->route('permissions.index')
+            ->with('message', __('Permission deleted successfully'));
     }
 }
