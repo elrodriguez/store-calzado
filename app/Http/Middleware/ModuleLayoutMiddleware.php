@@ -16,13 +16,8 @@ class ModuleLayoutMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        // if ($request->is('modules/*')) {
-        Inertia::share('layout', 'module');
 
-        //dd(Inertia::share('layouts', 'module'));
-        // } else {
-        //     Inertia::share('layout', 'app');
-        // }
+        Inertia::setRootView('layouts.blog');
 
         return $next($request);
     }

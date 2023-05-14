@@ -273,5 +273,5 @@ return [
         ],
     ],
 
-    'activator' => 'file',
+    'activator' => 'file'
 ];
