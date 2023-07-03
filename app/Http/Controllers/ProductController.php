@@ -97,7 +97,7 @@ class ProductController extends Controller
             $original_name = strtolower(trim($file->getClientOriginalName()));
             $original_name = str_replace(" ", "_", $original_name);
             $extension = $file->getClientOriginalExtension();
-            $file_name = date('YmdHis') . $extension;
+            $file_name = date('YmdHis') . '.' . $extension;
             $path = $request->file('image')->storeAs(
                 $destination,
                 $file_name,
