@@ -125,6 +125,7 @@ class SaleController extends Controller
         try {
             $res = DB::transaction(function () use ($request) {
 
+                date_default_timezone_set('America/Lima');
 
                 $local_id = Auth::user()->local_id;
                 $serie = Serie::where('document_type_id', '5')
