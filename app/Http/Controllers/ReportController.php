@@ -104,28 +104,64 @@ class ReportController extends Controller
     }
     public function getSales($start, $end, $local_id = 0)
     {
+        $sales = [];
         if ($local_id == 0) {
-            return Sale::join('local_sales', 'sales.local_id', 'local_sales.id')
+            $sales = Sale::join('local_sales', 'sales.local_id', 'local_sales.id')
                 ->join('sale_products', 'sale_products.sale_id', 'sales.id')
                 ->join('products', 'products.id', 'sale_products.product_id')
-                ->select('sales.*', 'products.interne', 'products.description as product_description', 'products.image', 'sale_products.product as product')
+                ->select(
+                    'sales.id',
+                    'sales.created_at',
+                    'sales.local_id',
+                    'sales.payments',
+                    'local_sales.description AS local_description',
+                    'products.interne',
+                    'products.description as product_description',
+                    'products.image',
+                    'sale_products.product as product'
+                )
                 ->whereDate('sales.created_at', '>=', $start)
                 ->whereDate('sales.created_at', '<=', $end)
                 ->where('sales.status', '=', 1)
-                ->orderBy('id', 'desc')->orderBy('sale_products.id', 'desc')
+                ->orderBy('sales.id')
                 ->get();
         } else {
-            return Sale::join('local_sales', 'sales.local_id', 'local_sales.id')
+            $sales = Sale::join('local_sales', 'sales.local_id', 'local_sales.id')
                 ->join('sale_products', 'sale_products.sale_id', 'sales.id')
                 ->join('products', 'products.id', 'sale_products.product_id')
-                ->select('sales.*', 'products.interne', 'products.description as product_description', 'products.image', 'sale_products.product as product')
+                ->select(
+                    'sales.id',
+                    'sales.created_at',
+                    'sales.local_id',
+                    'sales.payments',
+                    'local_sales.description AS local_description',
+                    'products.interne',
+                    'products.description as product_description',
+                    'products.image',
+                    'sale_products.product as product'
+                )
                 ->whereDate('sales.created_at', '>=', $start)
                 ->whereDate('sales.created_at', '<=', $end)
                 ->where('sales.status', '=', 1)
                 ->where('sales.local_id', '=', $local_id)
-                ->orderBy('id', 'desc')->orderBy('sale_products.id', 'desc')
+                ->orderBy('sales.id')
                 ->get();
         }
+        $arraySale = [];
+        foreach ($sales as $k => $sale) {
+            $arraySale[$k] = [
+                'id'                        => $sale->id,
+                'created_at'                => $sale->created_at,
+                'local_id'                 => $sale->local_id,
+                'payments'                  => $sale->payments,
+                'interne'                   => $sale->interne,
+                'product_description'       => $sale->product_description,
+                'image'                     => $sale->image,
+                'product'                   => $sale->product
+            ];
+        }
+
+        return $arraySale;
     }
 
     public function PettyCashReport($petty_cash_id)
