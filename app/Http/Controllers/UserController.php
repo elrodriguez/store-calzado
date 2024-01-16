@@ -81,7 +81,7 @@ class UserController extends Controller
     public function update(Request $request, User $user)
     {
         $this->validate($request, [
-            'local_id' => 'required|unique:users,local_id,' . $user->id,
+            //'local_id' => 'required|unique:users,local_id,' . $user->id,
             'name' => 'required',
             'email' => 'required|string|max:255|unique:users,email,' . $user->id,
         ]);
