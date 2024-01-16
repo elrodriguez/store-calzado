@@ -33,9 +33,9 @@
                         <NavLink :href="route('sales.create')" :active="route().current('sales.create')">
                             Vender
                         </NavLink>
-                        <NavLink :href="route('onlineshop_dashboard')" :active="route().current('onlineshop_dashboard')">
+                        <!-- <NavLink :href="route('onlineshop_dashboard')" :active="route().current('onlineshop_dashboard')">
                             Tienda virtual
-                        </NavLink>
+                        </NavLink> -->
                     </div>
                 </div>
 
