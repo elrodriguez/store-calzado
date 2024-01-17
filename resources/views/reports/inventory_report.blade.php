@@ -9503,11 +9503,18 @@
                                                 <td style="text-align: center">S/ {{ $prices->medium }}</td>
                                                 <td style="text-align: center">S/ {{ $prices->high }}</td>
                                                 <td style="text-align: center">S/
-                                                    {{ ($prices->under ?? 0) -($product->purchase_prices ?? 0) }}</td>
+                                                    @if($prices->under)
+                                                    {{ $prices->under - $product->purchase_prices }}</td>
+                                                    @endif
                                                 <td style="text-align: center">S/
-                                                    {{ $prices->high - $product->purchase_prices }}</td>
+                                                    @if($prices->high)
+                                                        {{ $prices->high - $product->purchase_prices }}</td>
+                                                    @endif
                                                 <td style="text-align: center"><b>S/
-                                                        {{ ($prices->high - $product->purchase_prices) * $size->quantity }}</b>
+                                                    @if($prices->high)
+                                                        {{ ($prices->high - $product->purchase_prices) * $size->quantity }}
+                                                    @endif
+                                                </b>
                                                 </td>
                                                 @php
                                                     $g_max += ($prices->high - $product->purchase_prices) * $size->quantity;
