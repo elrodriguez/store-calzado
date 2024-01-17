@@ -9503,7 +9503,7 @@
                                                 <td style="text-align: center">S/ {{ $prices->medium }}</td>
                                                 <td style="text-align: center">S/ {{ $prices->high }}</td>
                                                 <td style="text-align: center">S/
-                                                    {{ $prices->under - $product->purchase_prices }}</td>
+                                                    {{ ($prices->under ?? 0) -($product->purchase_prices ?? 0) }}</td>
                                                 <td style="text-align: center">S/
                                                     {{ $prices->high - $product->purchase_prices }}</td>
                                                 <td style="text-align: center"><b>S/
