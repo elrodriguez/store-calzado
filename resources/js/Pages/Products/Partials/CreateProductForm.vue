@@ -146,6 +146,7 @@ const props = defineProps({
                     type="text"
                     class="block w-full mt-1"
                 />
+                <small>Solo Numeros</small>
                 <InputError :message="form.errors.purchase_prices" class="mt-2" />
             </div>
             <div class="col-span-6 sm:col-span-2">
@@ -156,6 +157,7 @@ const props = defineProps({
                     type="text"
                     class="block w-full mt-1"
                 />
+                <small>Solo Numeros</small>
                 <InputError :message="form.errors[`sale_prices.high`]" class="mt-2" />
             </div>
             <div class="col-span-6 sm:col-span-2">
@@ -166,6 +168,7 @@ const props = defineProps({
                     type="text"
                     class="block w-full mt-1"
                 />
+                <small>Solo Numeros</small>
                 <InputError :message="form.errors[`sale_prices.medium`]" class="mt-2" />
             </div>
             <div class="col-span-6 sm:col-span-2">

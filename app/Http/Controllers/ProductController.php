@@ -79,11 +79,16 @@ class ProductController extends Controller
                 'interne' => 'required|unique:products,interne',
                 'description' => 'required',
                 'purchase_prices' => 'required',
-                'sale_prices.high' => 'required',
+                'sale_prices.high' => 'required|numeric',
+                'sale_prices.medium' => 'nullable|numeric',
+                'sale_prices.under' => 'nullable|numeric',
                 'sizes.*.size' => 'required|numeric',
                 'sizes.*.quantity' => 'required|numeric',
             ],
             [
+                'sale_prices.high.numeric' => 'Ingrese solo numeros',
+                'sale_prices.medium.numeric' => 'Ingrese solo numeros',
+                'sale_prices.under.numeric' => 'Ingrese solo numeros',
                 'sizes.*.size.required' => 'Ingrese Talla',
                 'sizes.*.quantity.required' => 'Ingrese Cantidad',
             ]

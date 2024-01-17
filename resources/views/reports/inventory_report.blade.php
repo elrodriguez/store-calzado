@@ -9503,15 +9503,20 @@
                                                 <td style="text-align: center">S/ {{ $prices->medium }}</td>
                                                 <td style="text-align: center">S/ {{ $prices->high }}</td>
                                                 <td style="text-align: center">S/
-                                                    @if($prices->under)
+                                                    @php
+                                                        $valor_under = preg_replace("/[^0-9]/", "", $prices->under);
+                                                        $valor_medium = preg_replace("/[^0-9]/", "", $prices->medium);
+                                                        $valor_high = preg_replace("/[^0-9]/", "", $prices->high);
+                                                    @endphp
+                                                    @if(is_numeric($valor_under))
                                                     {{ $prices->under - $product->purchase_prices }}</td>
                                                     @endif
                                                 <td style="text-align: center">S/
-                                                    @if($prices->high)
+                                                    @if(is_numeric($valor_medium))
                                                         {{ $prices->high - $product->purchase_prices }}</td>
                                                     @endif
                                                 <td style="text-align: center"><b>S/
-                                                    @if($prices->high)
+                                                    @if(is_numeric($valor_high))
                                                         {{ ($prices->high - $product->purchase_prices) * $size->quantity }}
                                                     @endif
                                                 </b>
